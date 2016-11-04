@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="effects_small_png">
+        <item>@drawable/normal</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/sepia</item>
+        <item>@drawable/grey</item>
+    </array>
+
+    <string-array name="effects_name">
+        <item>Normal</item>
+        <item>Bright</item>
+        <item>Sepia</item>
+        <item>Grey</item>
+    </string-array>
+
+</resources>

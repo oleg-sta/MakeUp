@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="send_mail_with">Отправить письмо с помощью</string>
+    <string name="send_photo_with">отправить с помощью</string>
+</resources>

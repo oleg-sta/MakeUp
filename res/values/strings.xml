@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Make Up</string>
+
+    <string name="settings_field">ABOUT</string>
+    <string name="options_field">OPTIONS</string>
+    <string name="version_field">VERSION V 1.0</string>
+    <string name="mail_field">FEEDBACK</string>
+    <string name="send_mail_with">Send e-mail</string>
+    <string name="send_photo_with">send with</string>
+    <string name="delete_photo">Delete photo</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+</resources>

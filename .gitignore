@@ -1,0 +1,9 @@
+/bin/*
+/build/*
+/libs/*
+/.gradle/*
+/obj/*
+/gen/*
+/.idea/*
+/.settings/*
+/jni/dlib/*
