@@ -5,7 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -14,10 +16,13 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -33,6 +38,7 @@ import android.content.res.AssetManager;
 import android.content.res.Resources.NotFoundException;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaActionSound;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
@@ -91,7 +97,8 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
     private float mRelativeFaceSize = 0.5f;
     private int mAbsoluteFaceSize = 0;
     
-    private final static int maxSizeEyeWidth = 367;
+    private final static int maxSizeEyeWidth = 135;
+    private final static int maxSizeLipsWidth = 70;
 
     private boolean makeNewFace;
     
@@ -110,6 +117,8 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
     int cameraIndex;
     int numberOfCameras;
     boolean cameraFacing;
+    Mat leftEye;
+    Mat lips;
 
     private CameraBridgeViewBase mOpenCvCameraView;
     
@@ -187,7 +196,8 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
                 }
                 filter = new Filter(mCascadeFile.getAbsolutePath(), 0, detectorName);
                 mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
-                
+                leftEye = loadNewEye(R.raw.eyelash_6);
+                lips = loadNewEye(R.raw.lips1);
             }
                 break;
             default: {
@@ -320,6 +330,25 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         
     }
     
+    // TODO: лучше делать асинхронно
+    private Mat loadNewEye(int index) {
+        File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
+        File newEyeFile = new File(cascadeDir, "temp.png");
+        resourceToFile(getResources().openRawResource(index), newEyeFile);
+        // load eye to Mat
+        // используем загрузку через андроид, т.к. opencv ломает цвета
+        Bitmap bmp = BitmapFactory.decodeFile(newEyeFile.getAbsolutePath());
+        Mat newEyeTmp2 = new Mat(bmp.getHeight(), bmp.getWidth(), CvType.CV_8UC4);
+        Utils.bitmapToMat(bmp, newEyeTmp2, true);
+        Log.i(TAG, "loadNewEye2 " + index + " " + newEyeTmp2.type() + " " + newEyeTmp2.channels());
+        Mat newEyeTmp = newEyeTmp2.t();
+        Core.flip(newEyeTmp2.t(), newEyeTmp, 0);
+        newEyeTmp2.release();
+        cascadeDir.delete();
+        return newEyeTmp;
+        //Log.i(TAG, "loadNewEye " + currentEye.type() + " " + currentEye.channels());
+    }
+    
     void changeMask(int newMask) {
         newIndexEye = newMask;
     }
@@ -388,6 +417,16 @@ new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
         if (facesArray.length > 0) {
             Rect face = facesArray[0];
             Point[] points = filter.findEyes(mGray, face);
+            Point leftEyeLeft = points[0];
+            Point leftEyeRight = points[3];
+            drawEye(mRgba, leftEyeRight, leftEyeLeft, leftEye, maxSizeEyeWidth);
+            Point rightEyeLeft = points[6];
+            Point rightEyeRight = points[9];
+            drawEye(mRgba, rightEyeRight, rightEyeLeft, leftEye, maxSizeEyeWidth);
+            
+            Point lipsLeft = points[12];
+            Point lipsRight = points[18];
+            drawEye(mRgba, lipsRight, lipsLeft, lips, maxSizeLipsWidth);
             for (Point point : points) {
                 Imgproc.circle(mRgba, point, 2, new Scalar(0, 255, 0, 255));
             }
@@ -428,6 +467,76 @@ new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
         }
         return mRgba;
     }
+    
+    private void drawEye(Mat mRgba, Point rEye, Point lEye, Mat currentEye, int size) {
+        Point centerEye = new Point((rEye.x + lEye.x) / 2, (rEye.y + lEye.y) / 2);
+        double distanceEye = Math.sqrt(Math.pow(rEye.x - lEye.x, 2) +  Math.pow(rEye.y - lEye.y, 2));
+        double scale = distanceEye / size;
+        double angle = -angleOfYx(lEye, rEye);
+        
+        Point centerEyePic = new Point(currentEye.cols() / 2, currentEye.rows() / 2);
+        Rect bbox = new RotatedRect(centerEyePic, new Size(currentEye.size().width * scale, currentEye.size().height * scale), angle).boundingRect();
+        
+        Mat affineMat = Imgproc.getRotationMatrix2D(centerEyePic, angle, scale);
+        double[] x1 = affineMat.get(0, 2);
+        double[] y1 = affineMat.get(1, 2);
+        x1[0] = x1[0] + bbox.width / 2.0 - centerEyePic.x;
+        y1[0] = y1[0] + bbox.height / 2.0 - centerEyePic.y;
+        Point leftPoint = new Point(centerEye.x - bbox.width / 2.0, centerEye.y - bbox.height / 2.0);
+        if (leftPoint.y < 0) {
+            bbox.height = (int)(bbox.height + leftPoint.y);
+            y1[0] = y1[0] + leftPoint.y;
+            leftPoint.y = 0;
+        }
+        if (leftPoint.x < 0) {
+            bbox.width = (int)(bbox.width + leftPoint.x);
+            x1[0] = x1[0] + leftPoint.x;
+            leftPoint.x = 0;
+        }
+        if ((leftPoint.y + bbox.height) > mRgba.height()) {
+            int delta = (int)(leftPoint.y + bbox.height - mRgba.height());
+            bbox.height = bbox.height - delta;
+        }
+        if ((leftPoint.x + bbox.width) > mRgba.width()) {
+            int delta = (int)(leftPoint.x + bbox.width - mRgba.width());
+            bbox.width = bbox.width - delta;
+        }
+        affineMat.put(0, 2, x1);
+        affineMat.put(1, 2, y1);
+        
+        Size newSize = new Size(bbox.size().width, bbox.size().height);
+        Mat sizedRotatedEye = new Mat(newSize, currentEye.type());
+        Imgproc.warpAffine(currentEye, sizedRotatedEye, affineMat, newSize);
+        
+        int newEyeHeight = sizedRotatedEye.height();
+        int newEyeWidth = sizedRotatedEye.width();
+        Rect r = new Rect((int) (leftPoint.x), (int) (leftPoint.y),
+                newEyeWidth, newEyeHeight);
+        Mat rgbaInnerWindow = mRgba.submat(r.y, r.y + r.height, r.x, r.x + r.width);
+        
+        List<Mat> layers = new ArrayList<Mat>();
+        Core.split(sizedRotatedEye, layers);
+        sizedRotatedEye.copyTo(rgbaInnerWindow, layers.get(3)); // копируем повернутый глаз по альфа-каналу(4-й слой)
+        rgbaInnerWindow.release();
+        sizedRotatedEye.release();
+        
+        if (debugMode) {
+            Imgproc.rectangle(mRgba, new Point(r.x, r.y), new Point(r.x + r.width, r.y + r.height), FACE_RECT_COLOR, 3);
+            Imgproc.circle(mRgba, lEye, 9, FACE_RECT_COLOR, 4);
+            Imgproc.circle(mRgba, rEye, 9, FACE_RECT_COLOR, 4);
+        }
+    }
+    
+    public static double angleOfYx(Point p1, Point p2) {
+        // NOTE: Remember that most math has the Y axis as positive above the X.
+        // However, for screens we have Y as positive below. For this reason, 
+        // the Y values are inverted to get the expected results.
+        final double deltaX = (p1.y - p2.y);
+        final double deltaY = (p2.x - p1.x);
+        final double result = Math.toDegrees(Math.atan2(deltaY, deltaX)); 
+        return (result < 0) ? (360d + result) : result;
+    }
+
     
     private void saveBitmap(String toFile, Bitmap bmp) {
         FileOutputStream out = null;
