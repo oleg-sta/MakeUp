@@ -6,6 +6,8 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 
+import ru.flightlabs.masks.model.primitives.Triangle;
+
 import android.util.Log;
 
 public class Filter {
@@ -36,8 +38,15 @@ public class Filter {
         }
     }
     
+    public void drawMask(Mat currentMaskLandScaped, Mat mRgba, ru.flightlabs.masks.model.primitives.Point[] pointsWas, Point[] foundEyes, Triangle[] trianlges) {
+        nativeDrawMask(currentMaskLandScaped.getNativeObjAddr(), mRgba.getNativeObjAddr(), pointsWas,
+                foundEyes, trianlges);
+     }
+    
     private static native long nativeCreateObject(String cascadeName, int minFaceSize);
     private static native long nativeCreateModel(String cascadeName);
     private static native Point[] findEyes(long thiz, long inputImage, int x, int y, int height, int width, long modelSp);
+    private static native void nativeDrawMask(long maskImage, long toImage, ru.flightlabs.masks.model.primitives.Point[] pointsWas,
+            Point[] foundEyes, Triangle[] trianlges);
 
 }

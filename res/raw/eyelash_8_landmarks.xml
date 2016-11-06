@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml-stylesheet type='text/xsl' href='image_metadata_stylesheet.xsl'?>
+<dataset>
+<name>Testing faces</name>
+<comment>These are images from the PASCAL VOC 2011 dataset.
+   The face landmarks are from dlib's shape_predictor_68_face_landmarks.dat
+   landmarking model.  The model uses the 68 landmark scheme used by the iBUG
+   300-W dataset.</comment>
+<images>
+  <image file='eyelash_8.png'>
+    <box top='104' left='224' width='526' height='1012'>
+      <part name='00' x='680' y='900'/>
+      <part name='01' x='984' y='584'/>
+      <part name='02' x='1608' y='552'/>
+      <part name='03' x='2320' y='1044'/>
+      <part name='04' x='1788' y='1124'/>
+      <part name='05' x='1200' y='1124'/>
+      <part name='06' x='4' y='12'/>
+      <part name='07' x='2320' y='8'/>
+      <part name='08' x='2328' y='1408'/>
+      <part name='09' x='4' y='1424'/>
+    </box>
+  </image>
+</images>
+</dataset>

@@ -1,3 +1,7 @@
+#ifndef _MODELLCASS_CPP_
+#define _MODELLCASS_CPP_
+
+
 #include "ModelClass.h"
 #include <dlib/image_processing/render_face_detections.h>
 
@@ -14,3 +18,6 @@ full_object_detection ModelClass::getsp(array2d<rgb_pixel> &img, dlib::rectangle
 full_object_detection ModelClass::getsp(array2d<int> &img, dlib::rectangle &d) {
 	return sp(img, d);
 }
+
+#endif _MODELLCASS_CPP_
+

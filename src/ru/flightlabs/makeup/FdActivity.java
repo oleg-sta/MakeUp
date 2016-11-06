@@ -1,10 +1,12 @@
 package ru.flightlabs.makeup;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +30,10 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.videoio.VideoWriter;
+
+import ru.flightlabs.masks.model.ImgLabModel;
+import ru.flightlabs.masks.model.SimpleModel;
+import ru.flightlabs.masks.model.primitives.Triangle;
 
 import android.app.Activity;
 import android.content.Context;
@@ -67,6 +73,9 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
     int kEyePercentSide = 13;
     int kEyePercentHeight = 30;
     int kEyePercentWidth = 35;
+    
+    ru.flightlabs.masks.model.primitives.Point[] pointsWas;
+    Triangle[] trianlges;
 
     // Algorithm Parameters
     int kFastEyeWidth = 50;
@@ -196,8 +205,40 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
                 }
                 filter = new Filter(mCascadeFile.getAbsolutePath(), 0, detectorName);
                 mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
-                leftEye = loadNewEye(R.raw.eyelash_6);
-                lips = loadNewEye(R.raw.lips1);
+                leftEye = loadNewEye(R.raw.eyelash_8, false);
+                lips = loadNewEye(R.raw.lips1, true);
+                
+                try {
+                    List<Triangle> triangleArr = new ArrayList<Triangle>();
+                    InputStream ims;
+                    ims = assetManager.open("eyelash_8_triangles.txt");
+                    BufferedReader in = new BufferedReader(new InputStreamReader(ims));
+                    String line = null;
+                    while ((line = in.readLine()) != null) {
+                        String[] spl = line.split(";");
+                        if (spl.length == 3) {
+                            triangleArr.add(new Triangle(Integer.parseInt(spl[0]), Integer.parseInt(spl[1]), Integer
+                                    .parseInt(spl[2])));
+                        }
+                    }
+                    ims.close();
+                    trianlges = triangleArr.toArray(new Triangle[0]);
+                    
+                    try {
+                        resourceToFile(getResources().openRawResource(R.raw.eyelash_8_landmarks), fModel);
+                    } catch (NotFoundException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } 
+                    Log.i(TAG, "LoadModel doInBackground1");
+                    SimpleModel modelFrom = new ImgLabModel(fModel.getPath());
+                    Log.i(TAG, "LoadModel doInBackground2");
+                    pointsWas = modelFrom.getPointsWas();
+                    Log.i(TAG, "LoadModel doInBackground2 "  + pointsWas.length);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
                 break;
             default: {
@@ -331,7 +372,7 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
     }
     
     // TODO: лучше делать асинхронно
-    private Mat loadNewEye(int index) {
+    private Mat loadNewEye(int index, boolean flip) {
         File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
         File newEyeFile = new File(cascadeDir, "temp.png");
         resourceToFile(getResources().openRawResource(index), newEyeFile);
@@ -341,9 +382,14 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         Mat newEyeTmp2 = new Mat(bmp.getHeight(), bmp.getWidth(), CvType.CV_8UC4);
         Utils.bitmapToMat(bmp, newEyeTmp2, true);
         Log.i(TAG, "loadNewEye2 " + index + " " + newEyeTmp2.type() + " " + newEyeTmp2.channels());
-        Mat newEyeTmp = newEyeTmp2.t();
-        Core.flip(newEyeTmp2.t(), newEyeTmp, 0);
-        newEyeTmp2.release();
+        Mat newEyeTmp;
+        if (flip) {
+            newEyeTmp = newEyeTmp2.t();
+            Core.flip(newEyeTmp2.t(), newEyeTmp, 0);
+            newEyeTmp2.release();
+        } else {
+            newEyeTmp = newEyeTmp2;
+        }
         cascadeDir.delete();
         return newEyeTmp;
         //Log.i(TAG, "loadNewEye " + currentEye.type() + " " + currentEye.channels());
@@ -417,12 +463,16 @@ new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
         if (facesArray.length > 0) {
             Rect face = facesArray[0];
             Point[] points = filter.findEyes(mGray, face);
-            Point leftEyeLeft = points[0];
-            Point leftEyeRight = points[3];
-            drawEye(mRgba, leftEyeRight, leftEyeLeft, leftEye, maxSizeEyeWidth);
+            //Point leftEyeLeft = points[0];
+            //Point leftEyeRight = points[3];
+            //drawEye(mRgba, leftEyeRight, leftEyeLeft, leftEye, maxSizeEyeWidth);
+            
+            Log.i(TAG, "onCameraFrame before drawMask");
+            filter.drawMask(leftEye, mRgba, pointsWas, points, trianlges);
+            
             Point rightEyeLeft = points[6];
             Point rightEyeRight = points[9];
-            drawEye(mRgba, rightEyeRight, rightEyeLeft, leftEye, maxSizeEyeWidth);
+            //drawEye(mRgba, rightEyeRight, rightEyeLeft, leftEye, maxSizeEyeWidth);
             
             Point lipsLeft = points[12];
             Point lipsRight = points[18];
