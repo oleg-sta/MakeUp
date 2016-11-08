@@ -114,31 +114,44 @@ int clamRGB1(int val) {
 }
 
 JNIEXPORT void JNICALL Java_ru_flightlabs_makeup_Filter_nativeDrawMask(
-		JNIEnv * jenv, jclass, jlong imageFrom, jlong imageTo,
-		jobjectArray pointsWas1, jobjectArray pointsTo1, jobjectArray triangle1) {
+		JNIEnv * jenv, jclass, jlong imageLeftEye, jlong imageWhole,
+		jobjectArray pointsEyeOrig, jobjectArray pointsOnFace, jobjectArray triangleEye,
+		jlong imageLips, jobjectArray pointsWasLips, jobjectArray trianglelips) {
 	LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask");
-	cv::Mat imageFromMat = *((Mat*) imageFrom);
-	cv::Mat imageToMat = *((Mat*) imageTo);
+	cv::Mat imageLeftEyeMat = *((Mat*) imageLeftEye);
+	cv::Mat imageWholeMat = *((Mat*) imageWhole);
+	cv::Mat imageLipsMat = *((Mat*) imageLips);
 
 	// конвертация изначальных точек из java в C-ишный
 	std::vector<cv::Point> pointsOrig;
-	int pointsWasLength = jenv->GetArrayLength(pointsWas1);
-	Point** pointsWas = new Point*[pointsWasLength];
+	int pointsWasLength = jenv->GetArrayLength(pointsEyeOrig);
 	for(int i = 0; i < pointsWasLength; i++) {
-		jobject point = jenv->GetObjectArrayElement((jobjectArray) pointsWas1, i);
+		jobject point = jenv->GetObjectArrayElement((jobjectArray) pointsEyeOrig, i);
 		jclass cls = jenv->GetObjectClass(point);
-		pointsWas[i] = new Point(getObjectFieldD(jenv, point, cls, "x"), getObjectFieldD(jenv, point, cls, "y"));
 		pointsOrig.push_back(Point(getObjectFieldD(jenv, point, cls, "x"), getObjectFieldD(jenv, point, cls, "y")));
 		jenv->DeleteLocalRef(cls);
 		jenv->DeleteLocalRef(point);
 	}
+
+
+	std::vector<cv::Point> pointsOrigLips;
+	{
+		int pointsWasLength = jenv->GetArrayLength(pointsWasLips);
+		for(int i = 0; i < pointsWasLength; i++) {
+			jobject point = jenv->GetObjectArrayElement((jobjectArray) pointsWasLips, i);
+			jclass cls = jenv->GetObjectClass(point);
+			pointsOrigLips.push_back(Point(getObjectFieldD(jenv, point, cls, "x"), getObjectFieldD(jenv, point, cls, "y")));
+			jenv->DeleteLocalRef(cls);
+			jenv->DeleteLocalRef(point);
+		}
+	}
 	LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask2");
 
 	// конвертация конечных точек из java в C-ишный
-	int pointsToLength = jenv->GetArrayLength(pointsTo1);
-	Point** pointsTo = new Point*[jenv->GetArrayLength(pointsTo1)]; // точки найденые на ч\б изображении
+	int pointsToLength = jenv->GetArrayLength(pointsOnFace);
+	Point** pointsTo = new Point*[jenv->GetArrayLength(pointsOnFace)]; // точки найденые на ч\б изображении
 	for(int i = 0; i < pointsToLength; i++) {
-		jobject point = jenv->GetObjectArrayElement((jobjectArray) pointsTo1, i);
+		jobject point = jenv->GetObjectArrayElement((jobjectArray) pointsOnFace, i);
 		jclass cls = jenv->GetObjectClass(point);
 		pointsTo[i] = new Point(getObjectFieldD(jenv, point, cls, "x"), getObjectFieldD(jenv, point, cls, "y"));
 		jenv->DeleteLocalRef(cls);
@@ -148,26 +161,33 @@ JNIEXPORT void JNICALL Java_ru_flightlabs_makeup_Filter_nativeDrawMask(
 	LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask3");
 	 std::vector<Triangle> triangles;
 	// конвертация треугольников из java в C-ишный
-	int trianglesLength = jenv->GetArrayLength(triangle1);
+	int trianglesLength = jenv->GetArrayLength(triangleEye);
 	//Triangle** triangles = new Triangle*[trianglesLength];
 	for(int i = 0; i < trianglesLength; i++) {
-		jobject point = jenv->GetObjectArrayElement((jobjectArray) triangle1, i);
+		jobject point = jenv->GetObjectArrayElement((jobjectArray) triangleEye, i);
 		jclass cls = jenv->GetObjectClass(point);
-		//triangles[i] = new Triangle(getObjectFieldI(jenv, point, cls, "point1"), getObjectFieldI(jenv, point, cls, "point2"), getObjectFieldI(jenv, point, cls, "point3"));
-		// вычисялем для треугольника минимальные и максимальные диапазоны
-		//triangles[i]->minX = std::min(std::min(pointsTo[triangles[i]->point1]->x, pointsTo[triangles[i]->point2]->x), pointsTo[triangles[i]->point3]->x);
-		//triangles[i]->maxX = std::max(std::max(pointsTo[triangles[i]->point1]->x, pointsTo[triangles[i]->point2]->x), pointsTo[triangles[i]->point3]->x);
-		//triangles[i]->minY = std::min(std::min(pointsTo[triangles[i]->point1]->y, pointsTo[triangles[i]->point2]->y), pointsTo[triangles[i]->point3]->y);
-		//triangles[i]->maxY = std::max(std::max(pointsTo[triangles[i]->point1]->y, pointsTo[triangles[i]->point2]->y), pointsTo[triangles[i]->point3]->y);
 		triangles.push_back(Triangle(getObjectFieldI(jenv, point, cls, "point1"), getObjectFieldI(jenv, point, cls, "point2"), getObjectFieldI(jenv, point, cls, "point3")));
 		jenv->DeleteLocalRef(cls);
 		jenv->DeleteLocalRef(point);
+	}
 
+	std::vector<Triangle> trianglesLips;
+	{
+			// конвертация треугольников из java в C-ишный
+			int trianglesLength = jenv->GetArrayLength(trianglelips);
+			//Triangle** triangles = new Triangle*[trianglesLength];
+			for(int i = 0; i < trianglesLength; i++) {
+				jobject point = jenv->GetObjectArrayElement((jobjectArray) trianglelips, i);
+				jclass cls = jenv->GetObjectClass(point);
+				trianglesLips.push_back(Triangle(getObjectFieldI(jenv, point, cls, "point1"), getObjectFieldI(jenv, point, cls, "point2"), getObjectFieldI(jenv, point, cls, "point3")));
+				jenv->DeleteLocalRef(cls);
+				jenv->DeleteLocalRef(point);
+			}
 	}
 
 	LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask4");
 	// TODO change eyelashes
-
+	LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask4 sizes %i %i", pointsToLength, pointsOrig.size());
 
     std::vector<cv::Point> pointsOrigRight;
 	  std::vector<cv::Point> pointsOnImage;
@@ -177,8 +197,8 @@ JNIEXPORT void JNICALL Java_ru_flightlabs_makeup_Filter_nativeDrawMask(
 		pointsOnImageRight.push_back(
 				cv::Point(pointsTo[sh + 6]->x, pointsTo[sh + 6]->y));
 	}
-	  int pp[] = {3, 2, 1, 0, 5, 4, 7, 6, 9, 8};
-	  flipPo(pointsOrig, pointsOrigRight, imageFromMat.size().width, pp);
+	  int pp[] = {3, 2, 1, 0, 5, 4, 7, 6, 9, 8}; // FIXME!!! change numbers of points in triangle
+	  flipPo(pointsOrig, pointsOrigRight, imageLeftEyeMat.size().width, pp);
 	  LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask5666 %i %i", pointsOrig.size(), pointsOrigRight.size());
 	  int p[] =  {0, 1, 3};
 	  int p1[] =  {0, 1, 3};
@@ -189,10 +209,19 @@ JNIEXPORT void JNICALL Java_ru_flightlabs_makeup_Filter_nativeDrawMask(
 	  convertPoints(pointsOrigRight, pointsOnImageRight, p2, p3);
 
 	  cv::Mat eyelashRight;
-	  cv::flip(imageFromMat, eyelashRight, 1);
+	  cv::flip(imageLeftEyeMat, eyelashRight, 1);
 
-	  change_faces(imageFromMat, imageToMat, pointsOrig, pointsOnImage, triangles);
-	  change_faces(eyelashRight, imageToMat, pointsOrigRight, pointsOnImageRight, triangles);
+	  change_faces(imageLeftEyeMat, imageWholeMat, pointsOrig, pointsOnImage, triangles);
+	  change_faces(eyelashRight, imageWholeMat, pointsOrigRight, pointsOnImageRight, triangles);
+
+
+	  std::vector<cv::Point> pointsOnImageLips;
+	  for (int sh = 0; sh < 20; sh++) {
+		  pointsOnImageLips.push_back(
+	  				cv::Point(pointsTo[sh + 12]->x, pointsTo[sh + 12]->y));
+		  ///cv::circle(imageWholeMat, cv::Point(pointsTo[sh + 12]->x, pointsTo[sh + 12]->y), 3, cv::Scalar(255, 255, 255), -1);
+	  	}
+	  change_faces(imageLipsMat, imageWholeMat, pointsOrigLips, pointsOnImageLips, trianglesLips);
 
 	  LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask7");
 	// release resources
@@ -201,11 +230,6 @@ JNIEXPORT void JNICALL Java_ru_flightlabs_makeup_Filter_nativeDrawMask(
 		delete pointsTo[i];
 	}
 	delete pointsTo;
-
-	for(int i = 0; i < pointsWasLength; i++) {
-		delete pointsWas[i];
-	}
-	delete pointsWas;
 
 }
 void findEyes(cv::Mat frame_gray, cv::Rect face, std::vector<cv::Point> &pixels, ModelClass *modelClass) {

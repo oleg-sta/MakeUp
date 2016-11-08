@@ -76,6 +76,9 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
     
     ru.flightlabs.masks.model.primitives.Point[] pointsWas;
     Triangle[] trianlges;
+    
+    ru.flightlabs.masks.model.primitives.Point[] pointsWasLips;
+    Triangle[] trianlgesLips;
 
     // Algorithm Parameters
     int kFastEyeWidth = 50;
@@ -177,6 +180,7 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
                 
                 File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
                 File fModel = new File(cascadeDir, "testing_with_face_landmarks.xml");
+                File fModelLips = new File(cascadeDir, "lubov14_landmarks.xml");
                 AssetManager assetManager = getAssets();
                 
                 mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
@@ -188,7 +192,7 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
                     Log.i(TAG, "LoadModel doInBackground66");
                     try {
                         File ertModel = new File(cascadeDir, "ert_model.dat"); 
-                        InputStream ims = assetManager.open("sp_mouth.dat");//mdl_400_0.1_3_20_300.dat");//sp68.dat");
+                        InputStream ims = assetManager.open("mdl1.dat");//mdl_400_0.1_3_20_300.dat");//sp68.dat");
                         int bytes = resourceToFile(ims, ertModel);
                         ims.close();
                         detectorName = ertModel.getAbsolutePath();
@@ -206,26 +210,16 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
                 filter = new Filter(mCascadeFile.getAbsolutePath(), 0, detectorName);
                 mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
                 leftEye = loadNewEye(R.raw.eyelash_8, false);
-                lips = loadNewEye(R.raw.lips1, true);
+                lips = loadNewEye(R.raw.lubov14, false);
                 
                 try {
-                    List<Triangle> triangleArr = new ArrayList<Triangle>();
-                    InputStream ims;
-                    ims = assetManager.open("eyelash_8_triangles.txt");
-                    BufferedReader in = new BufferedReader(new InputStreamReader(ims));
-                    String line = null;
-                    while ((line = in.readLine()) != null) {
-                        String[] spl = line.split(";");
-                        if (spl.length == 3) {
-                            triangleArr.add(new Triangle(Integer.parseInt(spl[0]), Integer.parseInt(spl[1]), Integer
-                                    .parseInt(spl[2])));
-                        }
-                    }
-                    ims.close();
-                    trianlges = triangleArr.toArray(new Triangle[0]);
+                    
+                    trianlges = loadriangle(assetManager, "eyelash_8_triangles.txt");
+                    trianlgesLips = loadriangle(assetManager, "lubov14_landmarks_triangles.txt");
                     
                     try {
                         resourceToFile(getResources().openRawResource(R.raw.eyelash_8_landmarks), fModel);
+                        resourceToFile(getResources().openRawResource(R.raw.lubov14_landmarks), fModelLips);
                     } catch (NotFoundException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -235,6 +229,9 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
                     Log.i(TAG, "LoadModel doInBackground2");
                     pointsWas = modelFrom.getPointsWas();
                     Log.i(TAG, "LoadModel doInBackground2 "  + pointsWas.length);
+                    SimpleModel modelFromLibs = new ImgLabModel(fModelLips.getPath());
+                    Log.i(TAG, "LoadModel doInBackground2");
+                    pointsWasLips = modelFromLibs.getPointsWas();
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -249,6 +246,22 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         }
     };
     
+    private Triangle[] loadriangle(AssetManager assetManager, String assetName) throws IOException {
+        List<Triangle> triangleArr = new ArrayList<Triangle>();
+        InputStream ims;
+        ims = assetManager.open(assetName);
+        BufferedReader in = new BufferedReader(new InputStreamReader(ims));
+        String line = null;
+        while ((line = in.readLine()) != null) {
+            String[] spl = line.split(";");
+            if (spl.length == 3) {
+                triangleArr.add(new Triangle(Integer.parseInt(spl[0]), Integer.parseInt(spl[1]), Integer
+                        .parseInt(spl[2])));
+            }
+        }
+        ims.close();
+        return triangleArr.toArray(new Triangle[0]);
+    }
     
     protected boolean drawMask;
     
@@ -463,12 +476,13 @@ new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
         if (facesArray.length > 0) {
             Rect face = facesArray[0];
             Point[] points = filter.findEyes(mGray, face);
+            Log.i(TAG, "onCameraFrame before drawMask points " + points.length + " " + pointsWasLips.length + " " +  trianlgesLips.length);
             //Point leftEyeLeft = points[0];
             //Point leftEyeRight = points[3];
             //drawEye(mRgba, leftEyeRight, leftEyeLeft, leftEye, maxSizeEyeWidth);
             
             Log.i(TAG, "onCameraFrame before drawMask");
-            filter.drawMask(leftEye, mRgba, pointsWas, points, trianlges);
+            filter.drawMask(leftEye, mRgba, pointsWas, points, trianlges, lips, pointsWasLips, trianlgesLips);
             
             Point rightEyeLeft = points[6];
             Point rightEyeRight = points[9];
@@ -476,9 +490,9 @@ new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
             
             Point lipsLeft = points[12];
             Point lipsRight = points[18];
-            drawEye(mRgba, lipsRight, lipsLeft, lips, maxSizeLipsWidth);
+            //drawEye(mRgba, lipsRight, lipsLeft, lips, maxSizeLipsWidth);
             for (Point point : points) {
-                Imgproc.circle(mRgba, point, 2, new Scalar(0, 255, 0, 255));
+                // Imgproc.circle(mRgba, point, 2, new Scalar(0, 255, 0, 255));
             }
         }
         
