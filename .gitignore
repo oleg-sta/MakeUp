@@ -1,3 +1,4 @@
+/.externalNativeBuild/*
 /bin/*
 /build/*
 /libs/*

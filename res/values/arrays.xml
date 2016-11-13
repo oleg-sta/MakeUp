@@ -4,15 +4,201 @@
     <array name="effects_small_png">
         <item>@drawable/normal</item>
         <item>@drawable/bright</item>
-        <item>@drawable/sepia</item>
-        <item>@drawable/grey</item>
+        
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
+        <item>@drawable/bright</item>
     </array>
 
     <string-array name="effects_name">
         <item>Normal</item>
         <item>Bright</item>
-        <item>Sepia</item>
-        <item>Grey</item>
+        
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+        <item>Bright</item>
+    </string-array>
+    
+    <array name="masks_eyes">
+        <item>@raw/eyelash_8</item>
+        <item>@raw/eyeshadow</item>
+        <item>@raw/eyelash_01_01_01</item>
+        <item>@raw/eyelash_01_02_01</item>
+        <item>@raw/eyelash_01_03_01</item>
+        <item>@raw/eyelash_01_04_01</item>
+        <item>@raw/eyelash_01_05_01</item>
+        <item>@raw/eyelash_01_06_01</item>
+        <item>@raw/eyelash_01_07_01</item>
+        <item>@raw/eyelash_01_08_01</item>
+        <item>@raw/eyelash_02_01_01</item>
+        <item>@raw/eyelash_02_01_02</item>
+        <item>@raw/eyelash_02_02_01</item>
+        <item>@raw/eyelash_02_02_02</item>
+        <item>@raw/eyelash_02_03_01</item>
+        <item>@raw/eyelash_02_03_02</item>
+        <item>@raw/eyelash_02_04_01</item>
+        <item>@raw/eyelash_02_04_02</item>
+        <item>@raw/eyelash_02_06_01</item>
+        <item>@raw/eyelash_02_06_02</item>
+        <item>@raw/eyelash_02_07_01</item>
+        <item>@raw/eyelash_02_07_02</item>
+        <item>@raw/eyelash_02_09_01</item>
+        <item>@raw/eyelash_02_09_02</item>
+        <item>@raw/eyelash_20150115_02_01</item>
+        <item>@raw/eyelash_20150115_02_02</item>
+        <item>@raw/eyelash_20150115_02_02_tattoo</item>
+        <item>@raw/eyelash_20150210_02_02_01</item>
+        <item>@raw/eyelash_20150210_02_02_02</item>
+    </array>
+    
+    <array name="masks_eyes_landamarks">
+        <item>@raw/eyelash_8_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+        <item>@raw/eyeshadow_landmarks</item>
+    </array>
+    
+    <string-array name="masks_eyes_triangles">
+        <item>eyelash_8_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+        <item>eyeshadow_triangles.txt</item>
+    </string-array>
+    
+    <array name="masks_lips">
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+        <item>@raw/lubov14</item>
+    </array>
+    
+    <array name="masks_lips_landmarks">
+        <item>@raw/lubov14_landmarks</item>
+        <item>@raw/lubov14_landmarks</item>
+        <item>@raw/lubov14_landmarks</item>
+        <item>@raw/lubov14_landmarks</item>
+        <item>@raw/lubov14_landmarks</item>
+        <item>@raw/lubov14_landmarks</item>
+    </array>
+    
+    <string-array name="masks_lips_triangles">
+        <item>lubov14_landmarks_triangles.txt</item>
+        <item>lubov14_landmarks_triangles.txt</item>
     </string-array>
 
 </resources>

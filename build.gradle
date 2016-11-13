@@ -1,0 +1,106 @@
+buildscript {
+    repositories {
+        maven { url 'http://repo1.maven.org/maven2' }
+        maven { url "http://dl.bintray.com/populov/maven" }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.1'
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.application'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "com.android.support:support-v4:22.2.+"
+    compile "com.android.support:appcompat-v7:22.2.+"
+}
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.1.2"
+
+    signingConfigs {
+        release {
+            storeFile file(PROM_KEY_PATH)
+            storePassword KEYSTORE_PASSWORD
+            keyAlias PROM_KEY_ALIAS
+            keyPassword KEY_PASSWORD
+        }
+        debug {
+            storeFile file("i:\\androidKey\\mysign1")
+            storePassword "Fyfyfc"
+            keyAlias "111"
+            keyPassword "Fyfyfc"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest {
+                srcFile 'AndroidManifest.xml'
+            }
+            java {
+                srcDir 'src'
+            }
+            res {
+                srcDir 'res'
+            }
+            assets {
+                srcDir 'assets'
+            }
+            resources {
+                srcDir 'src'
+            }
+            aidl {
+                srcDir 'src'
+            }
+            jni {
+                srcDirs = []
+            }
+            jniLibs {
+                srcDirs 'libs'
+            }
+        }
+    }
+
+
+    task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
+        commandLine ndkDir + "\\ndk-build.cmd",
+                'NDK_PROJECT_PATH=build/intermediates/ndk',
+                'NDK_LIBS_OUT=libs',
+                'APP_BUILD_SCRIPT=jni/Android.mk',
+                'NDK_APPLICATION_MK=jni/Application.mk',
+                'OPEN-CV-SDK=' + OPEN_CV_SDK
+    }
+
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn ndkBuild
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            path 'jni/Android.mk'
+        }
+    }
+
+
+}

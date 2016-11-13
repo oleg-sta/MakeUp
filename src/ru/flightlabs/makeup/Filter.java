@@ -37,7 +37,8 @@ public class Filter {
             return new Point[0];
         }
     }
-    
+
+    // draw mask on face using triangulation model
     public void drawMask(Mat currentMaskLandScaped, Mat mRgba, ru.flightlabs.masks.model.primitives.Point[] pointsWas, Point[] foundEyes, Triangle[] trianlges, Mat lips, ru.flightlabs.masks.model.primitives.Point[] pointsWasLips, Triangle[] trianlgesLips) {
         nativeDrawMask(currentMaskLandScaped.getNativeObjAddr(), mRgba.getNativeObjAddr(), pointsWas,
                 foundEyes, trianlges, lips.getNativeObjAddr(), pointsWasLips, trianlgesLips);

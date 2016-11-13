@@ -64,28 +64,23 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 public class FdActivity extends Activity implements CvCameraViewListener2 {
 
     Filter filter;
-    public static final String DIRECTORY_SELFIE = "Filter";
+    public static final String DIRECTORY_SELFIE = "MakeUp";
     //public static int counter;
     public static boolean makePhoto;
     public static boolean preMakePhoto;
-    // Size constants of eye
-    int kEyePercentTop = 25;
-    int kEyePercentSide = 13;
-    int kEyePercentHeight = 30;
-    int kEyePercentWidth = 35;
-    
-    ru.flightlabs.masks.model.primitives.Point[] pointsWas;
-    Triangle[] trianlges;
-    
-    ru.flightlabs.masks.model.primitives.Point[] pointsWasLips;
-    Triangle[] trianlgesLips;
 
-    // Algorithm Parameters
-    int kFastEyeWidth = 50;
-    int kWeightBlurSize = 5;
-    boolean kEnableWeight = true;
-    float kWeightDivisor = 1.0f;
-    double kGradientThreshold = 50.0;
+    TypedArray eyesResourcesSmall;
+    TypedArray masks_eyes;
+    TypedArray masks_eyes_landamarks;
+    TypedArray masks_lips;
+    TypedArray masks_lips_landmarks;
+    // lips and eyes
+    ru.flightlabs.masks.model.primitives.Point[] pointsLeftEye;
+    Triangle[] trianglesLeftEye;
+    ru.flightlabs.masks.model.primitives.Point[] pointsWasLips;
+    Triangle[] trianglesLips;
+    Mat leftEye;
+    Mat lips;
 
     private static final String TAG = "FdActivity_class";
     private static final Scalar FACE_RECT_COLOR = new Scalar(0, 255, 0, 255);
@@ -97,7 +92,7 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
     private Mat mGray;
     private File mCascadeFile;
     private CascadeClassifier mJavaDetector;
-    private boolean loadModel = false; 
+    private boolean loadModel = false;
 
     private boolean debugMode = false;
     private boolean showEyes = true;
@@ -108,45 +103,36 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
 
     private float mRelativeFaceSize = 0.5f;
     private int mAbsoluteFaceSize = 0;
-    
+
     private final static int maxSizeEyeWidth = 135;
     private final static int maxSizeLipsWidth = 70;
 
     private boolean makeNewFace;
-    
-    TypedArray eyesResourcesSmall;
-    
+
+
     int currentIndexEye = -1;
     int newIndexEye = 0;
-    
+
     ImageView noPerson;
     ProgressBar progressBar;
-    
-    int frameCount;
-    long timeStart;
+
     double lastCount = 0.5f;
-   
+
     int cameraIndex;
     int numberOfCameras;
     boolean cameraFacing;
-    Mat leftEye;
-    Mat lips;
 
     private CameraBridgeViewBase mOpenCvCameraView;
-    
+
     MediaActionSound sound = new MediaActionSound();
     boolean playSound = true;
     View borderCam;
     ImageView cameraButton;
-    
+
     int availableProcessors = 1;
-    
+
     String detectorName;
-    
-    VideoWriter videoWriter;
-    VideoWriter videoWriterOrig;
-    boolean videoWriterStart;
-    
+
     SeekBar sbWeight;
     int param = 50;
 
@@ -154,98 +140,64 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
-            case LoaderCallbackInterface.SUCCESS: {
-                Log.i(TAG, "OpenCV loaded successfully");
+                case LoaderCallbackInterface.SUCCESS: {
+                    Log.i(TAG, "OpenCV loaded successfully");
 
-                // Load native library after(!) OpenCV initialization
-                System.loadLibrary("filter");
-                
-//                Display display = getWindowManager().getDefaultDisplay(); 
-//                int width = display.getWidth();
-//                int height = display.getHeight();
-//                mOpenCvCameraView.setMaxFrameSize(width, width);
+                    // Load native library after(!) OpenCV initialization
+                    System.loadLibrary("filter");
 
-                mOpenCvCameraView.enableView();
+                    mOpenCvCameraView.enableView();
 
-                try {
-                    // load cascade file from application resources
-                    Log.e(TAG, "findEyes onManagerConnected");
-                    throw new IOException(); // РЅСѓ РІС‹С…РѕРґ С‚Р°РєРѕР№:)
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
-                }
-                Runtime info = Runtime.getRuntime();
-                availableProcessors = info.availableProcessors();
-                
-                File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
-                File fModel = new File(cascadeDir, "testing_with_face_landmarks.xml");
-                File fModelLips = new File(cascadeDir, "lubov14_landmarks.xml");
-                AssetManager assetManager = getAssets();
-                
-                mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
-                resourceToFile(getResources().openRawResource(R.raw.haarcascade_frontalface_alt2), mCascadeFile);
-                detectorName = "/storage/extSdCard/mdl1.dat";
-
-
-                if (!new File(detectorName).exists()) {
-                    Log.i(TAG, "LoadModel doInBackground66");
                     try {
-                        File ertModel = new File(cascadeDir, "ert_model.dat"); 
-                        InputStream ims = assetManager.open("mdl1.dat");//mdl_400_0.1_3_20_300.dat");//sp68.dat");
-                        int bytes = resourceToFile(ims, ertModel);
-                        ims.close();
-                        detectorName = ertModel.getAbsolutePath();
-                        Log.i(TAG, "LoadModel doInBackground66 " + detectorName + " " + ertModel.exists() + " " + ertModel.length() + " " + bytes);
-                    } catch (NotFoundException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                        Log.i(TAG, "LoadModel doInBackground667", e);
+                        // load cascade file from application resources
+                        Log.e(TAG, "findEyes onManagerConnected");
+                        throw new IOException(); // РЅСѓ РІС‹С…РѕРґ С‚Р°РєРѕР№:)
                     } catch (IOException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
-                        Log.i(TAG, "LoadModel doInBackground667", e);
+                        Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
                     }
+                    Runtime info = Runtime.getRuntime();
+                    availableProcessors = info.availableProcessors();
+
+                    File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
+                    AssetManager assetManager = getAssets();
+
+                    mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
+                    resourceToFile(getResources().openRawResource(R.raw.haarcascade_frontalface_alt2), mCascadeFile);
+                    detectorName = "/storage/extSdCard/mdl1.dat";
+
+                    if (!new File(detectorName).exists()) {
+                        Log.i(TAG, "LoadModel doInBackground66");
+                        try {
+                            File ertModel = new File(cascadeDir, "ert_model.dat");
+                            InputStream ims = assetManager.open("mdl1.dat");//mdl_400_0.1_3_20_300.dat");//sp68.dat");
+                            int bytes = resourceToFile(ims, ertModel);
+                            ims.close();
+                            detectorName = ertModel.getAbsolutePath();
+                            Log.i(TAG, "LoadModel doInBackground66 " + detectorName + " " + ertModel.exists() + " " + ertModel.length() + " " + bytes);
+                        } catch (NotFoundException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                            Log.i(TAG, "LoadModel doInBackground667", e);
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                            Log.i(TAG, "LoadModel doInBackground667", e);
+                        }
+                    }
+                    filter = new Filter(mCascadeFile.getAbsolutePath(), 0, detectorName);
+                    mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
+                    loadNewMakeUp(0);
                 }
-                filter = new Filter(mCascadeFile.getAbsolutePath(), 0, detectorName);
-                mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
-                leftEye = loadNewEye(R.raw.eyelash_8, false);
-                lips = loadNewEye(R.raw.lubov14, false);
-                
-                try {
-                    
-                    trianlges = loadriangle(assetManager, "eyelash_8_triangles.txt");
-                    trianlgesLips = loadriangle(assetManager, "lubov14_landmarks_triangles.txt");
-                    
-                    try {
-                        resourceToFile(getResources().openRawResource(R.raw.eyelash_8_landmarks), fModel);
-                        resourceToFile(getResources().openRawResource(R.raw.lubov14_landmarks), fModelLips);
-                    } catch (NotFoundException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } 
-                    Log.i(TAG, "LoadModel doInBackground1");
-                    SimpleModel modelFrom = new ImgLabModel(fModel.getPath());
-                    Log.i(TAG, "LoadModel doInBackground2");
-                    pointsWas = modelFrom.getPointsWas();
-                    Log.i(TAG, "LoadModel doInBackground2 "  + pointsWas.length);
-                    SimpleModel modelFromLibs = new ImgLabModel(fModelLips.getPath());
-                    Log.i(TAG, "LoadModel doInBackground2");
-                    pointsWasLips = modelFromLibs.getPointsWas();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
                 break;
-            default: {
-                super.onManagerConnected(status);
-            }
+                default: {
+                    super.onManagerConnected(status);
+                }
                 break;
             }
         }
     };
-    
+
     private Triangle[] loadriangle(AssetManager assetManager, String assetName) throws IOException {
         List<Triangle> triangleArr = new ArrayList<Triangle>();
         InputStream ims;
@@ -262,10 +214,10 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         ims.close();
         return triangleArr.toArray(new Triangle[0]);
     }
-    
+
     protected boolean drawMask;
-    
- 
+
+
     public static int resourceToFile(InputStream is, File toFile) {
         int res = 0;
         try {
@@ -298,7 +250,9 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         Log.i(TAG, "Instantiated new " + this.getClass());
     }
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "called onCreate " + getApplicationContext().getResources().getDisplayMetrics().density);
@@ -330,7 +284,7 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         mOpenCvCameraView.setCvCameraViewListener(this);
 
         borderCam = findViewById(R.id.border);
-        cameraButton = (ImageView)findViewById(R.id.camera_button);
+        cameraButton = (ImageView) findViewById(R.id.camera_button);
         cameraButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -347,45 +301,76 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
             }
         });
         cameraButton.setSoundEffectsEnabled(false);
-        
+
         sbWeight = (SeekBar) findViewById(R.id.sbWeight);
         sbWeight.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-            
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                
+
             }
-            
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 // TODO Auto-generated method stub
-                
+
             }
-            
+
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 param = progress;
-                
+
             }
         });
-        
+
         eyesResourcesSmall = getResources().obtainTypedArray(R.array.effects_small_png);
-        
+        masks_eyes = getResources().obtainTypedArray(R.array.masks_eyes);
+        masks_eyes_landamarks = getResources().obtainTypedArray(R.array.masks_eyes_landamarks);
+        masks_lips = getResources().obtainTypedArray(R.array.masks_lips);
+        masks_lips_landmarks = getResources().obtainTypedArray(R.array.masks_lips_landmarks);
+
         ViewPager viewPager = (ViewPager) findViewById(R.id.photo_pager);
         FilterPagerAdapter pager = new FilterPagerAdapter(this, eyesResourcesSmall);
         viewPager.setAdapter(pager);
-        
+
         findViewById(R.id.rotate_camera).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 swapCamera();
             }
         });
-        
+
     }
-    
+
+    // загрузка ресниц и губ
+    private void loadNewMakeUp(int index) {
+        try {
+            String eyesTriangle = getResources().getStringArray(R.array.masks_eyes_triangles)[index];
+            String lipsTriangle = getResources().getStringArray(R.array.masks_lips_triangles)[0];
+            File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
+            File fModel = new File(cascadeDir, "landmarks_eye.xml");
+            resourceToFile(getResources().openRawResource(masks_eyes_landamarks.getResourceId(index, 0)), fModel);
+            File fModelLips = new File(cascadeDir, "landmarks_lips.xml");
+            resourceToFile(getResources().openRawResource(masks_lips_landmarks.getResourceId(0, 0)), fModelLips);
+            AssetManager assetManager = getAssets();
+            trianglesLeftEye = loadriangle(assetManager, eyesTriangle);
+            trianglesLips = loadriangle(assetManager, lipsTriangle);
+            SimpleModel modelFrom = new ImgLabModel(fModel.getPath());
+            pointsLeftEye = modelFrom.getPointsWas();
+            SimpleModel modelFromLibs = new ImgLabModel(fModelLips.getPath());
+            pointsWasLips = modelFromLibs.getPointsWas();
+            leftEye = loadPngToMat(masks_eyes.getResourceId(index, 0), false);
+            lips = loadPngToMat(masks_lips.getResourceId(0, 0), false);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+
     // TODO: лучше делать асинхронно
-    private Mat loadNewEye(int index, boolean flip) {
+    // загрузка png через java, т.к. Opencv не загружает alpha-канал из файла
+    private Mat loadPngToMat(int index, boolean flip) {
         File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
         File newEyeFile = new File(cascadeDir, "temp.png");
         resourceToFile(getResources().openRawResource(index), newEyeFile);
@@ -405,13 +390,12 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         }
         cascadeDir.delete();
         return newEyeTmp;
-        //Log.i(TAG, "loadNewEye " + currentEye.type() + " " + currentEye.channels());
     }
-    
+
     void changeMask(int newMask) {
         newIndexEye = newMask;
     }
-    
+
     @Override
     public void onPause() {
         Log.i(TAG, "onPause");
@@ -424,7 +408,7 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
     public void onResume() {
         Log.i(TAG, "onResume");
         super.onResume();
-        
+
         OpenCVLoader.initDebug();
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
     }
@@ -449,58 +433,44 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         Log.i(TAG, "onCameraFrame " + new Date() + " count " + lastCount);
+        // if index of makeup is changed then we load new one
+        if (currentIndexEye != newIndexEye) {
+            loadNewMakeUp(newIndexEye);
+        }
         currentIndexEye = newIndexEye;
         Mat rgbaTemp = inputFrame.rgba();
         Log.i(TAG, "onCameraFrame " + rgbaTemp.width() + ";" + rgbaTemp.width());
-        
-        //Mat rgba = new Mat(rgbaTemp, new Rect(0, (rgbaTemp.height() - rgbaTemp.width()) / 2, rgbaTemp.width(), rgbaTemp.width()));
+
         if (mRgba != null) {
             mRgba.release();
         }
         mRgba = rgbaTemp.submat(new Rect(0, (rgbaTemp.height() - rgbaTemp.width()) / 2, rgbaTemp.width(), rgbaTemp.width()));
         Imgproc.cvtColor(mRgba, mGray, Imgproc.COLOR_RGB2GRAY);
-        
+
+        // compute face size to detect
         if (mAbsoluteFaceSize == 0) {
             int height = mRgba.cols();
             if (Math.round(height * mRelativeFaceSize) > 0) {
                 mAbsoluteFaceSize = Math.round(height * mRelativeFaceSize);
             }
-            //mNativeDetector.setMinFaceSize(mAbsoluteFaceSize);
         }
-        
+
         MatOfRect faces = new MatOfRect();
         mJavaDetector.detectMultiScale(mGray, faces, 1.1, 2, 2, // TODO:
                 // objdetect.CV_HAAR_SCALE_IMAGE
-new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
+                new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
         Rect[] facesArray = faces.toArray();
         if (facesArray.length > 0) {
             Rect face = facesArray[0];
             Point[] points = filter.findEyes(mGray, face);
-            Log.i(TAG, "onCameraFrame before drawMask points " + points.length + " " + pointsWasLips.length + " " +  trianlgesLips.length);
-            //Point leftEyeLeft = points[0];
-            //Point leftEyeRight = points[3];
-            //drawEye(mRgba, leftEyeRight, leftEyeLeft, leftEye, maxSizeEyeWidth);
-            
-            Log.i(TAG, "onCameraFrame before drawMask");
-            filter.drawMask(leftEye, mRgba, pointsWas, points, trianlges, lips, pointsWasLips, trianlgesLips);
-            
-            Point rightEyeLeft = points[6];
-            Point rightEyeRight = points[9];
-            //drawEye(mRgba, rightEyeRight, rightEyeLeft, leftEye, maxSizeEyeWidth);
-            
-            Point lipsLeft = points[12];
-            Point lipsRight = points[18];
-            //drawEye(mRgba, lipsRight, lipsLeft, lips, maxSizeLipsWidth);
-            for (Point point : points) {
-                // Imgproc.circle(mRgba, point, 2, new Scalar(0, 255, 0, 255));
-            }
+            filter.drawMask(leftEye, mRgba, pointsLeftEye, points, trianglesLeftEye, lips, pointsWasLips, trianglesLips);
         }
-        
+
         if (makePhoto) {
             makePhoto = false;
             Log.i(TAG, "saving start " + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
             File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-            File newFile=new File(file, DIRECTORY_SELFIE);
+            File newFile = new File(file, DIRECTORY_SELFIE);
             if (!newFile.exists()) {
                 newFile.mkdirs();
             }
@@ -510,14 +480,14 @@ new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
             Editor editor = prefs.edit();
             editor.putInt(Settings.COUNTER_PHOTO, counter);
             editor.commit();
-            File fileJpg = new File(newFile, "Filter_" +counter + " .jpg");
-            
+            File fileJpg = new File(newFile, "Filter_" + counter + " .jpg");
+
             Bitmap bitmap = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(mRgba, bitmap);
-            saveBitmap(fileJpg.getPath(),bitmap);
+            saveBitmap(fileJpg.getPath(), bitmap);
             bitmap.recycle();
             // TODO посмотреть альтернативные способы
-            MediaScannerConnection.scanFile(this, new String[] { fileJpg.getPath() }, new String[] { "image/jpeg" }, null);
+            MediaScannerConnection.scanFile(this, new String[]{fileJpg.getPath()}, new String[]{"image/jpeg"}, null);
             final Activity d = this;
             runOnUiThread(new Runnable() {
                 @Override
@@ -525,83 +495,13 @@ new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
                     borderCam.setVisibility(View.INVISIBLE);
                     cameraButton.setImageResource(R.drawable.ic_camera);
                     startActivity(new Intent(d, Gallery.class));
-               }
+                }
             });
             Log.i(TAG, "saving end " + true);
         }
         return mRgba;
     }
-    
-    private void drawEye(Mat mRgba, Point rEye, Point lEye, Mat currentEye, int size) {
-        Point centerEye = new Point((rEye.x + lEye.x) / 2, (rEye.y + lEye.y) / 2);
-        double distanceEye = Math.sqrt(Math.pow(rEye.x - lEye.x, 2) +  Math.pow(rEye.y - lEye.y, 2));
-        double scale = distanceEye / size;
-        double angle = -angleOfYx(lEye, rEye);
-        
-        Point centerEyePic = new Point(currentEye.cols() / 2, currentEye.rows() / 2);
-        Rect bbox = new RotatedRect(centerEyePic, new Size(currentEye.size().width * scale, currentEye.size().height * scale), angle).boundingRect();
-        
-        Mat affineMat = Imgproc.getRotationMatrix2D(centerEyePic, angle, scale);
-        double[] x1 = affineMat.get(0, 2);
-        double[] y1 = affineMat.get(1, 2);
-        x1[0] = x1[0] + bbox.width / 2.0 - centerEyePic.x;
-        y1[0] = y1[0] + bbox.height / 2.0 - centerEyePic.y;
-        Point leftPoint = new Point(centerEye.x - bbox.width / 2.0, centerEye.y - bbox.height / 2.0);
-        if (leftPoint.y < 0) {
-            bbox.height = (int)(bbox.height + leftPoint.y);
-            y1[0] = y1[0] + leftPoint.y;
-            leftPoint.y = 0;
-        }
-        if (leftPoint.x < 0) {
-            bbox.width = (int)(bbox.width + leftPoint.x);
-            x1[0] = x1[0] + leftPoint.x;
-            leftPoint.x = 0;
-        }
-        if ((leftPoint.y + bbox.height) > mRgba.height()) {
-            int delta = (int)(leftPoint.y + bbox.height - mRgba.height());
-            bbox.height = bbox.height - delta;
-        }
-        if ((leftPoint.x + bbox.width) > mRgba.width()) {
-            int delta = (int)(leftPoint.x + bbox.width - mRgba.width());
-            bbox.width = bbox.width - delta;
-        }
-        affineMat.put(0, 2, x1);
-        affineMat.put(1, 2, y1);
-        
-        Size newSize = new Size(bbox.size().width, bbox.size().height);
-        Mat sizedRotatedEye = new Mat(newSize, currentEye.type());
-        Imgproc.warpAffine(currentEye, sizedRotatedEye, affineMat, newSize);
-        
-        int newEyeHeight = sizedRotatedEye.height();
-        int newEyeWidth = sizedRotatedEye.width();
-        Rect r = new Rect((int) (leftPoint.x), (int) (leftPoint.y),
-                newEyeWidth, newEyeHeight);
-        Mat rgbaInnerWindow = mRgba.submat(r.y, r.y + r.height, r.x, r.x + r.width);
-        
-        List<Mat> layers = new ArrayList<Mat>();
-        Core.split(sizedRotatedEye, layers);
-        sizedRotatedEye.copyTo(rgbaInnerWindow, layers.get(3)); // копируем повернутый глаз по альфа-каналу(4-й слой)
-        rgbaInnerWindow.release();
-        sizedRotatedEye.release();
-        
-        if (debugMode) {
-            Imgproc.rectangle(mRgba, new Point(r.x, r.y), new Point(r.x + r.width, r.y + r.height), FACE_RECT_COLOR, 3);
-            Imgproc.circle(mRgba, lEye, 9, FACE_RECT_COLOR, 4);
-            Imgproc.circle(mRgba, rEye, 9, FACE_RECT_COLOR, 4);
-        }
-    }
-    
-    public static double angleOfYx(Point p1, Point p2) {
-        // NOTE: Remember that most math has the Y axis as positive above the X.
-        // However, for screens we have Y as positive below. For this reason, 
-        // the Y values are inverted to get the expected results.
-        final double deltaX = (p1.y - p2.y);
-        final double deltaY = (p2.x - p1.x);
-        final double result = Math.toDegrees(Math.atan2(deltaY, deltaX)); 
-        return (result < 0) ? (360d + result) : result;
-    }
 
-    
     private void saveBitmap(String toFile, Bitmap bmp) {
         FileOutputStream out = null;
         try {
@@ -636,9 +536,5 @@ new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
         mOpenCvCameraView.setCameraIndex(cameraIndex);
         mOpenCvCameraView.enableView();
     }
-    
-    private void setMinFaceSize(float faceSize) {
-        mRelativeFaceSize = faceSize;
-        mAbsoluteFaceSize = 0;
-    }
+
 }
