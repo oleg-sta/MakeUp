@@ -345,13 +345,17 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
     // загрузка ресниц и губ
     private void loadNewMakeUp(int index) {
         try {
+            int indexLips = index;
+            if (indexLips >= getResources().getStringArray(R.array.masks_lips_triangles).length) {
+                indexLips = getResources().getStringArray(R.array.masks_lips_triangles).length - 1;
+            }
             String eyesTriangle = getResources().getStringArray(R.array.masks_eyes_triangles)[index];
-            String lipsTriangle = getResources().getStringArray(R.array.masks_lips_triangles)[0];
+            String lipsTriangle = getResources().getStringArray(R.array.masks_lips_triangles)[indexLips];
             File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
             File fModel = new File(cascadeDir, "landmarks_eye.xml");
             resourceToFile(getResources().openRawResource(masks_eyes_landamarks.getResourceId(index, 0)), fModel);
             File fModelLips = new File(cascadeDir, "landmarks_lips.xml");
-            resourceToFile(getResources().openRawResource(masks_lips_landmarks.getResourceId(0, 0)), fModelLips);
+            resourceToFile(getResources().openRawResource(masks_lips_landmarks.getResourceId(indexLips, 0)), fModelLips);
             AssetManager assetManager = getAssets();
             trianglesLeftEye = loadriangle(assetManager, eyesTriangle);
             trianglesLips = loadriangle(assetManager, lipsTriangle);
@@ -360,7 +364,7 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
             SimpleModel modelFromLibs = new ImgLabModel(fModelLips.getPath());
             pointsWasLips = modelFromLibs.getPointsWas();
             leftEye = loadPngToMat(masks_eyes.getResourceId(index, 0), false);
-            lips = loadPngToMat(masks_lips.getResourceId(0, 0), false);
+            lips = loadPngToMat(masks_lips.getResourceId(indexLips, 0), false);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

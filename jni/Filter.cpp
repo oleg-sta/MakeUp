@@ -27,33 +27,30 @@ using namespace cv;
 using namespace dlib;
 
 JNIEXPORT jlong JNICALL Java_ru_flightlabs_makeup_Filter_nativeCreateObject
-(JNIEnv * jenv, jclass, jstring jFileName, jint faceSize)
-{
+        (JNIEnv *jenv, jclass, jstring jFileName, jint faceSize) {
     LOGD("Java_org_opencv_samples_facedetect_DetectionBasedTracker_nativeCreateObject enter");
-    const char* jnamestr = jenv->GetStringUTFChars(jFileName, NULL);
+    const char *jnamestr = jenv->GetStringUTFChars(jFileName, NULL);
     string stdFileName(jnamestr);
     jlong result = 0;
 
-    try
-    {
+    try {
 //        DetectionBasedTracker::Parameters DetectorParams;
 //        if (faceSize > 0)
 //            DetectorParams.minObjectSize = faceSize;
 //        result = (jlong)new DetectionBasedTracker(stdFileName, DetectorParams);
     }
-    catch(cv::Exception& e)
-    {
+    catch (cv::Exception &e) {
         LOGD("nativeCreateObject caught cv::Exception: %s", e.what());
         jclass je = jenv->FindClass("org/opencv/core/CvException");
-        if(!je)
+        if (!je)
             je = jenv->FindClass("java/lang/Exception");
         jenv->ThrowNew(je, e.what());
     }
-    catch (...)
-    {
+    catch (...) {
         LOGD("nativeCreateObject caught unknown exception");
         jclass je = jenv->FindClass("java/lang/Exception");
-        jenv->ThrowNew(je, "Unknown exception in JNI code of DetectionBasedTracker.nativeCreateObject()");
+        jenv->ThrowNew(je,
+                       "Unknown exception in JNI code of DetectionBasedTracker.nativeCreateObject()");
         return 0;
     }
 
@@ -62,225 +59,240 @@ JNIEXPORT jlong JNICALL Java_ru_flightlabs_makeup_Filter_nativeCreateObject
 }
 
 JNIEXPORT jlong JNICALL Java_ru_flightlabs_makeup_Filter_nativeCreateModel
-(JNIEnv * jenv, jclass, jstring jFileName)
-{
-	LOGD("findEyes119 dd");
-	jlong result = 0;
-	result = (jlong)new ModelClass(jenv->GetStringUTFChars(jFileName, NULL));
-	LOGD("findEyes119 dde111 %i", result);
-	return result;
+        (JNIEnv *jenv, jclass, jstring jFileName) {
+    LOGD("findEyes119 dd");
+    jlong result = 0;
+    result = (jlong) new ModelClass(jenv->GetStringUTFChars(jFileName, NULL));
+    LOGD("findEyes119 dde111 %i", result);
+    return result;
 }
 
 JNIEXPORT jobjectArray JNICALL Java_ru_flightlabs_makeup_Filter_findEyes
-(JNIEnv * jenv, jclass, jlong thiz, jlong imageGray, jint x, jint y, jint width, jint height, jlong thizModel)
-{
-	LOGD("Java_ru_flightlabs_masks_DetectionBasedTracker_findEyes");
+        (JNIEnv *jenv, jclass, jlong thiz, jlong imageGray, jint x, jint y, jint width, jint height,
+         jlong thizModel) {
+    LOGD("Java_ru_flightlabs_masks_DetectionBasedTracker_findEyes");
 
-	cv::Mat imageGrayInner = *((Mat*)imageGray);
-	cv::Rect faceRect(x, y,  width, height);
-	LOGD("findEyes imageGray %d %d", imageGrayInner.rows, imageGrayInner.cols);
-	LOGD("findEyes face %d %d %d %d", faceRect.x, faceRect.y, faceRect.height, faceRect.width);
-	std::vector<cv::Point> pixels;
-	findEyes(imageGrayInner, faceRect, pixels, (ModelClass*)thizModel);
+    cv::Mat imageGrayInner = *((Mat *) imageGray);
+    cv::Rect faceRect(x, y, width, height);
+    LOGD("findEyes imageGray %d %d", imageGrayInner.rows, imageGrayInner.cols);
+    LOGD("findEyes face %d %d %d %d", faceRect.x, faceRect.y, faceRect.height, faceRect.width);
+    std::vector<cv::Point> pixels;
+    findEyes(imageGrayInner, faceRect, pixels, (ModelClass *) thizModel);
 
 
-	jclass clsPoint = jenv->FindClass("org/opencv/core/Point");
-	jobjectArray jobAr = jenv->NewObjectArray((int)pixels.size(), clsPoint, NULL);
+    jclass clsPoint = jenv->FindClass("org/opencv/core/Point");
+    jobjectArray jobAr = jenv->NewObjectArray((int) pixels.size(), clsPoint, NULL);
 
-	jmethodID constructorPoint = jenv->GetMethodID(clsPoint, "<init>", "(DD)V");
-	int i = 0;
-	for (std::vector<cv::Point>::iterator it = pixels.begin() ; it != pixels.end(); ++it) {
-		jobject objPoint = jenv->NewObject(clsPoint, constructorPoint, (double)(*it).x, (double)(*it).y);
-		jenv->SetObjectArrayElement(jobAr, i, objPoint);
-		i++;
-	}
+    jmethodID constructorPoint = jenv->GetMethodID(clsPoint, "<init>", "(DD)V");
+    int i = 0;
+    for (std::vector<cv::Point>::iterator it = pixels.begin(); it != pixels.end(); ++it) {
+        jobject objPoint = jenv->NewObject(clsPoint, constructorPoint, (double) (*it).x,
+                                           (double) (*it).y);
+        jenv->SetObjectArrayElement(jobAr, i, objPoint);
+        i++;
+    }
 
-	return jobAr;
+    return jobAr;
 }
 
 void clamRGB(cv::Vec4b &pixel) {
-	pixel[0] = clamRGB1(pixel[0]);
-	pixel[1] = clamRGB1(pixel[1]);
-	pixel[2] = clamRGB1(pixel[2]);
+    pixel[0] = clamRGB1(pixel[0]);
+    pixel[1] = clamRGB1(pixel[1]);
+    pixel[2] = clamRGB1(pixel[2]);
 }
 
 int clamRGB1(int val) {
-	if (val < 0) {
-		return 0;
-	} else if (val > 255) {
-		return 255;
-	}
-	return val;
+    if (val < 0) {
+        return 0;
+    } else if (val > 255) {
+        return 255;
+    }
+    return val;
 }
 
 JNIEXPORT void JNICALL Java_ru_flightlabs_makeup_Filter_nativeDrawMask(
-		JNIEnv * jenv, jclass, jlong imageLeftEye, jlong imageWhole,
-		jobjectArray pointsEyeOrig, jobjectArray pointsOnFace, jobjectArray triangleEye,
-		jlong imageLips, jobjectArray pointsWasLips, jobjectArray trianglelips) {
-	LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask");
-	cv::Mat imageLeftEyeMat = *((Mat*) imageLeftEye);
-	cv::Mat imageWholeMat = *((Mat*) imageWhole);
-	cv::Mat imageLipsMat = *((Mat*) imageLips);
+        JNIEnv *jenv, jclass, jlong imageLeftEye, jlong imageWhole,
+        jobjectArray pointsEyeOrig, jobjectArray pointsOnFace, jobjectArray triangleEye,
+        jlong imageLips, jobjectArray pointsWasLips, jobjectArray trianglelips) {
+    LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask");
+    cv::Mat imageLeftEyeMat = *((Mat *) imageLeftEye);
+    cv::Mat imageWholeMat = *((Mat *) imageWhole);
+    cv::Mat imageLipsMat = *((Mat *) imageLips);
 
-	// конвертация изначальных точек из java в C-ишный
-	std::vector<cv::Point> pointsOrig;
-	int pointsWasLength = jenv->GetArrayLength(pointsEyeOrig);
-	for(int i = 0; i < pointsWasLength; i++) {
-		jobject point = jenv->GetObjectArrayElement((jobjectArray) pointsEyeOrig, i);
-		jclass cls = jenv->GetObjectClass(point);
-		pointsOrig.push_back(Point(getObjectFieldD(jenv, point, cls, "x"), getObjectFieldD(jenv, point, cls, "y")));
-		jenv->DeleteLocalRef(cls);
-		jenv->DeleteLocalRef(point);
-	}
+    // конвертация изначальных точек из java в C-ишный
+    std::vector<cv::Point> pointsOrig;
+    int pointsWasLength = jenv->GetArrayLength(pointsEyeOrig);
+    for (int i = 0; i < pointsWasLength; i++) {
+        jobject point = jenv->GetObjectArrayElement((jobjectArray) pointsEyeOrig, i);
+        jclass cls = jenv->GetObjectClass(point);
+        pointsOrig.push_back(Point(getObjectFieldD(jenv, point, cls, "x"),
+                                   getObjectFieldD(jenv, point, cls, "y")));
+        jenv->DeleteLocalRef(cls);
+        jenv->DeleteLocalRef(point);
+    }
 
 
-	std::vector<cv::Point> pointsOrigLips;
-	{
-		int pointsWasLength = jenv->GetArrayLength(pointsWasLips);
-		for(int i = 0; i < pointsWasLength; i++) {
-			jobject point = jenv->GetObjectArrayElement((jobjectArray) pointsWasLips, i);
-			jclass cls = jenv->GetObjectClass(point);
-			pointsOrigLips.push_back(Point(getObjectFieldD(jenv, point, cls, "x"), getObjectFieldD(jenv, point, cls, "y")));
-			jenv->DeleteLocalRef(cls);
-			jenv->DeleteLocalRef(point);
-		}
-	}
-	LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask2");
+    std::vector<cv::Point> pointsOrigLips;
+    {
+        int pointsWasLength = jenv->GetArrayLength(pointsWasLips);
+        for (int i = 0; i < pointsWasLength; i++) {
+            jobject point = jenv->GetObjectArrayElement((jobjectArray) pointsWasLips, i);
+            jclass cls = jenv->GetObjectClass(point);
+            pointsOrigLips.push_back(Point(getObjectFieldD(jenv, point, cls, "x"),
+                                           getObjectFieldD(jenv, point, cls, "y")));
+            jenv->DeleteLocalRef(cls);
+            jenv->DeleteLocalRef(point);
+        }
+    }
+    LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask2");
 
-	// конвертация конечных точек из java в C-ишный
-	int pointsToLength = jenv->GetArrayLength(pointsOnFace);
-	Point** pointsTo = new Point*[jenv->GetArrayLength(pointsOnFace)]; // точки найденые на ч\б изображении
-	for(int i = 0; i < pointsToLength; i++) {
-		jobject point = jenv->GetObjectArrayElement((jobjectArray) pointsOnFace, i);
-		jclass cls = jenv->GetObjectClass(point);
-		pointsTo[i] = new Point(getObjectFieldD(jenv, point, cls, "x"), getObjectFieldD(jenv, point, cls, "y"));
-		jenv->DeleteLocalRef(cls);
-		jenv->DeleteLocalRef(point);
-	}
+    // конвертация конечных точек из java в C-ишный
+    int pointsToLength = jenv->GetArrayLength(pointsOnFace);
+    Point **pointsTo = new Point *[jenv->GetArrayLength(
+            pointsOnFace)]; // точки найденые на ч\б изображении
+    for (int i = 0; i < pointsToLength; i++) {
+        jobject point = jenv->GetObjectArrayElement((jobjectArray) pointsOnFace, i);
+        jclass cls = jenv->GetObjectClass(point);
+        pointsTo[i] = new Point(getObjectFieldD(jenv, point, cls, "x"),
+                                getObjectFieldD(jenv, point, cls, "y"));
+        jenv->DeleteLocalRef(cls);
+        jenv->DeleteLocalRef(point);
+    }
 
-	LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask3");
-	 std::vector<Triangle> triangles;
-	// конвертация треугольников из java в C-ишный
-	int trianglesLength = jenv->GetArrayLength(triangleEye);
-	//Triangle** triangles = new Triangle*[trianglesLength];
-	for(int i = 0; i < trianglesLength; i++) {
-		jobject point = jenv->GetObjectArrayElement((jobjectArray) triangleEye, i);
-		jclass cls = jenv->GetObjectClass(point);
-		triangles.push_back(Triangle(getObjectFieldI(jenv, point, cls, "point1"), getObjectFieldI(jenv, point, cls, "point2"), getObjectFieldI(jenv, point, cls, "point3")));
-		jenv->DeleteLocalRef(cls);
-		jenv->DeleteLocalRef(point);
-	}
+    LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask3");
+    std::vector<Triangle> triangles;
+    // конвертация треугольников из java в C-ишный
+    int trianglesLength = jenv->GetArrayLength(triangleEye);
+    //Triangle** triangles = new Triangle*[trianglesLength];
+    for (int i = 0; i < trianglesLength; i++) {
+        jobject point = jenv->GetObjectArrayElement((jobjectArray) triangleEye, i);
+        jclass cls = jenv->GetObjectClass(point);
+        triangles.push_back(Triangle(getObjectFieldI(jenv, point, cls, "point1"),
+                                     getObjectFieldI(jenv, point, cls, "point2"),
+                                     getObjectFieldI(jenv, point, cls, "point3")));
+        jenv->DeleteLocalRef(cls);
+        jenv->DeleteLocalRef(point);
+    }
 
-	std::vector<Triangle> trianglesLips;
-	{
-			// конвертация треугольников из java в C-ишный
-			int trianglesLength = jenv->GetArrayLength(trianglelips);
-			//Triangle** triangles = new Triangle*[trianglesLength];
-			for(int i = 0; i < trianglesLength; i++) {
-				jobject point = jenv->GetObjectArrayElement((jobjectArray) trianglelips, i);
-				jclass cls = jenv->GetObjectClass(point);
-				trianglesLips.push_back(Triangle(getObjectFieldI(jenv, point, cls, "point1"), getObjectFieldI(jenv, point, cls, "point2"), getObjectFieldI(jenv, point, cls, "point3")));
-				jenv->DeleteLocalRef(cls);
-				jenv->DeleteLocalRef(point);
-			}
-	}
+    std::vector<Triangle> trianglesLips;
+    {
+        // конвертация треугольников из java в C-ишный
+        int trianglesLength = jenv->GetArrayLength(trianglelips);
+        //Triangle** triangles = new Triangle*[trianglesLength];
+        for (int i = 0; i < trianglesLength; i++) {
+            jobject point = jenv->GetObjectArrayElement((jobjectArray) trianglelips, i);
+            jclass cls = jenv->GetObjectClass(point);
+            trianglesLips.push_back(Triangle(getObjectFieldI(jenv, point, cls, "point1"),
+                                             getObjectFieldI(jenv, point, cls, "point2"),
+                                             getObjectFieldI(jenv, point, cls, "point3")));
+            jenv->DeleteLocalRef(cls);
+            jenv->DeleteLocalRef(point);
+        }
+    }
 
-	LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask4");
-	// TODO change eyelashes
-	LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask4 sizes %i %i", pointsToLength, pointsOrig.size());
+    LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask4");
+    // TODO change eyelashes
+    LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask4 sizes %i %i", pointsToLength,
+         pointsOrig.size());
 
     std::vector<cv::Point> pointsOrigRight;
-	  std::vector<cv::Point> pointsOnImage;
-	  std::vector<cv::Point> pointsOnImageRight;
-	for (int sh = 0; sh < 6; sh++) {
-		pointsOnImage.push_back(cv::Point(pointsTo[sh]->x, pointsTo[sh]->y));
-		pointsOnImageRight.push_back(
-				cv::Point(pointsTo[sh + 6]->x, pointsTo[sh + 6]->y));
-	}
-	  int pp[] = {3, 2, 1, 0, 5, 4, 7, 6, 9, 8}; // FIXME!!! change numbers of points in triangle
-	  flipPo(pointsOrig, pointsOrigRight, imageLeftEyeMat.size().width, pp);
-	  LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask5666 %i %i", pointsOrig.size(), pointsOrigRight.size());
-	  int p[] =  {0, 1, 3};
-	  int p1[] =  {0, 1, 3};
-	  int p2[] =  {0, 1, 3};
-	  int p3[] =  {0, 1, 3};
-	  LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask5 %i %i", pointsOrig.size(), pointsOnImage.size());
-	  convertPoints(pointsOrig, pointsOnImage, p, p1);
-	  convertPoints(pointsOrigRight, pointsOnImageRight, p2, p3);
+    std::vector<cv::Point> pointsOnImage;
+    std::vector<cv::Point> pointsOnImageRight;
+    for (int sh = 0; sh < 6; sh++) {
+        pointsOnImage.push_back(cv::Point(pointsTo[sh]->x, pointsTo[sh]->y));
+        pointsOnImageRight.push_back(
+                cv::Point(pointsTo[sh + 6]->x, pointsTo[sh + 6]->y));
+    }
+    int pp[] = {3, 2, 1, 0, 5, 4, 7, 6, 9, 8}; // FIXME!!! change numbers of points in triangle
+    flipPo(pointsOrig, pointsOrigRight, imageLeftEyeMat.size().width, pp);
+    std::vector<Triangle> trianglesRight;
+    flipTriangles(triangles, trianglesRight, pp);
+    LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask5666 %i %i", pointsOrig.size(),
+         pointsOrigRight.size());
+    int p[] =  {0, 3, 1};
+    int p1[] =  {0, 3, 1};
+    int p2[] =  {0, 3, 1};
+    int p3[] =  {0, 3, 1};
+    LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask5 %i %i", pointsOrig.size(),
+         pointsOnImage.size());
+    convertPoints(pointsOrig, pointsOnImage, p, p1, true);
+    convertPoints(pointsOrigRight, pointsOnImageRight, p2, p3, true);
 
-	  cv::Mat eyelashRight;
-	  cv::flip(imageLeftEyeMat, eyelashRight, 1);
+    cv::Mat eyelashRight;
+    cv::flip(imageLeftEyeMat, eyelashRight, 1);
 
-	  change_faces(imageLeftEyeMat, imageWholeMat, pointsOrig, pointsOnImage, triangles);
-	  change_faces(eyelashRight, imageWholeMat, pointsOrigRight, pointsOnImageRight, triangles);
+    change_faces(imageLeftEyeMat, imageWholeMat, pointsOrig, pointsOnImage, triangles);
+    change_faces(eyelashRight, imageWholeMat, pointsOrigRight, pointsOnImageRight, trianglesRight);
 
 
-	  std::vector<cv::Point> pointsOnImageLips;
-	  for (int sh = 0; sh < 20; sh++) {
-		  pointsOnImageLips.push_back(
-	  				cv::Point(pointsTo[sh + 12]->x, pointsTo[sh + 12]->y));
-		  ///cv::circle(imageWholeMat, cv::Point(pointsTo[sh + 12]->x, pointsTo[sh + 12]->y), 3, cv::Scalar(255, 255, 255), -1);
-	  	}
-	  change_faces(imageLipsMat, imageWholeMat, pointsOrigLips, pointsOnImageLips, trianglesLips);
+    std::vector<cv::Point> pointsOnImageLips;
+    for (int sh = 0; sh < 20; sh++) {
+        pointsOnImageLips.push_back(
+                cv::Point(pointsTo[sh + 12]->x, pointsTo[sh + 12]->y));
+        ///cv::circle(imageWholeMat, cv::Point(pointsTo[sh + 12]->x, pointsTo[sh + 12]->y), 3, cv::Scalar(255, 255, 255), -1);
+    }
+    change_faces(imageLipsMat, imageWholeMat, pointsOrigLips, pointsOnImageLips, trianglesLips, 1, true);
 
-	  LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask7");
-	// release resources
+    LOGD("Java_ru_flightlabs_makeup_Filter_nativeDrawMask7");
+    // release resources
 
-	for(int i = 0; i < pointsToLength; i++) {
-		delete pointsTo[i];
-	}
-	delete pointsTo;
+    for (int i = 0; i < pointsToLength; i++) {
+        delete pointsTo[i];
+    }
+    delete pointsTo;
 
 }
-void findEyes(cv::Mat frame_gray, cv::Rect face, std::vector<cv::Point> &pixels, ModelClass *modelClass) {
-	LOGD("findEyes111");
-	shape_predictor sp;
-	LOGD("findEyes112");
-	//array2d<int> img;
-	LOGD("findEyes1121 %i", frame_gray.type());
+
+void findEyes(cv::Mat frame_gray, cv::Rect face, std::vector<cv::Point> &pixels,
+              ModelClass *modelClass) {
+    LOGD("findEyes111");
+    shape_predictor sp;
+    LOGD("findEyes112");
+    //array2d<int> img;
+    LOGD("findEyes1121 %i", frame_gray.type());
 
 //  assign_image(img, cv_image<uchar>(frame_gray));
-	// т.к. предыдущий метод cv_image не работает(может неправильно использую), то делаем преобразование кадра из opencv в dlib вручную
-	array2d<int> img;
-	img.set_size(frame_gray.rows, frame_gray.cols); // for grey
-	LOGD("findEyes1122");
-	for (int i = 0; i < frame_gray.rows; i++) {
-		//LOGD("findEyes1124");
-		for (int j = 0; j < frame_gray.cols; j++) {
-			//LOGD("findEyes115");
-			img[i][j] = frame_gray.at<uchar>(i, j);
-		}
-	}
-	////  cv_image<bgr_pixel> image(frame_gray);
-	LOGD("findEyes114");
-	//std::vector<dlib::rectangle> dets;
-	//dets.push_back(dlib::rectangle);
-	dlib::rectangle d(face.x, face.y, face.x + face.width,
-			face.y + face.height);
-	LOGD("findEyes115");
-	//deserialize(s) >> sp;
-	LOGD("findEyes113");
-	//  full_object_detection shape = sp(img, d);
-	full_object_detection shape = modelClass->getsp(img, d);
-	LOGD("findEyes116 %i", shape.num_parts());
-	if (shape.num_parts() > 2) {
-		LOGD("findEyes116 %i %i", shape.part(0).x(), shape.part(0).y());
-		LOGD("findEyes116 %i %i", shape.part(1).x(), shape.part(1).y());
-	}
-	for (int i = 0; i < shape.num_parts(); i++) {
-		pixels.push_back(cv::Point(shape.part(i).x(), shape.part(i).y()));
-	}
-	LOGD("findEyes116");
+    // т.к. предыдущий метод cv_image не работает(может неправильно использую), то делаем преобразование кадра из opencv в dlib вручную
+    array2d<int> img;
+    img.set_size(frame_gray.rows, frame_gray.cols); // for grey
+    LOGD("findEyes1122");
+    for (int i = 0; i < frame_gray.rows; i++) {
+        //LOGD("findEyes1124");
+        for (int j = 0; j < frame_gray.cols; j++) {
+            //LOGD("findEyes115");
+            img[i][j] = frame_gray.at<uchar>(i, j);
+        }
+    }
+    ////  cv_image<bgr_pixel> image(frame_gray);
+    LOGD("findEyes114");
+    //std::vector<dlib::rectangle> dets;
+    //dets.push_back(dlib::rectangle);
+    dlib::rectangle d(face.x, face.y, face.x + face.width,
+                      face.y + face.height);
+    LOGD("findEyes115");
+    //deserialize(s) >> sp;
+    LOGD("findEyes113");
+    //  full_object_detection shape = sp(img, d);
+    full_object_detection shape = modelClass->getsp(img, d);
+    LOGD("findEyes116 %i", shape.num_parts());
+    if (shape.num_parts() > 2) {
+        LOGD("findEyes116 %i %i", shape.part(0).x(), shape.part(0).y());
+        LOGD("findEyes116 %i %i", shape.part(1).x(), shape.part(1).y());
+    }
+    for (int i = 0; i < shape.num_parts(); i++) {
+        pixels.push_back(cv::Point(shape.part(i).x(), shape.part(i).y()));
+    }
+    LOGD("findEyes116");
 
-	LOGD("findEyes116");
+    LOGD("findEyes116");
 }
 
-double getObjectFieldD(JNIEnv* env, jobject obj, jclass clsFeature, const char* name) {
-	jfieldID x1FieldId2 = env->GetFieldID(clsFeature, name, "D");
-	return env->GetDoubleField(obj, x1FieldId2);
+double getObjectFieldD(JNIEnv *env, jobject obj, jclass clsFeature, const char *name) {
+    jfieldID x1FieldId2 = env->GetFieldID(clsFeature, name, "D");
+    return env->GetDoubleField(obj, x1FieldId2);
 }
 
-int getObjectFieldI(JNIEnv* env, jobject obj, jclass clsFeature, const char* name) {
-	jfieldID x1FieldId2 = env->GetFieldID(clsFeature, name, "I");
-	return env->GetIntField(obj, x1FieldId2);
+int getObjectFieldI(JNIEnv *env, jobject obj, jclass clsFeature, const char *name) {
+    jfieldID x1FieldId2 = env->GetFieldID(clsFeature, name, "I");
+    return env->GetIntField(obj, x1FieldId2);
 }
