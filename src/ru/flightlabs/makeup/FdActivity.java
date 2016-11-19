@@ -484,8 +484,8 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
             }
 
             if (currentColor[2] != -1) {
-                filter.drawMask(leftEyeLine, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, 1, true, currentColor[2]);
-                filter.drawMask(rightEyeLine, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, 1, true, currentColor[2]);
+                filter.drawMask(leftEyeLine, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, 1, false, currentColor[2]);
+                filter.drawMask(rightEyeLine, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, 1, false, currentColor[2]);
             }
 
             if (currentColor[0] != -1) {

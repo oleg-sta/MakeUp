@@ -101,6 +101,9 @@ void change_faces ( cv::Mat& imageFromMat, cv::Mat& imageToMat, std::vector<cv::
                         cv::Vec4b pixelFrom = imageFromMat.at<cv::Vec4b> ( origY, origX );
                         cv::Vec4b pixelTo = imageToMat.at<cv::Vec4b> ( j, i );
 
+                        pixelFrom[0] = color[0];
+                        pixelFrom[1] = color[1];
+                        pixelFrom[2] = color[2];
 						int alpha = pixelFrom[3] * op;
                         if (alpha > 0) {
                             // FIXME add filter for layer blendings

@@ -10,6 +10,7 @@
 
     <array name="colors_shadow">
         <item>none</item>
+        <item>#000000</item>
         <item>#E18049</item>
         <item>#D7CD9C</item>
         <item>#8F824B</item>
