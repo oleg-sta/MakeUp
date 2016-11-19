@@ -98,6 +98,12 @@ android {
         compileTask -> compileTask.dependsOn ndkBuild
     }
 
+    defaultConfig {
+        ndk {
+            abiFilters "armeabi-v7a"
+        }
+    }
+
     externalNativeBuild {
         ndkBuild {
             path 'jni/Android.mk'

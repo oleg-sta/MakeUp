@@ -24,12 +24,10 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
-import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
-import org.opencv.videoio.VideoWriter;
 
 import ru.flightlabs.masks.model.ImgLabModel;
 import ru.flightlabs.masks.model.SimpleModel;
@@ -57,7 +55,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
@@ -69,17 +66,26 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
     public static boolean makePhoto;
     public static boolean preMakePhoto;
 
-    TypedArray eyesResourcesSmall;
-    TypedArray masks_eyes;
-    TypedArray masks_eyes_landamarks;
-    TypedArray masks_lips;
-    TypedArray masks_lips_landmarks;
-    // lips and eyes
+    int catgoryNum = 0;
+
+    // FIXME make it small
+    TypedArray eyelashesSmall;
+    TypedArray eyeshadowSmall;
+    TypedArray eyelinesSmall;
+    TypedArray lipsSmall;
+
+    // lips and eyes models points and triangles
     ru.flightlabs.masks.model.primitives.Point[] pointsLeftEye;
     Triangle[] trianglesLeftEye;
     ru.flightlabs.masks.model.primitives.Point[] pointsWasLips;
     Triangle[] trianglesLips;
-    Mat leftEye;
+
+    Mat leftEyeLash;
+    Mat rightEyeLash;
+    Mat leftEyeShadow;
+    Mat rightEyeShadow;
+    Mat leftEyeLine;
+    Mat rightEyeLine;
     Mat lips;
 
     private static final String TAG = "FdActivity_class";
@@ -92,29 +98,15 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
     private Mat mGray;
     private File mCascadeFile;
     private CascadeClassifier mJavaDetector;
-    private boolean loadModel = false;
 
-    private boolean debugMode = false;
-    private boolean showEyes = true;
-    private String[] mEysOnOff;
-
-    private int mDetectorType = JAVA_DETECTOR;
     private String[] mDetectorName;
 
     private float mRelativeFaceSize = 0.5f;
     private int mAbsoluteFaceSize = 0;
 
-    private final static int maxSizeEyeWidth = 135;
-    private final static int maxSizeLipsWidth = 70;
-
-    private boolean makeNewFace;
-
-
-    int currentIndexEye = -1;
-    int newIndexEye = 0;
-
-    ImageView noPerson;
-    ProgressBar progressBar;
+    int[] currentIndexItem = {-1, -1, -1, -1};
+    int[] currentColor = {-1, -1, -1, -1};
+    int newIndexItem = 0;
 
     double lastCount = 0.5f;
 
@@ -187,7 +179,12 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
                     }
                     filter = new Filter(mCascadeFile.getAbsolutePath(), 0, detectorName);
                     mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
-                    loadNewMakeUp(0);
+                    //loadNewMakeUp(0);
+                    // TODO refactor
+                    loadNewMakeUp(0, 0);
+                    loadNewMakeUp(1, 0);
+                    loadNewMakeUp(2, 0);
+                    loadNewMakeUp(3, 0);
                 }
                 break;
                 default: {
@@ -214,9 +211,6 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         ims.close();
         return triangleArr.toArray(new Triangle[0]);
     }
-
-    protected boolean drawMask;
-
 
     public static int resourceToFile(InputStream is, File toFile) {
         int res = 0;
@@ -323,15 +317,18 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
             }
         });
 
-        eyesResourcesSmall = getResources().obtainTypedArray(R.array.effects_small_png);
-        masks_eyes = getResources().obtainTypedArray(R.array.masks_eyes);
-        masks_eyes_landamarks = getResources().obtainTypedArray(R.array.masks_eyes_landamarks);
-        masks_lips = getResources().obtainTypedArray(R.array.masks_lips);
-        masks_lips_landmarks = getResources().obtainTypedArray(R.array.masks_lips_landmarks);
+        eyelashesSmall = getResources().obtainTypedArray(R.array.eyelashes);
+        eyeshadowSmall = getResources().obtainTypedArray(R.array.eyeshadow);
+        eyelinesSmall = getResources().obtainTypedArray(R.array.eyelines);
+        lipsSmall = getResources().obtainTypedArray(R.array.lips);
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.photo_pager);
-        FilterPagerAdapter pager = new FilterPagerAdapter(this, eyesResourcesSmall);
-        viewPager.setAdapter(pager);
+        ViewPager viewPagerCategories = (ViewPager) findViewById(R.id.categories);
+        CategoriesPagerAdapter pagerCategories = new CategoriesPagerAdapter(this, getResources().getStringArray(R.array.categories));
+        viewPagerCategories.setAdapter(pagerCategories);
+
+
+        changeCategory(0);
+        loadModels();
 
         findViewById(R.id.rotate_camera).setOnClickListener(new OnClickListener() {
             @Override
@@ -342,34 +339,45 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
 
     }
 
-    // загрузка ресниц и губ
-    private void loadNewMakeUp(int index) {
+    private void loadModels() {
         try {
-            int indexLips = index;
-            if (indexLips >= getResources().getStringArray(R.array.masks_lips_triangles).length) {
-                indexLips = getResources().getStringArray(R.array.masks_lips_triangles).length - 1;
-            }
-            String eyesTriangle = getResources().getStringArray(R.array.masks_eyes_triangles)[index];
-            String lipsTriangle = getResources().getStringArray(R.array.masks_lips_triangles)[indexLips];
             File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
             File fModel = new File(cascadeDir, "landmarks_eye.xml");
-            resourceToFile(getResources().openRawResource(masks_eyes_landamarks.getResourceId(index, 0)), fModel);
+            resourceToFile(getResources().openRawResource(R.raw.eye_real_landmarks), fModel);
             File fModelLips = new File(cascadeDir, "landmarks_lips.xml");
-            resourceToFile(getResources().openRawResource(masks_lips_landmarks.getResourceId(indexLips, 0)), fModelLips);
+            resourceToFile(getResources().openRawResource(R.raw.lips_icon_landmarks), fModelLips);
             AssetManager assetManager = getAssets();
-            trianglesLeftEye = loadriangle(assetManager, eyesTriangle);
-            trianglesLips = loadriangle(assetManager, lipsTriangle);
+            trianglesLeftEye = loadriangle(assetManager, "eye_real_triangles.txt");
+            trianglesLips = loadriangle(assetManager, "lips_icon_triangles.txt");
             SimpleModel modelFrom = new ImgLabModel(fModel.getPath());
             pointsLeftEye = modelFrom.getPointsWas();
             SimpleModel modelFromLibs = new ImgLabModel(fModelLips.getPath());
             pointsWasLips = modelFromLibs.getPointsWas();
-            leftEye = loadPngToMat(masks_eyes.getResourceId(index, 0), false);
-            lips = loadPngToMat(masks_lips.getResourceId(indexLips, 0), false);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
+    }
+    // загрузка ресниц и губ
+    // FIXME everything is wrong
+    private void loadNewMakeUp(int category, int index) {
+        switch (category) {
+            case 0: leftEyeLash = loadPngToMat(eyelashesSmall.getResourceId(index, 0), false);
+                rightEyeLash = new Mat();
+                Core.flip(leftEyeLash, rightEyeLash, 1);
+                break;
+            case 1: leftEyeShadow = loadPngToMat(eyeshadowSmall.getResourceId(index, 0), false);
+                rightEyeShadow = new Mat();
+                Core.flip(leftEyeShadow, rightEyeShadow, 1);
+                break;
+            case 2: leftEyeLine = loadPngToMat(eyelinesSmall.getResourceId(index, 0), false);
+                rightEyeLine = new Mat();
+                Core.flip(leftEyeLine, rightEyeLine, 1);
+                break;
+            default:
+                lips = loadPngToMat(lipsSmall.getResourceId(index, 0), false);
+                break;
+        }
     }
 
     // TODO: лучше делать асинхронно
@@ -396,9 +404,6 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         return newEyeTmp;
     }
 
-    void changeMask(int newMask) {
-        newIndexEye = newMask;
-    }
 
     @Override
     public void onPause() {
@@ -438,10 +443,10 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         Log.i(TAG, "onCameraFrame " + new Date() + " count " + lastCount);
         // if index of makeup is changed then we load new one
-        if (currentIndexEye != newIndexEye) {
-            loadNewMakeUp(newIndexEye);
+        if (currentIndexItem[catgoryNum] != newIndexItem) {
+            loadNewMakeUp(catgoryNum, newIndexItem);
         }
-        currentIndexEye = newIndexEye;
+        currentIndexItem[catgoryNum] = newIndexItem;
         Mat rgbaTemp = inputFrame.rgba();
         Log.i(TAG, "onCameraFrame " + rgbaTemp.width() + ";" + rgbaTemp.width());
 
@@ -466,8 +471,31 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         Rect[] facesArray = faces.toArray();
         if (facesArray.length > 0) {
             Rect face = facesArray[0];
-            Point[] points = filter.findEyes(mGray, face);
-            filter.drawMask(leftEye, mRgba, pointsLeftEye, points, trianglesLeftEye, lips, pointsWasLips, trianglesLips);
+            Point[] pointsOnFrame = filter.findEyes(mGray, face);
+
+            Point[] onImageEyeLeft = getOnlyPoints(pointsOnFrame, 0, 6);
+            Point[] onImageEyeRight = getOnlyPoints(pointsOnFrame, 6, 6);
+            ru.flightlabs.masks.model.primitives.Point[] pointsRightEye = getReversePoint(pointsLeftEye, rightEyeLash.width(), new int[] {3, 2, 1, 0, 5, 4, 7, 6, 9, 8});
+            Triangle[] trianglesRightEye = flipTriangles(trianglesLeftEye, new int[] {3, 2, 1, 0, 5, 4, 7, 6, 9, 8});
+            Log.i(TAG, "saving Java_ru_flightlabs_makeup_Filter_nativeDrawMask6 java " + currentColor[3]);
+            if (currentColor[1] != -1) {
+                filter.drawMask(leftEyeShadow, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, 1, true, currentColor[1]);
+                filter.drawMask(rightEyeShadow, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, 1, true, currentColor[1]);
+            }
+
+            if (currentColor[2] != -1) {
+                filter.drawMask(leftEyeLine, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, 1, true, currentColor[2]);
+                filter.drawMask(rightEyeLine, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, 1, true, currentColor[2]);
+            }
+
+            if (currentColor[0] != -1) {
+                filter.drawMask(leftEyeLash, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, 1, false, currentColor[0]);
+                filter.drawMask(rightEyeLash, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, 1, false, currentColor[0]);
+            }
+
+            if (currentColor[3] != -1) {
+                filter.drawMask(lips, mRgba, pointsWasLips, getOnlyPoints(pointsOnFrame, 12, 20), trianglesLips, 1, true, currentColor[3]);
+            }
         }
 
         if (makePhoto) {
@@ -506,6 +534,34 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         return mRgba;
     }
 
+    private ru.flightlabs.masks.model.primitives.Point[] getReversePoint(ru.flightlabs.masks.model.primitives.Point[] onImageEyeLeft, int width, int[] ints) {
+        ru.flightlabs.masks.model.primitives.Point[] result = new ru.flightlabs.masks.model.primitives.Point[onImageEyeLeft.length];
+        for (int i = 0; i < ints.length; i++) {
+            ru.flightlabs.masks.model.primitives.Point p = onImageEyeLeft[ints[i]];
+            ru.flightlabs.masks.model.primitives.Point newP = new ru.flightlabs.masks.model.primitives.Point(p.x, p.y);
+            newP.x = width - newP.x;
+            result[i] = newP;
+        }
+        return result;
+    }
+
+    private Triangle[] flipTriangles(Triangle[] tr, int[] ints) {
+        Triangle[] result = new Triangle[tr.length];
+        for (int i = 0; i < tr.length; i++) {
+            Triangle d = tr[i];
+            result[i] = new Triangle(ints[d.point1], ints[d.point2], ints[d.point3]);
+        }
+        return result;
+    }
+
+    private Point[] getOnlyPoints(Point[] pointsOnFrame, int indexStart, int number) {
+        Point[] result = new Point[number];
+        for (int i = 0; i < number; i++) {
+            result[i] = pointsOnFrame[indexStart + i];
+        }
+        return result;
+    }
+
     private void saveBitmap(String toFile, Bitmap bmp) {
         FileOutputStream out = null;
         try {
@@ -541,4 +597,40 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         mOpenCvCameraView.enableView();
     }
 
+    void changeMask(int newMask) {
+        newIndexItem = newMask;
+    }
+
+    public void changeCategory(int position) {
+        int resourceId = R.array.colors_shadow;
+
+        newIndexItem = 0;
+        catgoryNum = position;
+        ViewPager viewPager = (ViewPager) findViewById(R.id.elements);
+        TypedArray iconsCategory = null;
+        if (position == 0) {
+            iconsCategory = eyelashesSmall;
+        } else if (position == 1) {
+            iconsCategory = eyeshadowSmall;
+        } else if (position == 2) {
+            iconsCategory = eyelinesSmall;
+        } else {
+            iconsCategory = lipsSmall;
+            resourceId = R.array.colors_lips;
+        }
+        FilterPagerAdapter pager = new FilterPagerAdapter(this, iconsCategory);
+        viewPager.setAdapter(pager);
+
+        ViewPager viewPagerColors = (ViewPager) findViewById(R.id.colors);
+        ColorsPagerAdapter pagerColors = new ColorsPagerAdapter(this, getResources().getIntArray(resourceId));
+        viewPagerColors.setAdapter(pagerColors);
+    }
+
+    public void changeColor(int color, int position) {
+        if (position == 0) {
+            currentColor[catgoryNum] = -1;
+            return;
+        }
+        currentColor[catgoryNum] = color & 0xFFFFFF;
+    }
 }

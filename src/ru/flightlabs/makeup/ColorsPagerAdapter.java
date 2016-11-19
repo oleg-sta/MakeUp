@@ -1,35 +1,36 @@
 package ru.flightlabs.makeup;
 
-
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class FilterPagerAdapter extends PagerAdapter {
+/**
+ * Created by sov on 19.11.2016.
+ */
+
+public class ColorsPagerAdapter  extends PagerAdapter {
 
     FdActivity fdAct;
     Context mContext;
-    TypedArray images;
+    int[] colors;
     LayoutInflater mLayoutInflater;
 
-    public FilterPagerAdapter(FdActivity context, TypedArray images) {
+    public ColorsPagerAdapter(FdActivity context, int[] colors) {
         mContext = context;
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.images = images;
         this.fdAct = context;
+        this.colors = colors;
     }
 
     @Override
     public int getCount() {
-        return images.length();
+        return colors.length;
     }
 
     @Override
@@ -40,16 +41,18 @@ public class FilterPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
         View itemView = mLayoutInflater.inflate(R.layout.item_effect, container, false);
+
         ImageView imageView = (ImageView) itemView.findViewById(R.id.item_image);
-        imageView.setImageResource(images.getResourceId(position, 0));
+        imageView.setImageResource(R.drawable.color_picker);
         imageView.setBackgroundColor(Color.WHITE);
+        imageView.setBackgroundColor(colors[position]);
         container.addView(itemView);
-        itemView.setOnClickListener(new OnClickListener() {
-            
+        itemView.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                fdAct.changeMask(position);
-                
+                fdAct.changeColor(colors[position], position);
+
             }
         });
         return itemView;
@@ -59,7 +62,7 @@ public class FilterPagerAdapter extends PagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((LinearLayout) object);
     }
-    
+
     @Override
     public float getPageWidth(int position) {
         return 1f / 4;

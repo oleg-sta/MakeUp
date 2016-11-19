@@ -24,9 +24,9 @@ void convertPoints ( std::vector<cv::Point>& src, std::vector<cv::Point>& dst, i
 void flipPo ( std::vector<cv::Point>& src, std::vector<cv::Point>& dst, int width, int p2[] ); // flip points and change order of points after flip
 void flipTriangles ( std::vector<Triangle>& trianglesIn, std::vector<Triangle>& trianglesOut, int p2[] );
 
-void change_faces ( cv::Mat& imageFromMat, cv::Mat& imageToMat, std::vector<cv::Point>&, std::vector<cv::Point>&, std::vector<Triangle>& triangles, double op = 1, bool useHsv = false);
+void change_faces ( cv::Mat& imageFromMat, cv::Mat& imageToMat, std::vector<cv::Point>&, std::vector<cv::Point>&, std::vector<Triangle>& triangles, double op, bool useHsv, Scalar);
 // change face by triangulation
-void change_faces ( cv::Mat& imageFromMat, cv::Mat& imageToMat, std::vector<cv::Point>&, full_object_detection& oldShape, std::vector<Triangle>& triangles , double op = 1, bool useHsv = false);
+void change_faces ( cv::Mat& imageFromMat, cv::Mat& imageToMat, std::vector<cv::Point>&, full_object_detection& oldShape, std::vector<Triangle>& triangles , double op, bool useHsv, Scalar);
 std::vector<Line> get_lines_from_file ( std::string path );
 std::vector<Triangle> get_triangles_from_file ( string path );
 void split ( const string& s, char delim,std::vector<string>& v );
@@ -34,16 +34,16 @@ void getBorder ( cv::Point& p1, cv::Point& p2, cv::Point& opposite, int x, int* 
 void loadImgLab ( string path, std::vector<cv::Point>& points );
 std::string getAttribute ( std::string line, std::string );
 
-void change_faces ( cv::Mat& imageFromMat, cv::Mat& imageToMat, std::vector<cv::Point>& pointsMask, full_object_detection& oldShape, std::vector<Triangle>& triangles, double op, bool useHsv )
+void change_faces ( cv::Mat& imageFromMat, cv::Mat& imageToMat, std::vector<cv::Point>& pointsMask, full_object_detection& oldShape, std::vector<Triangle>& triangles, double op, bool useHsv, Scalar color)
 {
     std::vector<cv::Point> oldShape22;
     for ( int sh = 0; sh < oldShape.num_parts(); sh++ )
     {
         oldShape22.push_back ( cv::Point ( oldShape.part ( sh ).x(), oldShape.part ( sh ).y() ) );
     }
-    change_faces ( imageFromMat, imageToMat, pointsMask, oldShape22, triangles, op, useHsv );
+    change_faces ( imageFromMat, imageToMat, pointsMask, oldShape22, triangles, op, useHsv, color );
 }
-void change_faces ( cv::Mat& imageFromMat, cv::Mat& imageToMat, std::vector<cv::Point>& pointsMask, std::vector<cv::Point>& oldShape, std::vector<Triangle>& triangles, double op, bool useHsv)
+void change_faces ( cv::Mat& imageFromMat, cv::Mat& imageToMat, std::vector<cv::Point>& pointsMask, std::vector<cv::Point>& oldShape, std::vector<Triangle>& triangles, double op, bool useHsv, Scalar color)
 {
     int width = imageToMat.cols;
     cout << "Width "<< width << endl;
@@ -100,38 +100,40 @@ void change_faces ( cv::Mat& imageFromMat, cv::Mat& imageToMat, std::vector<cv::
                     {
                         cv::Vec4b pixelFrom = imageFromMat.at<cv::Vec4b> ( origY, origX );
                         cv::Vec4b pixelTo = imageToMat.at<cv::Vec4b> ( j, i );
-			
-			int alpha = pixelFrom[3] * op;
-			// TEST HSV
-                        if ( useHsv )
-                        {
-                            Mat HSVto;
-                            Mat RGBto = imageToMat ( Rect ( i, j, 1, 1 ) );
-                            Mat HSVfrom;
-                            Mat RGBfrom = imageFromMat ( Rect ( origX, origY, 1, 1 ) );
-                            cvtColor ( RGBfrom, HSVfrom, CV_BGR2HSV );
-                            cvtColor ( RGBto, HSVto, CV_BGR2HSV );
-                            Vec3b hsvTo = HSVto.at<Vec3b> ( 0, 0 );
-                            Vec3b hsvFrom = HSVfrom.at<Vec3b> ( 0, 0 );
-                            hsvTo[0] = hsvFrom[0];
-                            hsvTo[1] = hsvFrom[1];
-                            HSVto.at<Vec3b> ( 0, 0 ) = hsvTo;
-                            cvtColor ( HSVto, RGBto, CV_HSV2BGR );
-                            cv::Vec3b  pixelFrom2 = RGBto.at<cv::Vec3b> ( 0, 0 );
-                            pixelFrom[0] = pixelFrom2[0];
-                            pixelFrom[1] = pixelFrom2[1];
-                            pixelFrom[2] = pixelFrom2[2];
+
+						int alpha = pixelFrom[3] * op;
+                        if (alpha > 0) {
+                            // FIXME add filter for layer blendings
+                            // TEST HSV
+                            if (useHsv) {
+                                Mat HSVto;
+                                Mat RGBto = imageToMat(Rect(i, j, 1, 1));
+                                Mat HSVfrom;
+                                Mat RGBfrom = imageFromMat(Rect(origX, origY, 1, 1)).clone();
+                                RGBfrom.setTo(color);
+                                cvtColor(RGBfrom, HSVfrom, CV_BGR2HSV);
+                                cvtColor(RGBto, HSVto, CV_BGR2HSV);
+                                Vec3b hsvTo = HSVto.at<Vec3b>(0, 0);
+                                Vec3b hsvFrom = HSVfrom.at<Vec3b>(0, 0);
+                                hsvTo[0] = hsvFrom[0];
+                                hsvTo[1] = hsvFrom[1];
+                                HSVto.at<Vec3b>(0, 0) = hsvTo;
+                                cvtColor(HSVto, RGBto, CV_HSV2BGR);
+                                cv::Vec3b pixelFrom2 = RGBto.at<cv::Vec3b>(0, 0);
+                                pixelFrom[0] = pixelFrom2[0];
+                                pixelFrom[1] = pixelFrom2[1];
+                                pixelFrom[2] = pixelFrom2[2];
+                            }
+                            //imageToMat.at<cv::Vec3b> ( j, i ) = RGBto.at<Vec3b>(0, 0);
+                            //continue;
+
+                            // ��������� �� ���� �������(RGB)
+                            for (int ij = 0; ij < 3; ij++) {
+                                pixelTo[ij] = (pixelTo[ij] * (255 - alpha)
+                                               + pixelFrom[ij] * alpha) / 255;
+                            }
+                            imageToMat.at<cv::Vec4b>(j, i) = pixelTo;
                         }
-			//imageToMat.at<cv::Vec3b> ( j, i ) = RGBto.at<Vec3b>(0, 0);
-			//continue;
-			
-                        // ��������� �� ���� �������(RGB)
-                        for ( int ij = 0; ij < 3; ij++ )
-                        {
-                            pixelTo[ij] = ( pixelTo[ij] * ( 255 - alpha )
-                                            + pixelFrom[ij] * alpha ) / 255;
-                        }
-                        imageToMat.at<cv::Vec4b> ( j, i ) = pixelTo;
                     }
                 }
             }

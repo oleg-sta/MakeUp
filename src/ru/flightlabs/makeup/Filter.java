@@ -39,15 +39,15 @@ public class Filter {
     }
 
     // draw mask on face using triangulation model
-    public void drawMask(Mat currentMaskLandScaped, Mat mRgba, ru.flightlabs.masks.model.primitives.Point[] pointsWas, Point[] foundEyes, Triangle[] trianlges, Mat lips, ru.flightlabs.masks.model.primitives.Point[] pointsWasLips, Triangle[] trianlgesLips) {
+    public void drawMask(Mat currentMaskLandScaped, Mat mRgba, ru.flightlabs.masks.model.primitives.Point[] pointsWas, Point[] foundEyes, Triangle[] trianlges, double opacity, boolean useHsv, int color) {
         nativeDrawMask(currentMaskLandScaped.getNativeObjAddr(), mRgba.getNativeObjAddr(), pointsWas,
-                foundEyes, trianlges, lips.getNativeObjAddr(), pointsWasLips, trianlgesLips);
+                foundEyes, trianlges, opacity, useHsv, color);
      }
     
     private static native long nativeCreateObject(String cascadeName, int minFaceSize);
     private static native long nativeCreateModel(String cascadeName);
     private static native Point[] findEyes(long thiz, long inputImage, int x, int y, int height, int width, long modelSp);
     private static native void nativeDrawMask(long maskImage, long toImage, ru.flightlabs.masks.model.primitives.Point[] pointsWas,
-            Point[] foundEyes, Triangle[] trianlges, long lips, ru.flightlabs.masks.model.primitives.Point[] pointsWasLips, Triangle[] trianlgesLips);
+            Point[] foundEyes, Triangle[] trianlges, double opacity, boolean useHsv, int color);
 
 }
