@@ -16,13 +16,13 @@ import android.widget.TextView;
 
 public class ColorsPagerAdapter  extends PagerAdapter {
 
-    FdActivity fdAct;
+    CommonI fdAct;
     Context mContext;
     int[] colors;
     LayoutInflater mLayoutInflater;
 
-    public ColorsPagerAdapter(FdActivity context, int[] colors) {
-        mContext = context;
+    public ColorsPagerAdapter(CommonI context, int[] colors) {
+        mContext = (Context) context;
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.fdAct = context;
         this.colors = colors;

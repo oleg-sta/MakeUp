@@ -16,13 +16,14 @@ import android.widget.TextView;
 
 public class CategoriesPagerAdapter extends PagerAdapter {
 
-    FdActivity fdAct;
+    CommonI fdAct;
     Context mContext;
     String[] texts;
     LayoutInflater mLayoutInflater;
 
-    public CategoriesPagerAdapter(FdActivity context, String[] texts) {
-        mContext = context;
+    public CategoriesPagerAdapter(CommonI context, String[] texts) {
+        // something terrible
+        mContext = (Context)context;
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.fdAct = context;
         this.texts = texts;

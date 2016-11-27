@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <org.opencv.android.PortraitCameraView
-        android:id="@+id/fd_activity_surface_view"
+    <ImageView
+        android:id="@+id/edited_image"
         android:layout_gravity="top"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -12,33 +12,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-
-        <View
-            android:id="@+id/border"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/border"
-            android:visibility="gone" />
-
-         <ImageView
-             android:id="@+id/rotate_camera"
-             android:layout_width="40dp"
-             android:layout_height="40dp"
-             android:layout_alignParentRight="true"
-             android:layout_alignParentTop="true"
-             android:layout_marginRight="2dip"
-             android:layout_marginTop="2dip"
-             android:src="@drawable/ic_camera_turn" />
-
-        <ImageView
-            android:id="@+id/debug_enable"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginRight="62dip"
-            android:layout_marginTop="2dip"
-            android:src="@drawable/ic_camera_turn" />
 
         <SeekBar
             android:id="@+id/opacity"
@@ -65,22 +38,13 @@
             android:layout_marginBottom="2dip" >
         </android.support.v4.view.ViewPager>
 
-         <android.support.v4.view.ViewPager
+        <android.support.v4.view.ViewPager
             android:id="@+id/categories"
             android:layout_width="match_parent"
             android:layout_height="25dp"
-            android:layout_above="@+id/camera_button"
+            android:layout_alignParentBottom="true"
             android:layout_marginBottom="2dip" >
         </android.support.v4.view.ViewPager>
-
-         <ImageView
-             android:id="@+id/camera_button"
-             android:layout_width="40dp"
-             android:layout_height="40dp"
-             android:layout_alignParentBottom="true"
-             android:layout_marginBottom="15dp"
-             android:layout_centerHorizontal="true"
-             android:src="@drawable/ic_camera" />
 
     </RelativeLayout>
 

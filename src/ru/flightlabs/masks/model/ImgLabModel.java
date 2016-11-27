@@ -38,7 +38,7 @@ public class ImgLabModel implements SimpleModel {
             e.printStackTrace();
         }
         this.points = points.toArray(new Point[0]);
-        //Utils.upsideDown(this.points);
+        //Helper.upsideDown(this.points);
         int[] liness = {17,5,5,4,5,6,6,12,8};
         boolean[] closedLiness = {false, false, false, false, false, true, true, true, true};
         List<Line> lines = new ArrayList<Line>();

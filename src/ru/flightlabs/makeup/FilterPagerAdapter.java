@@ -17,13 +17,13 @@ import android.widget.TextView;
 
 public class FilterPagerAdapter extends PagerAdapter {
 
-    FdActivity fdAct;
+    CommonI fdAct;
     Context mContext;
     TypedArray images;
     LayoutInflater mLayoutInflater;
 
-    public FilterPagerAdapter(FdActivity context, TypedArray images) {
-        mContext = context;
+    public FilterPagerAdapter(CommonI context, TypedArray images) {
+        mContext = (Context)context;
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.images = images;
         this.fdAct = context;
@@ -48,11 +48,11 @@ public class FilterPagerAdapter extends PagerAdapter {
 //        imageView.setImageResource(images.getResourceId(position, 0));
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(fdAct.getResources(), images.getResourceId(position, 0), options);
+        BitmapFactory.decodeResource(mContext.getResources(), images.getResourceId(position, 0), options);
         options.inSampleSize = calculateInSampleSize(options, 60, 60);
         // FIXME
         options.inJustDecodeBounds = false;
-        Bitmap bm = BitmapFactory.decodeResource(fdAct.getResources(), images.getResourceId(position, 0), options);
+        Bitmap bm = BitmapFactory.decodeResource(mContext.getResources(), images.getResourceId(position, 0), options);
         imageView.setImageBitmap(bm);
 
         imageView.setBackgroundColor(Color.WHITE);
