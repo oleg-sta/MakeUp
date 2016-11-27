@@ -377,7 +377,7 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
             File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
             File fModel = new File(cascadeDir, "landmarks_eye.xml");
 //            resourceToFile(getResources().openRawResource(R.raw.eye_real_landmarks), fModel);
-            resourceToFile(getResources().openRawResource(R.raw.from_you_cam_landmarks), fModel);
+            resourceToFile(getResources().openRawResource(R.raw.eye_real_landmarks), fModel);
             File fModelLips = new File(cascadeDir, "landmarks_lips.xml");
             resourceToFile(getResources().openRawResource(R.raw.lips_icon_landmarks), fModelLips);
             AssetManager assetManager = getAssets();
