@@ -8,6 +8,20 @@
         <item>губы</item>
     </array>
 
+    <!-- WARNING это взято из другого приложения-->
+    <array name="colors_eyelashes">
+        <item>none</item>
+        <item>#000000</item>
+        <item>#262626</item>
+        <item>#3A1F24</item>
+        <item>#4D312E</item>
+        <item>#031D80</item>
+        <item>#4E62DD</item>
+        <item>#283C57</item>
+        <item>#4B1757</item>
+        <item>#7B0D17</item>
+    </array>
+
     <array name="colors_shadow">
         <item>none</item>
         <item>#000000</item>
@@ -28,6 +42,16 @@
         <item>#FF675C</item>
         <item>#FF4342</item>
         <item>#C02431</item>
+        <item>#D18FE6</item>
+        <item>#8E1256</item>
+        <item>#B3498B</item>
+        <item>#095B20</item>
+        <item>#4116EC</item>
+        <item>#1AE015</item>
+        <item>#1BEEDD</item>
+        <item>#FFC600</item>
+        <item>#B1B4B2</item>
+        <item>#FFFFFF</item>
     </array>
 
     <array name="eyelashes">

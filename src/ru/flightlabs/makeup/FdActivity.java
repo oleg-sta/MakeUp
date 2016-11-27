@@ -43,6 +43,7 @@ import android.content.res.Resources.NotFoundException;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Camera;
 import android.media.MediaActionSound;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
@@ -59,6 +60,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class FdActivity extends Activity implements CvCameraViewListener2 {
+
+    boolean debug = false;
 
     Filter filter;
     public static final String DIRECTORY_SELFIE = "MakeUp";
@@ -104,8 +107,14 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
     private float mRelativeFaceSize = 0.5f;
     private int mAbsoluteFaceSize = 0;
 
-    int[] currentIndexItem = {-1, -1, -1, -1};
+    public static final int EYE_LASH = 0;
+    public static final int EYE_SHADOW = 1;
+    public static final int EYE_LINE = 2;
+    public static final int LIPS = 3;
+
+    int[] currentIndexItem = {1, 1, 1, 1};
     int[] currentColor = {-1, -1, -1, -1};
+    int[] opacity = {50, 50, 50, 50};
     int newIndexItem = 0;
 
     double lastCount = 0.5f;
@@ -157,6 +166,9 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
                     mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
                     resourceToFile(getResources().openRawResource(R.raw.haarcascade_frontalface_alt2), mCascadeFile);
                     detectorName = "/storage/extSdCard/mdl1.dat";
+                    if (!new File(detectorName).exists()) {
+                        detectorName = "/sdcard/mdl1.dat";
+                    }
 
                     if (!new File(detectorName).exists()) {
                         Log.i(TAG, "LoadModel doInBackground66");
@@ -257,12 +269,12 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         setContentView(R.layout.face_detect_surface_view);
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.fd_activity_surface_view);
-        Display display = getWindowManager().getDefaultDisplay();
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        display.getMetrics(outMetrics);
-        mOpenCvCameraView.getLayoutParams().width = outMetrics.widthPixels;
-        mOpenCvCameraView.getLayoutParams().height = mOpenCvCameraView.getLayoutParams().width;
-        mOpenCvCameraView.requestLayout();
+//        Display display = getWindowManager().getDefaultDisplay();
+//        DisplayMetrics outMetrics = new DisplayMetrics();
+//        display.getMetrics(outMetrics);
+//        mOpenCvCameraView.getLayoutParams().width = outMetrics.widthPixels;
+//        mOpenCvCameraView.getLayoutParams().height = mOpenCvCameraView.getLayoutParams().width;
+//        mOpenCvCameraView.requestLayout();
         cameraIndex = 0;
         numberOfCameras = android.hardware.Camera.getNumberOfCameras();
         android.hardware.Camera.CameraInfo cameraInfo = new android.hardware.Camera.CameraInfo();
@@ -273,7 +285,6 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
                 cameraIndex = i;
             }
         }
-
         mOpenCvCameraView.setCameraIndex(cameraIndex);
         mOpenCvCameraView.setCvCameraViewListener(this);
 
@@ -336,6 +347,28 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
                 swapCamera();
             }
         });
+        findViewById(R.id.debug_enable).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                debug = !debug;
+            }
+        });
+        ((SeekBar)findViewById(R.id.opacity)).setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                opacity[catgoryNum] = i;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
     }
 
@@ -343,7 +376,8 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         try {
             File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
             File fModel = new File(cascadeDir, "landmarks_eye.xml");
-            resourceToFile(getResources().openRawResource(R.raw.eye_real_landmarks), fModel);
+//            resourceToFile(getResources().openRawResource(R.raw.eye_real_landmarks), fModel);
+            resourceToFile(getResources().openRawResource(R.raw.from_you_cam_landmarks), fModel);
             File fModelLips = new File(cascadeDir, "landmarks_lips.xml");
             resourceToFile(getResources().openRawResource(R.raw.lips_icon_landmarks), fModelLips);
             AssetManager assetManager = getAssets();
@@ -448,12 +482,14 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         }
         currentIndexItem[catgoryNum] = newIndexItem;
         Mat rgbaTemp = inputFrame.rgba();
-        Log.i(TAG, "onCameraFrame " + rgbaTemp.width() + ";" + rgbaTemp.width());
+        Log.i(TAG, "onCameraFrame " + rgbaTemp.width() + ";" + rgbaTemp.height());
 
-        if (mRgba != null) {
-            mRgba.release();
-        }
-        mRgba = rgbaTemp.submat(new Rect(0, (rgbaTemp.height() - rgbaTemp.width()) / 2, rgbaTemp.width(), rgbaTemp.width()));
+//        if (mRgba != null) {
+//            mRgba.release();
+//        }
+        mRgba = rgbaTemp;
+        if (false) return mRgba;
+//         mRgba = rgbaTemp.submat(new Rect(0, (rgbaTemp.height() - rgbaTemp.width()) / 2, rgbaTemp.width(), rgbaTemp.width()));
         Imgproc.cvtColor(mRgba, mGray, Imgproc.COLOR_RGB2GRAY);
 
         // compute face size to detect
@@ -472,29 +508,35 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         if (facesArray.length > 0) {
             Rect face = facesArray[0];
             Point[] pointsOnFrame = filter.findEyes(mGray, face);
+            if (debug) {
+                for (Point p : pointsOnFrame) {
+                    Imgproc.circle(mRgba, p, 1, new Scalar(255, 255, 255));
+                }
+            }
 
             Point[] onImageEyeLeft = getOnlyPoints(pointsOnFrame, 0, 6);
             Point[] onImageEyeRight = getOnlyPoints(pointsOnFrame, 6, 6);
             ru.flightlabs.masks.model.primitives.Point[] pointsRightEye = getReversePoint(pointsLeftEye, rightEyeLash.width(), new int[] {3, 2, 1, 0, 5, 4, 7, 6, 9, 8});
             Triangle[] trianglesRightEye = flipTriangles(trianglesLeftEye, new int[] {3, 2, 1, 0, 5, 4, 7, 6, 9, 8});
             Log.i(TAG, "saving Java_ru_flightlabs_makeup_Filter_nativeDrawMask6 java " + currentColor[3]);
+            // TODO add checkbox for rgb or hsv bleding
             if (currentColor[1] != -1) {
-                filter.drawMask(leftEyeShadow, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, 1, true, currentColor[1]);
-                filter.drawMask(rightEyeShadow, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, 1, true, currentColor[1]);
+                filter.drawMask(leftEyeShadow, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, opacity[EYE_SHADOW] / 100.0, false, currentColor[1]);
+                filter.drawMask(rightEyeShadow, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, opacity[EYE_SHADOW] / 100.0, true, currentColor[1]);
             }
 
             if (currentColor[2] != -1) {
-                filter.drawMask(leftEyeLine, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, 1, false, currentColor[2]);
-                filter.drawMask(rightEyeLine, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, 1, false, currentColor[2]);
+                filter.drawMask(leftEyeLine, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, opacity[EYE_LINE] / 100.0, false, currentColor[2]);
+                filter.drawMask(rightEyeLine, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, opacity[EYE_LINE] / 100.0, false, currentColor[2]);
             }
 
             if (currentColor[0] != -1) {
-                filter.drawMask(leftEyeLash, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, 1, false, currentColor[0]);
-                filter.drawMask(rightEyeLash, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, 1, false, currentColor[0]);
+                filter.drawMask(leftEyeLash, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, opacity[EYE_LASH] / 100.0, false, currentColor[0]);
+                filter.drawMask(rightEyeLash, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, opacity[EYE_LASH] / 100.0, false, currentColor[0]);
             }
 
             if (currentColor[3] != -1) {
-                filter.drawMask(lips, mRgba, pointsWasLips, getOnlyPoints(pointsOnFrame, 12, 20), trianglesLips, 1, true, currentColor[3]);
+                filter.drawMask(lips, mRgba, pointsWasLips, getOnlyPoints(pointsOnFrame, 12, 20), trianglesLips, opacity[LIPS] / 100.0, true, currentColor[3]);
             }
         }
 
@@ -610,9 +652,12 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         TypedArray iconsCategory = null;
         if (position == 0) {
             iconsCategory = eyelashesSmall;
+            resourceId = R.array.colors_eyelashes;
         } else if (position == 1) {
             iconsCategory = eyeshadowSmall;
+            resourceId = R.array.colors_shadow;
         } else if (position == 2) {
+            resourceId = R.array.colors_eyelashes;
             iconsCategory = eyelinesSmall;
         } else {
             iconsCategory = lipsSmall;
@@ -624,6 +669,7 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         ViewPager viewPagerColors = (ViewPager) findViewById(R.id.colors);
         ColorsPagerAdapter pagerColors = new ColorsPagerAdapter(this, getResources().getIntArray(resourceId));
         viewPagerColors.setAdapter(pagerColors);
+        ((SeekBar)findViewById(R.id.opacity)).setProgress(opacity[catgoryNum]);
     }
 
     public void changeColor(int color, int position) {
