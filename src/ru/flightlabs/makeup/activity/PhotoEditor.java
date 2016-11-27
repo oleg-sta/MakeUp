@@ -36,7 +36,6 @@ public class PhotoEditor extends Activity implements CommonI {
 
     ResourcesApp resourcesApp;
     EditorEnvironment editorEnvironment;
-    int catgoryNum = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,7 +61,7 @@ public class PhotoEditor extends Activity implements CommonI {
         ((SeekBar)findViewById(R.id.opacity)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                editorEnvironment.opacity[catgoryNum] = i;
+                editorEnvironment.opacity[editorEnvironment.catgoryNum] = i;
                 rechangePhoto();
             }
 
@@ -99,7 +98,7 @@ public class PhotoEditor extends Activity implements CommonI {
         int resourceId = R.array.colors_shadow;
 
         editorEnvironment.newIndexItem = 0;
-        catgoryNum = position;
+        editorEnvironment.catgoryNum = position;
         ViewPager viewPager = (ViewPager) findViewById(R.id.elements);
         TypedArray iconsCategory = null;
         if (position == 0) {
@@ -121,7 +120,7 @@ public class PhotoEditor extends Activity implements CommonI {
         ViewPager viewPagerColors = (ViewPager) findViewById(R.id.colors);
         ColorsPagerAdapter pagerColors = new ColorsPagerAdapter(this, getResources().getIntArray(resourceId));
         viewPagerColors.setAdapter(pagerColors);
-        ((SeekBar)findViewById(R.id.opacity)).setProgress(editorEnvironment.opacity[catgoryNum]);
+        ((SeekBar)findViewById(R.id.opacity)).setProgress(editorEnvironment.opacity[editorEnvironment.catgoryNum]);
     }
 
     public void changeMask(int newMask) {
@@ -131,18 +130,18 @@ public class PhotoEditor extends Activity implements CommonI {
 
     public void changeColor(int color, int position) {
         if (position == 0) {
-            editorEnvironment.currentColor[catgoryNum] = -1;
+            editorEnvironment.currentColor[editorEnvironment.catgoryNum] = -1;
             return;
         }
-        editorEnvironment.currentColor[catgoryNum] = color & 0xFFFFFF;
+        editorEnvironment.currentColor[editorEnvironment.catgoryNum] = color & 0xFFFFFF;
         rechangePhoto();
     }
 
     private void rechangePhoto() {
-        if (editorEnvironment.currentIndexItem[catgoryNum] != editorEnvironment.newIndexItem) {
-            editorEnvironment.loadNewMakeUp(catgoryNum, editorEnvironment.newIndexItem);
+        if (editorEnvironment.currentIndexItem[editorEnvironment.catgoryNum] != editorEnvironment.newIndexItem) {
+            editorEnvironment.loadNewMakeUp(editorEnvironment.catgoryNum, editorEnvironment.newIndexItem);
         }
-        editorEnvironment.currentIndexItem[catgoryNum] = editorEnvironment.newIndexItem;
+        editorEnvironment.currentIndexItem[editorEnvironment.catgoryNum] = editorEnvironment.newIndexItem;
 
         Mat mat = origPhoto.clone();
         editorEnvironment.editImage(mat, ResourcesApp.pointsOnFrame);

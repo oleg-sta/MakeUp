@@ -63,8 +63,6 @@ public class FdActivity extends Activity implements CvCameraViewListener2, Commo
 
     ResourcesApp resourcesApp;
 
-    int catgoryNum = 0;
-
     private static final String TAG = "FdActivity_class";
 
     private Mat mRgba;
@@ -232,7 +230,7 @@ public class FdActivity extends Activity implements CvCameraViewListener2, Commo
         ((SeekBar)findViewById(R.id.opacity)).setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                editorEnvironment.opacity[catgoryNum] = i;
+                editorEnvironment.opacity[editorEnvironment.catgoryNum] = i;
             }
 
             @Override
@@ -286,10 +284,10 @@ public class FdActivity extends Activity implements CvCameraViewListener2, Commo
         Log.i(TAG, "onCameraFrame " + new Date());
         // if index of makeup is changed then we load new one
         // not good
-        if (editorEnvironment.currentIndexItem[catgoryNum] != editorEnvironment.newIndexItem) {
-            editorEnvironment.loadNewMakeUp(catgoryNum, editorEnvironment.newIndexItem);
+        if (editorEnvironment.currentIndexItem[editorEnvironment.catgoryNum] != editorEnvironment.newIndexItem) {
+            editorEnvironment.loadNewMakeUp(editorEnvironment.catgoryNum, editorEnvironment.newIndexItem);
         }
-        editorEnvironment.currentIndexItem[catgoryNum] = editorEnvironment.newIndexItem;
+        editorEnvironment.currentIndexItem[editorEnvironment.catgoryNum] = editorEnvironment.newIndexItem;
         Mat rgbaTemp = inputFrame.rgba();
         Log.i(TAG, "onCameraFrame " + rgbaTemp.width() + ";" + rgbaTemp.height());
 
@@ -388,7 +386,7 @@ public class FdActivity extends Activity implements CvCameraViewListener2, Commo
         int resourceId = R.array.colors_shadow;
 
         editorEnvironment.newIndexItem = 0;
-        catgoryNum = position;
+        editorEnvironment.catgoryNum = position;
         ViewPager viewPager = (ViewPager) findViewById(R.id.elements);
         TypedArray iconsCategory = null;
         if (position == 0) {
@@ -410,14 +408,14 @@ public class FdActivity extends Activity implements CvCameraViewListener2, Commo
         ViewPager viewPagerColors = (ViewPager) findViewById(R.id.colors);
         ColorsPagerAdapter pagerColors = new ColorsPagerAdapter(this, getResources().getIntArray(resourceId));
         viewPagerColors.setAdapter(pagerColors);
-        ((SeekBar)findViewById(R.id.opacity)).setProgress(editorEnvironment.opacity[catgoryNum]);
+        ((SeekBar)findViewById(R.id.opacity)).setProgress(editorEnvironment.opacity[editorEnvironment.catgoryNum]);
     }
 
     public void changeColor(int color, int position) {
         if (position == 0) {
-            editorEnvironment.currentColor[catgoryNum] = -1;
+            editorEnvironment.currentColor[editorEnvironment.catgoryNum] = -1;
             return;
         }
-        editorEnvironment.currentColor[catgoryNum] = color & 0xFFFFFF;
+        editorEnvironment.currentColor[editorEnvironment.catgoryNum] = color & 0xFFFFFF;
     }
 }

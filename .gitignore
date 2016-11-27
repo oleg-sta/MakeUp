@@ -1,8 +1,12 @@
+*.iml
+/local.properties
+/build.cmd
 /.externalNativeBuild/*
 /bin/*
 /build/*
 /libs/*
 /.gradle/*
+/gradle*
 /obj/*
 /gen/*
 /.idea/*

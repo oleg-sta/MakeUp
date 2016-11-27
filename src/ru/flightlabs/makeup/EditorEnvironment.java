@@ -30,6 +30,7 @@ import ru.flightlabs.masks.model.primitives.Triangle;
 public class EditorEnvironment {
     Context activity;
     ResourcesApp resourcesApp;
+    public int catgoryNum = 0;
 
     public static final int EYE_LASH = 0;
     public static final int EYE_SHADOW = 1;

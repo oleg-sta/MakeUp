@@ -71,6 +71,14 @@
         <item>@raw/eye2_0000_shadow5</item>
         <item>@raw/eye2_0000_shadow6</item>
         <item>@raw/eye2_0000_smokey_eeys</item>
+
+        <item>@raw/eye22_0017_02_03_02</item>
+        <item>@raw/eye22_0018_02_03_01</item>
+        <item>@raw/eye22_0019_02_02_02</item>
+        <item>@raw/eye22_0020_02_02_01</item>
+        <item>@raw/eye22_0021_02_01_02</item>
+        <item>@raw/eye22_0022_02_01_01</item>
+
     </array>
 
     <array name="eyelines">
