@@ -1,4 +1,4 @@
-package ru.flightlabs.makeup;
+package ru.flightlabs.makeup.adapter;
 
 import java.util.List;
 

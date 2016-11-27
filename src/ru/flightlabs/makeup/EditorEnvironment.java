@@ -1,29 +1,22 @@
 package ru.flightlabs.makeup;
 
-import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import org.opencv.android.Utils;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.flightlabs.makeup.utils.Helper;
 import ru.flightlabs.masks.model.ImgLabModel;
 import ru.flightlabs.masks.model.SimpleModel;
 import ru.flightlabs.masks.model.primitives.Triangle;
@@ -43,12 +36,12 @@ public class EditorEnvironment {
     public static final int EYE_LINE = 2;
     public static final int LIPS = 3;
 
-    int[] currentIndexItem = {1, 1, 1, 1};
-    int[] currentColor = {-1, -1, -1, -1};
-    int[] opacity = {50, 50, 50, 50};
-    int newIndexItem = 0;
+    public int[] currentIndexItem = {1, 1, 1, 1};
+    public int[] currentColor = {-1, -1, -1, -1};
+    public int[] opacity = {50, 50, 50, 50};
+    public int newIndexItem = 0;
 
-    Filter filter;
+    public Filter filter;
 
     private static final String TAG = "EditorEnvironment_class";
     // lips and eyes models points and triangles
@@ -72,6 +65,10 @@ public class EditorEnvironment {
     }
 
     public void init() {
+        loadNewMakeUp(EYE_LASH, 0);
+        loadNewMakeUp(EYE_SHADOW, 0);
+        loadNewMakeUp(EYE_LINE, 0);
+        loadNewMakeUp(LIPS, 0);
         loadModels();
     }
 
@@ -126,22 +123,22 @@ public class EditorEnvironment {
         Triangle[] trianglesRightEye = flipTriangles(trianglesLeftEye, new int[] {3, 2, 1, 0, 5, 4, 7, 6, 9, 8});
         Log.i(TAG, "saving Java_ru_flightlabs_makeup_Filter_nativeDrawMask6 java " + currentColor[3]);
         // TODO add checkbox for rgb or hsv bleding
-        if (currentColor[1] != -1) {
+        if (currentColor[EYE_SHADOW] != -1) {
             filter.drawMask(leftEyeShadow, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, opacity[EYE_SHADOW] / 100.0, false, currentColor[1]);
             filter.drawMask(rightEyeShadow, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, opacity[EYE_SHADOW] / 100.0, true, currentColor[1]);
         }
 
-        if (currentColor[2] != -1) {
+        if (currentColor[EYE_LINE] != -1) {
             filter.drawMask(leftEyeLine, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, opacity[EYE_LINE] / 100.0, false, currentColor[2]);
             filter.drawMask(rightEyeLine, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, opacity[EYE_LINE] / 100.0, false, currentColor[2]);
         }
 
-        if (currentColor[0] != -1) {
+        if (currentColor[EYE_LASH] != -1) {
             filter.drawMask(leftEyeLash, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, opacity[EYE_LASH] / 100.0, false, currentColor[0]);
             filter.drawMask(rightEyeLash, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, opacity[EYE_LASH] / 100.0, false, currentColor[0]);
         }
 
-        if (currentColor[3] != -1) {
+        if (currentColor[LIPS] != -1) {
             filter.drawMask(lips, mRgba, pointsWasLips, getOnlyPoints(pointsOnFrame, 12, 20), trianglesLips, opacity[LIPS] / 100.0, true, currentColor[3]);
         }
     }
@@ -194,17 +191,17 @@ public class EditorEnvironment {
 
     // загрузка ресниц и губ
     // FIXME everything is wrong
-    void loadNewMakeUp(int category, int index) {
+    public void loadNewMakeUp(int category, int index) {
         switch (category) {
-            case 0: leftEyeLash = loadPngToMat(resourcesApp.eyelashesSmall.getResourceId(index, 0), false);
+            case EYE_LASH: leftEyeLash = loadPngToMat(resourcesApp.eyelashesSmall.getResourceId(index, 0), false);
                 rightEyeLash = new Mat();
                 Core.flip(leftEyeLash, rightEyeLash, 1);
                 break;
-            case 1: leftEyeShadow = loadPngToMat(resourcesApp.eyeshadowSmall.getResourceId(index, 0), false);
+            case EYE_SHADOW: leftEyeShadow = loadPngToMat(resourcesApp.eyeshadowSmall.getResourceId(index, 0), false);
                 rightEyeShadow = new Mat();
                 Core.flip(leftEyeShadow, rightEyeShadow, 1);
                 break;
-            case 2: leftEyeLine = loadPngToMat(resourcesApp.eyelinesSmall.getResourceId(index, 0), false);
+            case EYE_LINE: leftEyeLine = loadPngToMat(resourcesApp.eyelinesSmall.getResourceId(index, 0), false);
                 rightEyeLine = new Mat();
                 Core.flip(leftEyeLine, rightEyeLine, 1);
                 break;

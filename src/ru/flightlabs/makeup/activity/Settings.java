@@ -1,4 +1,4 @@
-package ru.flightlabs.makeup;
+package ru.flightlabs.makeup.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;

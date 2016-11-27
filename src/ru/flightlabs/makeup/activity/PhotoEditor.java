@@ -1,4 +1,4 @@
-package ru.flightlabs.makeup;
+package ru.flightlabs.makeup.activity;
 
 import android.app.Activity;
 import android.content.res.TypedArray;
@@ -14,6 +14,15 @@ import org.opencv.core.Mat;
 
 import java.io.File;
 
+import ru.flightlabs.makeup.adapter.CategoriesPagerAdapter;
+import ru.flightlabs.makeup.adapter.ColorsPagerAdapter;
+import ru.flightlabs.makeup.CommonI;
+import ru.flightlabs.makeup.EditorEnvironment;
+import ru.flightlabs.makeup.adapter.FilterPagerAdapter;
+import ru.flightlabs.makeup.utils.Helper;
+import ru.flightlabs.makeup.R;
+import ru.flightlabs.makeup.ResourcesApp;
+
 /**
  * Created by sov on 27.11.2016.
  */
@@ -21,8 +30,9 @@ import java.io.File;
 public class PhotoEditor extends Activity implements CommonI {
     private static final String TAG = "PhotoEditor_class";
 
-    Mat photo;
-    ImageView iv;
+    Mat origPhoto;
+    Mat editedPhoto;
+    ImageView resultEdit;
 
     ResourcesApp resourcesApp;
     EditorEnvironment editorEnvironment;
@@ -35,26 +45,15 @@ public class PhotoEditor extends Activity implements CommonI {
         setContentView(R.layout.face_editor);
 
         Bundle b = getIntent().getExtras();
-        String value = null; // or other values
-        if (b != null)
-            value = b.getString("name");
+        final String value = b.getString("name");
 
-        photo = Helper.loadPngToMat(new File(value));
-
-        Bitmap bmp = Helper.matToBmp(photo);
-        iv = (ImageView) findViewById(R.id.edited_image);
-        iv.setImageBitmap(bmp);
-
+        origPhoto = Helper.loadPngToMat(new File(value));
+        resultEdit = (ImageView) findViewById(R.id.edited_image);
 
         // TODO there are code past
         resourcesApp = new ResourcesApp(this);
-        editorEnvironment = new EditorEnvironment(getApplication().getApplicationContext(), resourcesApp);
-        editorEnvironment.init();
-        editorEnvironment.loadNewMakeUp(0, 0);
-        editorEnvironment.loadNewMakeUp(1, 0);
-        editorEnvironment.loadNewMakeUp(2, 0);
-        editorEnvironment.loadNewMakeUp(3, 0);
-        editorEnvironment.filter = ResourcesApp.filter;
+        // TODO if new should be created
+        editorEnvironment = ResourcesApp.editor;
 
         ViewPager viewPagerCategories = (ViewPager) findViewById(R.id.categories);
         CategoriesPagerAdapter pagerCategories = new CategoriesPagerAdapter(this, getResources().getStringArray(R.array.categories));
@@ -77,6 +76,22 @@ public class PhotoEditor extends Activity implements CommonI {
 
             }
         });
+        findViewById(R.id.apply).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Helper.saveMatToFile(editedPhoto, new File(value));
+                // TODO make share button
+                finish();
+            }
+        });
+        findViewById(R.id.not_apply).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new File(value).deleteOnExit();
+                finish();
+            }
+        });
+        rechangePhoto();
 
     }
 
@@ -129,10 +144,11 @@ public class PhotoEditor extends Activity implements CommonI {
         }
         editorEnvironment.currentIndexItem[catgoryNum] = editorEnvironment.newIndexItem;
 
-        Mat mat = photo.clone();
+        Mat mat = origPhoto.clone();
         editorEnvironment.editImage(mat, ResourcesApp.pointsOnFrame);
         Bitmap bmp = Helper.matToBmp(mat);
-        iv.setImageBitmap(bmp);
+        resultEdit.setImageBitmap(bmp);
+        editedPhoto = mat;
     }
 
  }

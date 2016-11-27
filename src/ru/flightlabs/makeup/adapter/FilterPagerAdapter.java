@@ -1,4 +1,4 @@
-package ru.flightlabs.makeup;
+package ru.flightlabs.makeup.adapter;
 
 
 import android.content.Context;
@@ -14,6 +14,9 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import ru.flightlabs.makeup.CommonI;
+import ru.flightlabs.makeup.R;
 
 public class FilterPagerAdapter extends PagerAdapter {
 

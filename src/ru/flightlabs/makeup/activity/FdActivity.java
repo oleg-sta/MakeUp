@@ -1,7 +1,6 @@
-package ru.flightlabs.makeup;
+package ru.flightlabs.makeup.activity;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -13,7 +12,6 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
@@ -45,6 +43,16 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
+import ru.flightlabs.makeup.adapter.CategoriesPagerAdapter;
+import ru.flightlabs.makeup.adapter.ColorsPagerAdapter;
+import ru.flightlabs.makeup.CommonI;
+import ru.flightlabs.makeup.EditorEnvironment;
+import ru.flightlabs.makeup.Filter;
+import ru.flightlabs.makeup.adapter.FilterPagerAdapter;
+import ru.flightlabs.makeup.utils.Helper;
+import ru.flightlabs.makeup.R;
+import ru.flightlabs.makeup.ResourcesApp;
+
 public class FdActivity extends Activity implements CvCameraViewListener2, CommonI {
 
     EditorEnvironment editorEnvironment;
@@ -61,7 +69,6 @@ public class FdActivity extends Activity implements CvCameraViewListener2, Commo
 
     private Mat mRgba;
     private Mat mGray;
-    private File mCascadeFile;
     private CascadeClassifier mJavaDetector;
 
     private float mRelativeFaceSize = 0.5f;
@@ -108,7 +115,7 @@ public class FdActivity extends Activity implements CvCameraViewListener2, Commo
                     File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
                     AssetManager assetManager = getAssets();
 
-                    mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
+                    File mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
                     Helper.resourceToFile(getResources().openRawResource(R.raw.haarcascade_frontalface_alt2), mCascadeFile);
                     detectorName = "/storage/extSdCard/mdl1.dat";
                     if (!new File(detectorName).exists()) {
@@ -138,12 +145,9 @@ public class FdActivity extends Activity implements CvCameraViewListener2, Commo
                     ResourcesApp.filter = filter;
                     mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
                     //loadNewMakeUp(0);
+                    editorEnvironment.init();
                     editorEnvironment.filter = filter;
                     // TODO refactor
-                    editorEnvironment.loadNewMakeUp(0, 0);
-                    editorEnvironment.loadNewMakeUp(1, 0);
-                    editorEnvironment.loadNewMakeUp(2, 0);
-                    editorEnvironment.loadNewMakeUp(3, 0);
                 }
                 break;
                 default: {
@@ -212,7 +216,6 @@ public class FdActivity extends Activity implements CvCameraViewListener2, Commo
 
 
         changeCategory(0);
-        editorEnvironment.init();
 
         findViewById(R.id.rotate_camera).setOnClickListener(new OnClickListener() {
             @Override
@@ -310,6 +313,45 @@ public class FdActivity extends Activity implements CvCameraViewListener2, Commo
             Rect face = facesArray[0];
             Point[] pointsOnFrame = filter.findEyes(mGray, face);
             ResourcesApp.pointsOnFrame = pointsOnFrame;
+
+            if (makePhoto && facesArray.length > 0) {
+                // TODO save original
+                makePhoto = false;
+                Log.i(TAG, "saving start " + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
+                File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+                File newFile = new File(file, DIRECTORY_SELFIE);
+                if (!newFile.exists()) {
+                    newFile.mkdirs();
+                }
+                final SharedPreferences prefs = getSharedPreferences(Settings.PREFS, Context.MODE_PRIVATE);
+                int counter = prefs.getInt(Settings.COUNTER_PHOTO, 0);
+                counter++;
+                Editor editor = prefs.edit();
+                editor.putInt(Settings.COUNTER_PHOTO, counter);
+                editor.commit();
+                final File fileJpg = new File(newFile, "MakeUp_" + counter + " .jpg");
+
+                Helper.saveMatToFile(mRgba, fileJpg);
+                // TODO посмотреть альтернативные способы
+                MediaScannerConnection.scanFile(this, new String[]{fileJpg.getPath()}, new String[]{"image/jpeg"}, null);
+                final Activity d = this;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        borderCam.setVisibility(View.INVISIBLE);
+                        cameraButton.setImageResource(R.drawable.ic_camera);
+                        Intent intent = new Intent(d, PhotoEditor.class);
+                        Bundle b = new Bundle();
+                        b.putString("name", fileJpg.getPath()); //Your id
+                        intent.putExtras(b); //Put your id to your next Intent
+                        ResourcesApp.face = facesArray[0];
+                        ResourcesApp.editor = editorEnvironment;
+                        startActivity(intent);
+                    }
+                });
+                Log.i(TAG, "saving end " + true);
+            }
+
             if (debug) {
                 for (Point p : pointsOnFrame) {
                     Imgproc.circle(mRgba, p, 1, new Scalar(255, 255, 255));
@@ -319,45 +361,6 @@ public class FdActivity extends Activity implements CvCameraViewListener2, Commo
             editorEnvironment.editImage(mRgba, pointsOnFrame);
         }
 
-        if (makePhoto && facesArray.length > 0) {
-            // TODO save original
-            makePhoto = false;
-            Log.i(TAG, "saving start " + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
-            File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-            File newFile = new File(file, DIRECTORY_SELFIE);
-            if (!newFile.exists()) {
-                newFile.mkdirs();
-            }
-            final SharedPreferences prefs = getSharedPreferences(Settings.PREFS, Context.MODE_PRIVATE);
-            int counter = prefs.getInt(Settings.COUNTER_PHOTO, 0);
-            counter++;
-            Editor editor = prefs.edit();
-            editor.putInt(Settings.COUNTER_PHOTO, counter);
-            editor.commit();
-            final File fileJpg = new File(newFile, "MakeUp_" + counter + " .jpg");
-
-            Bitmap bitmap = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
-            Utils.matToBitmap(mRgba, bitmap);
-            Helper.saveBitmap(fileJpg.getPath(), bitmap);
-            bitmap.recycle();
-            // TODO посмотреть альтернативные способы
-            MediaScannerConnection.scanFile(this, new String[]{fileJpg.getPath()}, new String[]{"image/jpeg"}, null);
-            final Activity d = this;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    borderCam.setVisibility(View.INVISIBLE);
-                    cameraButton.setImageResource(R.drawable.ic_camera);
-                    Intent intent = new Intent(d, PhotoEditor.class);
-                    Bundle b = new Bundle();
-                    b.putString("name", fileJpg.getPath()); //Your id
-                    intent.putExtras(b); //Put your id to your next Intent
-                    ResourcesApp.face = facesArray[0];
-                    startActivity(intent);
-                }
-            });
-            Log.i(TAG, "saving end " + true);
-        }
         return mRgba;
     }
 

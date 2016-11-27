@@ -16,12 +16,13 @@ public class ResourcesApp {
     public static Filter filter;
     public static Rect face;
     public static Point[] pointsOnFrame;
+    public static EditorEnvironment editor;
 
     // FIXME make it small
-    TypedArray eyelashesSmall;
-    TypedArray eyeshadowSmall;
-    TypedArray eyelinesSmall;
-    TypedArray lipsSmall;
+    public TypedArray eyelashesSmall;
+    public TypedArray eyeshadowSmall;
+    public TypedArray eyelinesSmall;
+    public TypedArray lipsSmall;
 
     public ResourcesApp(Context context) {
         eyelashesSmall = context.getResources().obtainTypedArray(R.array.eyelashes);

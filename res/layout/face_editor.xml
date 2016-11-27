@@ -13,6 +13,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
+        <ImageView
+            android:id="@+id/apply"
+            android:layout_gravity="top"
+            android:layout_alignParentRight="true"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ok"/>
+
+        <ImageView
+            android:id="@+id/not_apply"
+            android:layout_gravity="top"
+            android:layout_alignParentLeft="true"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/no_ok"/>
+
         <SeekBar
             android:id="@+id/opacity"
             android:layout_width="match_parent"

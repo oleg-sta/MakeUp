@@ -1,4 +1,4 @@
-package ru.flightlabs.makeup;
+package ru.flightlabs.makeup.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -73,5 +73,12 @@ public class Helper {
         Mat mat = new Mat(bmp.getHeight(), bmp.getWidth(), CvType.CV_8UC4);
         Utils.bitmapToMat(bmp, mat, true);
         return mat;
+    }
+
+    public static void saveMatToFile(Mat mRgba, File fileJpg) {
+        Bitmap bitmap = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(mRgba, bitmap);
+        saveBitmap(fileJpg.getPath(), bitmap);
+        bitmap.recycle();
     }
 }

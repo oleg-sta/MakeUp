@@ -1,7 +1,7 @@
-package ru.flightlabs.makeup;
+package ru.flightlabs.makeup.adapter;
 
 import android.content.Context;
-import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,28 +10,30 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import ru.flightlabs.makeup.CommonI;
+import ru.flightlabs.makeup.R;
+
 /**
  * Created by sov on 19.11.2016.
  */
 
-public class CategoriesPagerAdapter extends PagerAdapter {
+public class ColorsPagerAdapter  extends PagerAdapter {
 
     CommonI fdAct;
     Context mContext;
-    String[] texts;
+    int[] colors;
     LayoutInflater mLayoutInflater;
 
-    public CategoriesPagerAdapter(CommonI context, String[] texts) {
-        // something terrible
-        mContext = (Context)context;
+    public ColorsPagerAdapter(CommonI context, int[] colors) {
+        mContext = (Context) context;
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.fdAct = context;
-        this.texts = texts;
+        this.colors = colors;
     }
 
     @Override
     public int getCount() {
-        return texts.length;
+        return colors.length;
     }
 
     @Override
@@ -41,15 +43,18 @@ public class CategoriesPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
-        View itemView = mLayoutInflater.inflate(R.layout.category, container, false);
-        TextView textView = (TextView) itemView.findViewById(R.id.item_text);
-        textView.setText(texts[position]);
+        View itemView = mLayoutInflater.inflate(R.layout.item_effect, container, false);
+
+        ImageView imageView = (ImageView) itemView.findViewById(R.id.item_image);
+        imageView.setImageResource(R.drawable.color_picker);
+        imageView.setBackgroundColor(Color.WHITE);
+        imageView.setBackgroundColor(colors[position]);
         container.addView(itemView);
         itemView.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                fdAct.changeCategory(position);
+                fdAct.changeColor(colors[position], position);
 
             }
         });
