@@ -22,8 +22,10 @@ repositories {
 }
 
 dependencies {
-    compile "com.android.support:support-v4:22.2.+"
-    compile "com.android.support:appcompat-v7:22.2.+"
+    compile 'com.android.support:support-v4:22.2.+'
+    compile 'com.android.support:appcompat-v7:22.2.+'
+    compile project(':commonlib2')
+    compile project(':ecogallery2')
 }
 
 android {
@@ -82,32 +84,5 @@ android {
             }
         }
     }
-
-
-    task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
-        commandLine ndkDir + "\\ndk-build.cmd",
-                'NDK_PROJECT_PATH=build/intermediates/ndk',
-                'NDK_LIBS_OUT=libs',
-                'APP_BUILD_SCRIPT=jni/Android.mk',
-                'NDK_APPLICATION_MK=jni/Application.mk',
-                'OPEN-CV-SDK=' + OPEN_CV_SDK
-    }
-
-    tasks.withType(JavaCompile) {
-        compileTask -> compileTask.dependsOn ndkBuild
-    }
-
-    defaultConfig {
-        ndk {
-            abiFilters "armeabi-v7a"
-        }
-    }
-
-    externalNativeBuild {
-        ndkBuild {
-            path 'jni/Android.mk'
-        }
-    }
-
 
 }

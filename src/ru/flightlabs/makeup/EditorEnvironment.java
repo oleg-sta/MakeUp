@@ -30,26 +30,25 @@ import ru.flightlabs.masks.model.primitives.Triangle;
 public class EditorEnvironment {
     Context activity;
     ResourcesApp resourcesApp;
-    public int catgoryNum = 0;
+    public static int catgoryNum = 0;
 
     public static final int EYE_LASH = 0;
     public static final int EYE_SHADOW = 1;
     public static final int EYE_LINE = 2;
     public static final int LIPS = 3;
+    public static final int FASHION = 4;
 
-    public int[] currentIndexItem = {1, 1, 1, 1};
-    public int[] currentColor = {-1, -1, -1, -1};
-    public int[] opacity = {50, 50, 50, 50};
-    public int newIndexItem = 0;
-
-    public Filter filter;
+    public static int[] currentIndexItem = {1, 1, 1, 1, 1};
+    public static int[] currentColor = {-1, -1, -1, -1, -1};
+    public static int[] opacity = {50, 50, 50, 50, 50};
+    public static int newIndexItem = 0;
 
     private static final String TAG = "EditorEnvironment_class";
     // lips and eyes models points and triangles
-    ru.flightlabs.masks.model.primitives.Point[] pointsLeftEye;
-    Triangle[] trianglesLeftEye;
-    ru.flightlabs.masks.model.primitives.Point[] pointsWasLips;
-    Triangle[] trianglesLips;
+    public static ru.flightlabs.masks.model.primitives.Point[] pointsLeftEye;
+    public static Triangle[] trianglesLeftEye;
+    public static ru.flightlabs.masks.model.primitives.Point[] pointsWasLips;
+    public static Triangle[] trianglesLips;
 
 
     Mat leftEyeLash;
@@ -90,7 +89,7 @@ public class EditorEnvironment {
             pointsWasLips = modelFromLibs.getPointsWas();
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -118,6 +117,7 @@ public class EditorEnvironment {
     }
 
     public void editImage(Mat mRgba, Point[] pointsOnFrame) {
+        // we should use opengl
         Point[] onImageEyeLeft = getOnlyPoints(pointsOnFrame, 0, 6);
         Point[] onImageEyeRight = getOnlyPoints(pointsOnFrame, 6, 6);
         ru.flightlabs.masks.model.primitives.Point[] pointsRightEye = getReversePoint(pointsLeftEye, rightEyeLash.width(), new int[] {3, 2, 1, 0, 5, 4, 7, 6, 9, 8});
@@ -125,22 +125,22 @@ public class EditorEnvironment {
         Log.i(TAG, "saving Java_ru_flightlabs_makeup_Filter_nativeDrawMask6 java " + currentColor[3]);
         // TODO add checkbox for rgb or hsv bleding
         if (currentColor[EYE_SHADOW] != -1) {
-            filter.drawMask(leftEyeShadow, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, opacity[EYE_SHADOW] / 100.0, false, currentColor[1]);
-            filter.drawMask(rightEyeShadow, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, opacity[EYE_SHADOW] / 100.0, true, currentColor[1]);
+            //filter.drawMask(leftEyeShadow, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, opacity[EYE_SHADOW] / 100.0, false, currentColor[1]);
+            //filter.drawMask(rightEyeShadow, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, opacity[EYE_SHADOW] / 100.0, true, currentColor[1]);
         }
 
         if (currentColor[EYE_LINE] != -1) {
-            filter.drawMask(leftEyeLine, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, opacity[EYE_LINE] / 100.0, false, currentColor[2]);
-            filter.drawMask(rightEyeLine, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, opacity[EYE_LINE] / 100.0, false, currentColor[2]);
+            //filter.drawMask(leftEyeLine, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, opacity[EYE_LINE] / 100.0, false, currentColor[2]);
+            //filter.drawMask(rightEyeLine, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, opacity[EYE_LINE] / 100.0, false, currentColor[2]);
         }
 
         if (currentColor[EYE_LASH] != -1) {
-            filter.drawMask(leftEyeLash, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, opacity[EYE_LASH] / 100.0, false, currentColor[0]);
-            filter.drawMask(rightEyeLash, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, opacity[EYE_LASH] / 100.0, false, currentColor[0]);
+            //filter.drawMask(leftEyeLash, mRgba, pointsLeftEye, onImageEyeLeft, trianglesLeftEye, opacity[EYE_LASH] / 100.0, false, currentColor[0]);
+            //filter.drawMask(rightEyeLash, mRgba, pointsRightEye, onImageEyeRight, trianglesRightEye, opacity[EYE_LASH] / 100.0, false, currentColor[0]);
         }
 
         if (currentColor[LIPS] != -1) {
-            filter.drawMask(lips, mRgba, pointsWasLips, getOnlyPoints(pointsOnFrame, 12, 20), trianglesLips, opacity[LIPS] / 100.0, true, currentColor[3]);
+            //filter.drawMask(lips, mRgba, pointsWasLips, getOnlyPoints(pointsOnFrame, 12, 20), trianglesLips, opacity[LIPS] / 100.0, true, currentColor[3]);
         }
     }
 
@@ -164,7 +164,7 @@ public class EditorEnvironment {
         return result;
     }
 
-    private Point[] getOnlyPoints(Point[] pointsOnFrame, int indexStart, int number) {
+    public static Point[] getOnlyPoints(Point[] pointsOnFrame, int indexStart, int number) {
         Point[] result = new Point[number];
         for (int i = 0; i < number; i++) {
             result[i] = pointsOnFrame[indexStart + i];
@@ -193,6 +193,7 @@ public class EditorEnvironment {
     // загрузка ресниц и губ
     // FIXME everything is wrong
     public void loadNewMakeUp(int category, int index) {
+        currentIndexItem[category] = index;
         switch (category) {
             case EYE_LASH: leftEyeLash = loadPngToMat(resourcesApp.eyelashesSmall.getResourceId(index, 0), false);
                 rightEyeLash = new Mat();

@@ -17,4 +17,6 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <color name="main_makeup_color">#f7f7f7</color>
+
 </resources>

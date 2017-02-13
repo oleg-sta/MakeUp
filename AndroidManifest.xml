@@ -13,7 +13,7 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         <activity
-            android:name=".activity.FdActivity"
+            android:name=".activity.ActivityMakeUp"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
@@ -24,11 +24,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.Gallery"
+            android:name=".activity.ActivityPhoto"
             android:label="@string/app_name"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".activity.PhotoEditor"
+            android:name=".activity.ActivitySettings"
             android:label="@string/app_name"
             android:screenOrientation="portrait"></activity>
     </application>
