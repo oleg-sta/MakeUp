@@ -40,10 +40,12 @@ public class ActivityPhoto extends Activity {
                 onBackPressed();
             }
         });
-        findViewById(R.id.thras_button).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.thrash_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // remove picture
+                // TODO use adapter
+                new File(fileName).delete();
+                onBackPressed();
             }
         });
         findViewById(R.id.share_button).setOnClickListener(new View.OnClickListener() {

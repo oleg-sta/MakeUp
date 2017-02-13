@@ -10,10 +10,10 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 
@@ -49,9 +49,11 @@ public class ActivityMakeUp extends Activity implements CommonI {
     CompModel compModel;
     ProgressBar progressBar;
     public static GLSurfaceView gLSurfaceView;
-    FastCameraView sv;
-
-    private SurfaceHolder mHolder;
+    FastCameraView camereView;
+    MaskRenderer meRender;
+    ImageView rotateCamera;
+    ImageView backButton;
+    ImageView buttonCamera;
 
     private static final String TAG = "ActivityFast";
 
@@ -83,7 +85,7 @@ public class ActivityMakeUp extends Activity implements CommonI {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_makeup);
 
-        sv = (FastCameraView) findViewById(R.id.fd_fase_surface_view);
+        camereView = (FastCameraView) findViewById(R.id.fd_fase_surface_view);
 
         compModel = new CompModel();
         compModel.context = getApplicationContext();
@@ -110,10 +112,11 @@ public class ActivityMakeUp extends Activity implements CommonI {
                 Settings.useKalman = b;
             }
         });
-        findViewById(R.id.rotate_camera).setOnClickListener(new View.OnClickListener() {
+        rotateCamera = (ImageView)findViewById(R.id.rotate_camera);
+        rotateCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sv.swapCamera();
+                camereView.swapCamera();
             }
         });
         ViewPager viewPagerCategories = (ViewPager) findViewById(R.id.categories);
@@ -143,17 +146,34 @@ public class ActivityMakeUp extends Activity implements CommonI {
         gLSurfaceView.getHolder().setFormat(PixelFormat.TRANSPARENT);
         gLSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         //gLSurfaceView.setZOrderOnTop(true);
-        MaskRenderer meRender = new MaskRenderer(this, compModel, new ShaderEffectMakeUp(this));
+        meRender = new MaskRenderer(this, compModel, new ShaderEffectMakeUp(this));
         gLSurfaceView.setEGLContextClientVersion(2);
         gLSurfaceView.setRenderer(meRender);
         gLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//RENDERMODE_WHEN_DIRTY);
         //gLSurfaceView.setZOrderOnTop(false);
 
+        backButton = (ImageView)findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+        buttonCamera = (ImageView)findViewById(R.id.camera_button);
         findViewById(R.id.camera_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Static.makePhoto = true;
-                //startActivity(new Intent(getApplication(), ActivityPhoto.class));
+                if (!meRender.staticView) {
+                    meRender.staticView = true;
+                    gLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+                    camereView.disableView();
+                    buttonCamera.setImageResource(R.drawable.ic_save);
+                    backButton.setVisibility(View.VISIBLE);
+                    rotateCamera.setVisibility(View.GONE);
+                } else {
+                    Static.makePhoto = true;
+                    gLSurfaceView.requestRender();
+                }
             }
         });
         findViewById(R.id.settings).setOnClickListener(new View.OnClickListener() {
@@ -178,6 +198,16 @@ public class ActivityMakeUp extends Activity implements CommonI {
         editorEnvironment.init();
         Settings.makeUp = true;
         Settings.clazz = ActivityPhoto.class;
+
+        // FIXME wrong way
+        if (meRender.staticView) {
+            meRender.staticView = false;
+            gLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+            buttonCamera.setImageResource(R.drawable.ic_photo);
+            backButton.setVisibility(View.GONE);
+            rotateCamera.setVisibility(View.VISIBLE);
+            camereView.enableView(); // FIXME not good
+        }
     }
 
 
@@ -187,7 +217,7 @@ public class ActivityMakeUp extends Activity implements CommonI {
         super.onPause();
         gLSurfaceView.onPause();
         //TODO has something todo with FastCameraView (rlease, close etc.)
-        sv.disableView();
+        camereView.disableView();
     }
 
     public void changeCategory(int position) {
@@ -237,11 +267,40 @@ public class ActivityMakeUp extends Activity implements CommonI {
         ColorsPagerAdapter pagerColors = new ColorsPagerAdapter(this, getResources().getIntArray(resourceId));
         viewPagerColors.setAdapter(pagerColors);
         ((SeekBar)findViewById(R.id.opacity)).setProgress(editorEnvironment.opacity[editorEnvironment.catgoryNum]);
+        ((SeekBar)findViewById(R.id.opacity)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (meRender.staticView) {
+            meRender.staticView = false;
+            gLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+            buttonCamera.setImageResource(R.drawable.ic_photo);
+            backButton.setVisibility(View.GONE);
+            rotateCamera.setVisibility(View.VISIBLE);
+            camereView.enableView();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
     public void changeItemInCategory(int newItem) {
         editorEnvironment.newIndexItem = newItem;
+        gLSurfaceView.requestRender();
 
     }
 
@@ -251,5 +310,6 @@ public class ActivityMakeUp extends Activity implements CommonI {
             return;
         }
         editorEnvironment.currentColor[editorEnvironment.catgoryNum] = color & 0xFFFFFF;
+        gLSurfaceView.requestRender();
     }
 }

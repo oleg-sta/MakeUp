@@ -29,7 +29,7 @@
         android:layout_centerVertical="true"
         android:layout_alignTop="@+id/lower"
         android:layout_alignBottom="@+id/lower"
-        android:src="@drawable/ic_save"/>
+        android:src="@drawable/ic_share"/>
 
     <ImageView
         android:id="@+id/back_button"
@@ -43,7 +43,7 @@
         android:layout_marginLeft="20dp"/>
 
     <ImageView
-        android:id="@+id/thras_button"
+        android:id="@+id/thrash_button"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_alignParentRight="true"
