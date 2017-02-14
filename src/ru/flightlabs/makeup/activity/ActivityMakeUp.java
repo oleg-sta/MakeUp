@@ -128,7 +128,9 @@ public class ActivityMakeUp extends Activity implements CommonI {
         ((SeekBar)findViewById(R.id.opacity)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                Log.i(TAG, "opacity " + editorEnvironment.catgoryNum + " " + i);
                 editorEnvironment.opacity[editorEnvironment.catgoryNum] = i;
+                gLSurfaceView.requestRender();
             }
 
             @Override
@@ -267,20 +269,6 @@ public class ActivityMakeUp extends Activity implements CommonI {
         ColorsPagerAdapter pagerColors = new ColorsPagerAdapter(this, getResources().getIntArray(resourceId));
         viewPagerColors.setAdapter(pagerColors);
         ((SeekBar)findViewById(R.id.opacity)).setProgress(editorEnvironment.opacity[editorEnvironment.catgoryNum]);
-        ((SeekBar)findViewById(R.id.opacity)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
     }
 
     @Override
