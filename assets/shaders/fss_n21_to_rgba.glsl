@@ -5,6 +5,9 @@ varying vec2 texCoord;
 uniform int u_facing;
 uniform float cameraWidth;
 uniform float cameraHeight;
+// remember, camera is rotated 90 degree
+uniform float previewWidth;
+uniform float previewHeight;
 
 const mat3 yuv2rgb = mat3(
                         1, 0, 1.2802,
@@ -16,19 +19,18 @@ const mat3 yuv2rgb = mat3(
 void main() {
   vec2 coord = vec2(texCoord.y, texCoord.x);
   if (u_facing == 0) coord.x = 1.0 - coord.x;
+  // centered pic by maximum size
   coord.y = 1.0 - coord.y;
-
-  float hh = cameraHeight / 2.0;
-  vec2 realCoord = vec2(floor(coord.x * cameraWidth + 0.5), floor(coord.y * hh + 0.5));
-  vec2 uCoord = vec2(floor(realCoord.x / 2.0) * 2.0 / cameraWidth, floor(realCoord.y / 2.0) * 2.0 / hh);
-  vec2 vCoord = vec2((floor(realCoord.x / 2.0) * 2.0 + 1.0) / cameraWidth, floor(realCoord.y / 2.0) * 2.0 / hh);
-  uCoord = vec2(realCoord.x / cameraWidth, realCoord.y  / hh);
-  vCoord = vec2(realCoord.x / cameraWidth, realCoord.y  / hh);
-  uCoord = coord;
-  vCoord = coord;
+  if (previewWidth / previewHeight > cameraHeight / cameraWidth)
+  {
+    coord.x = 0.5 - (0.5 - coord.x) * previewHeight * (cameraHeight / previewWidth) / cameraWidth;// (cameraHeight / cameraWidth) * (previewWidth / previewHeight);
+  } else if (previewWidth / previewHeight < cameraHeight / cameraWidth)
+  {
+    coord.y = 0.5 - (0.5 - coord.y) * previewWidth * (cameraWidth / previewHeight) / cameraHeight;
+  }
   float y = texture2D(sTexture, coord).r;
-  float u = texture2D(sTexture2, uCoord).a;
-  float v = texture2D(sTexture2, vCoord).r;
+  float u = texture2D(sTexture2, coord).a;
+  float v = texture2D(sTexture2, coord).r;
   vec4 color;
   // another way sligthly lighter
   // TODO find correct way of transfromation
@@ -41,7 +43,7 @@ void main() {
                   u - 0.5,
                   v - 0.5
                   );
-      vec3 rgb = yuv * yuv2rgb;
-      color = vec4(rgb, 1.0);
+  vec3 rgb = yuv * yuv2rgb;
+  color = vec4(rgb, 1.0);
   gl_FragColor = color;
 }
