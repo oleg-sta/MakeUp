@@ -77,7 +77,7 @@ public class EditorEnvironment {
         loadNewMakeUp(LIPS, 0);
         EYE_LASH_COLORS = activity.getResources().getIntArray(R.array.colors_eyelashes);
         EYE_SHADOW_COLORS = activity.getResources().getIntArray(R.array.colors_shadow);
-        EYE_LINE_COLORS = activity.getResources().getIntArray(R.array.colors_shadow);
+        EYE_LINE_COLORS = activity.getResources().getIntArray(R.array.colors_eyelashes);
         LIPS_COLORS = activity.getResources().getIntArray(R.array.colors_lips);
         loadModels();
     }
