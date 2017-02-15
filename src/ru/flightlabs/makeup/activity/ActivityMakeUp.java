@@ -44,6 +44,7 @@ import us.feras.ecogallery.EcoGalleryAdapterView;
 
 public class ActivityMakeUp extends Activity implements CommonI {
 
+    public static boolean useHsvOrColorized = false;
     public static EditorEnvironment editorEnvironment;
     ResourcesApp resourcesApp;
     CompModel compModel;
@@ -110,6 +111,12 @@ public class ActivityMakeUp extends Activity implements CommonI {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 Settings.useKalman = b;
+            }
+        });
+        ((CheckBox)findViewById(R.id.useCoorized)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                useHsvOrColorized = b;
             }
         });
         rotateCamera = (ImageView)findViewById(R.id.rotate_camera);
@@ -225,25 +232,25 @@ public class ActivityMakeUp extends Activity implements CommonI {
     public void changeCategory(int position) {
         int resourceId = R.array.colors_shadow;
 
-        editorEnvironment.newIndexItem = 0;
+        //editorEnvironment.newIndexItem = 0;
         editorEnvironment.catgoryNum = position;
         EcoGallery viewPager = (EcoGallery) findViewById(R.id.elements);
         TypedArray iconsCategory = null;
-        if (position == 0) {
+        if (position == EditorEnvironment.EYE_LASH) {
             iconsCategory = resourcesApp.eyelashesSmall;
             resourceId = R.array.colors_eyelashes;
-        } else if (position == 1) {
+        } else if (position == EditorEnvironment.EYE_SHADOW) {
             iconsCategory = resourcesApp.eyeshadowSmall;
             resourceId = R.array.colors_shadow;
-        } else if (position == 2) {
+        } else if (position == EditorEnvironment.EYE_LINE) {
             resourceId = R.array.colors_eyelashes;
             iconsCategory = resourcesApp.eyelinesSmall;
-        } else if (position == 3) {
+        } else if (position == EditorEnvironment.LIPS) {
             iconsCategory = resourcesApp.lipsSmall;
             resourceId = R.array.colors_lips;
         } else  {
             iconsCategory = resourcesApp.fashionSmall;
-            resourceId = R.array.colors_lips;
+            resourceId = R.array.colors_none;
         }
         CategoriesNewAdapter pager = new CategoriesNewAdapter(this, iconsCategory);
         viewPager.setAdapter(pager);
@@ -253,6 +260,7 @@ public class ActivityMakeUp extends Activity implements CommonI {
                 changeItemInCategory(position);
             }
         });
+        viewPager.setSelection(editorEnvironment.currentIndexItem[editorEnvironment.catgoryNum]);
         viewPager.setOnItemSelectedListener(new EcoGalleryAdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(EcoGalleryAdapterView<?> parent, View view, int position, long id) {
@@ -287,17 +295,30 @@ public class ActivityMakeUp extends Activity implements CommonI {
 
     @Override
     public void changeItemInCategory(int newItem) {
+        Log.i(TAG, "changeItemInCategory " + newItem);
         editorEnvironment.newIndexItem = newItem;
+        if (editorEnvironment.catgoryNum == EditorEnvironment.FASHION) {
+            Log.i(TAG, "changeItemInCategory ");
+            String[] fashions = getResources().getStringArray(R.array.fashion_ic1);
+            Log.i(TAG, "changeItemInCategory " + fashions[newItem]);
+            String[] fash = fashions[newItem].split(";");
+            editorEnvironment.currentIndexItem[EditorEnvironment.EYE_LASH] = Integer.parseInt(fash[0]);
+            editorEnvironment.currentIndexItem[EditorEnvironment.EYE_SHADOW] = Integer.parseInt(fash[1]);
+            editorEnvironment.currentIndexItem[EditorEnvironment.EYE_LINE] = Integer.parseInt(fash[2]);
+            editorEnvironment.currentIndexItem[EditorEnvironment.LIPS] = Integer.parseInt(fash[3]);
+            editorEnvironment.currentColor[EditorEnvironment.EYE_LASH] = Integer.parseInt(fash[4]);
+            editorEnvironment.currentColor[EditorEnvironment.EYE_SHADOW] = Integer.parseInt(fash[5]);
+            editorEnvironment.currentColor[EditorEnvironment.EYE_LINE] = Integer.parseInt(fash[6]);
+            editorEnvironment.currentColor[EditorEnvironment.LIPS] = Integer.parseInt(fash[7]);
+        } else {
+            editorEnvironment.currentIndexItem[editorEnvironment.catgoryNum] = newItem;
+        }
         gLSurfaceView.requestRender();
-
     }
 
     public void changeColor(int color, int position) {
-        if (position == 0) {
-            editorEnvironment.currentColor[editorEnvironment.catgoryNum] = -1;
-            return;
-        }
-        editorEnvironment.currentColor[editorEnvironment.catgoryNum] = color & 0xFFFFFF;
+        Log.i(TAG, "changeColor " + position);
+        editorEnvironment.currentColor[editorEnvironment.catgoryNum] = position;
         gLSurfaceView.requestRender();
     }
 }

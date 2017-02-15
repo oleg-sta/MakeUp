@@ -41,6 +41,8 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/logo"
         android:src="@drawable/ic_like"
+        android:clickable="true"
+        android:onClick="rateApp"
         android:cropToPadding="false"
         android:adjustViewBounds="true" />
 
@@ -51,6 +53,8 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/like"
         android:text="Оценить приложение"
+        android:clickable="true"
+        android:onClick="rateApp"
         android:textSize="20sp"
         android:textColor="#b1b1b1" />
 
@@ -60,6 +64,8 @@
         android:layout_height="20dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/text_like"
+        android:clickable="true"
+        android:onClick="rateApp"
         android:src="@drawable/stars"
         android:cropToPadding="false"
         android:adjustViewBounds="true" />
@@ -81,6 +87,8 @@
         android:layout_height="60dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/sep1"
+        android:clickable="true"
+        android:onClick="shareApp"
         android:src="@drawable/ic_little_share"
         android:cropToPadding="false"
         android:adjustViewBounds="true" />
@@ -91,6 +99,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/share"
+        android:clickable="true"
+        android:onClick="shareApp"
         android:text="Поделиться приложением"
         android:textSize="20sp"
         android:textColor="#b1b1b1" />
@@ -112,6 +122,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/sep2"
+        android:clickable="true"
+        android:onClick="gotoUrl"
         android:text="www.flightlabs.ru"
         android:textSize="20sp"
         android:textColor="#e84044" />

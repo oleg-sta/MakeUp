@@ -55,6 +55,8 @@
         <item>#FFFFFF</item>
     </array>
 
+    <array name="colors_none"/>
+
     <array name="eyelashes">
         <item>@raw/eye2_0000_lash</item>
         <item>@raw/eye2_0000_lash2</item>
@@ -85,6 +87,15 @@
         <item>@raw/lips_icon_2</item>
     </array>
 
+    <array name="fashion_ic1">
+        <item>0;0;0;0;1;2;3;4</item>
+        <item>0;1;0;0;2;3;4;1</item>
+        <item>0;0;1;0;3;4;1;2</item>
+        <item>0;0;0;1;4;1;2;3</item>
+        <item>1;0;0;0;1;2;3;4</item>
+        <item>0;1;0;0;2;3;4;1</item>
+    </array>
+
     <array name="fashion_ic">
         <item>@drawable/fashion_1</item>
         <item>@drawable/fashion_1</item>
@@ -92,7 +103,6 @@
         <item>@drawable/fashion_1</item>
         <item>@drawable/fashion_1</item>
         <item>@drawable/fashion_1</item>
-
     </array>
 
 </resources>

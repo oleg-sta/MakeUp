@@ -38,6 +38,12 @@ public class EditorEnvironment {
     public static final int LIPS = 3;
     public static final int FASHION = 4;
 
+    public static int[] EYE_LASH_COLORS;
+    public static int[] EYE_SHADOW_COLORS;
+    public static int[] EYE_LINE_COLORS;
+    public static int[] LIPS_COLORS;
+
+    public static int[] prevIndexItem = {1, 1, 1, 1, 1};
     public static int[] currentIndexItem = {1, 1, 1, 1, 1};
     public static int[] currentColor = {-1, -1, -1, -1, -1};
     public static int[] opacity = {50, 50, 50, 50, 50};
@@ -69,6 +75,10 @@ public class EditorEnvironment {
         loadNewMakeUp(EYE_SHADOW, 0);
         loadNewMakeUp(EYE_LINE, 0);
         loadNewMakeUp(LIPS, 0);
+        EYE_LASH_COLORS = activity.getResources().getIntArray(R.array.colors_eyelashes);
+        EYE_SHADOW_COLORS = activity.getResources().getIntArray(R.array.colors_shadow);
+        EYE_LINE_COLORS = activity.getResources().getIntArray(R.array.colors_shadow);
+        LIPS_COLORS = activity.getResources().getIntArray(R.array.colors_lips);
         loadModels();
     }
 

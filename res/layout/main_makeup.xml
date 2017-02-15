@@ -33,8 +33,8 @@
             android:layout_height="40dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="2dip"
-            android:layout_marginTop="2dip"
+            android:layout_marginLeft="10dip"
+            android:layout_marginTop="10dip"
             android:src="@drawable/ic_settings2" />
 
         <View
@@ -76,6 +76,14 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="154dp" />
 
+        <CheckBox
+            android:id="@+id/useCoorized"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="204dp" />
+
         <SeekBar
             android:id="@+id/opacity"
             android:layout_width="match_parent"
@@ -98,7 +106,7 @@
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_above="@+id/categories"
-            android:layout_marginBottom="2dip" >
+            android:layout_marginBottom="10dip" >
         </android.support.v4.view.ViewPager>
 
          <android.support.v4.view.ViewPager
@@ -123,17 +131,20 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/ic_rotate_camera"
+            android:layout_marginRight="10dip"
+            android:layout_marginTop="10dip"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentRight="true" />
 
         <ImageView
             android:id="@+id/back_button"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:layout_marginLeft="20dp"
             android:src="@drawable/ic_back"
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
+            android:layout_marginBottom="33dp"
             android:visibility="gone"/>
 
     </RelativeLayout>
