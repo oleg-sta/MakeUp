@@ -56,7 +56,7 @@
         android:clickable="true"
         android:onClick="rateApp"
         android:textSize="20sp"
-        android:textColor="#b1b1b1" />
+        android:textColor="@color/setting_text" />
 
     <ImageView
         android:id="@+id/stars"
@@ -93,18 +93,6 @@
         android:cropToPadding="false"
         android:adjustViewBounds="true" />
 
-    <TextView
-        android:id="@+id/text_share"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/share"
-        android:clickable="true"
-        android:onClick="shareApp"
-        android:text="Поделиться приложением"
-        android:textSize="20sp"
-        android:textColor="#b1b1b1" />
-
     <View
         android:id="@+id/sep2"
         android:layout_width="match_parent"
@@ -128,21 +116,33 @@
         android:textSize="20sp"
         android:textColor="#e84044" />
 
-    <TextView
-        android:id="@+id/text_version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/text_url"
-        android:text="Версия 1.0"
-        android:textSize="17sp"
-        android:textColor="#b1b1b1" />
-
     <View
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/text_version"
         android:background="#d7d5c9"/>
+
+    <TextView
+        android:id="@+id/text_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:onClick="shareApp"
+        android:text="Поделиться приложением"
+        android:textSize="20sp"
+        android:textColor="@color/setting_text"
+        android:layout_below="@+id/share"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/text_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Версия 1.0"
+        android:textSize="17sp"
+        android:textColor="@color/setting_text"
+        android:layout_below="@+id/text_url"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

@@ -15,7 +15,6 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/categories" />
 
-
     <View
         android:id="@+id/nn"
         android:layout_width="match_parent"

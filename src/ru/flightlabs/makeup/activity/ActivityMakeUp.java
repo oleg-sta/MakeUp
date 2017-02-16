@@ -235,6 +235,7 @@ public class ActivityMakeUp extends Activity implements CommonI {
     }
 
     public void changeCategory(int position) {
+        // FIXME current position not equal current category
         currentCategory = position;
         int resourceId = R.array.colors_shadow;
 
@@ -256,19 +257,24 @@ public class ActivityMakeUp extends Activity implements CommonI {
             iconsCategory = resourcesApp.fashionSmall;
             resourceId = R.array.colors_none;
         }
-        CategoriesNewAdapter pager = new CategoriesNewAdapter(this, iconsCategory);
+        final CategoriesNewAdapter pager = new CategoriesNewAdapter(this, iconsCategory);
+        pager.selected = editorEnvironment.getCurrentIndex(currentCategory);
         viewPager.setAdapter(pager);
         viewPager.setOnItemClickListener(new EcoGalleryAdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(EcoGalleryAdapterView<?> parent, View view, int position, long id) {
+                pager.selected = position;
                 changeItemInCategory(position);
+                pager.notifyDataSetChanged();
             }
         });
         viewPager.setSelection(editorEnvironment.getCurrentIndex(currentCategory));
         viewPager.setOnItemSelectedListener(new EcoGalleryAdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(EcoGalleryAdapterView<?> parent, View view, int position, long id) {
+                pager.selected = position;
                 changeItemInCategory(position);
+                pager.notifyDataSetChanged();
             }
 
             @Override

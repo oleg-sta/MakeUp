@@ -22,6 +22,8 @@ public class CategoriesNamePagerAdapter extends PagerAdapter {
     Context mContext;
     String[] texts;
     LayoutInflater mLayoutInflater;
+    int selected = 3;
+    TextView textViewPrevious;
 
     public CategoriesNamePagerAdapter(CommonI context, String[] texts) {
         // something terrible
@@ -44,15 +46,24 @@ public class CategoriesNamePagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
         View itemView = mLayoutInflater.inflate(R.layout.category, container, false);
-        TextView textView = (TextView) itemView.findViewById(R.id.item_text);
+        final TextView textView = (TextView) itemView.findViewById(R.id.item_text);
         textView.setText(texts[position]);
+        if (selected == position) {
+            textView.setTextColor(mContext.getResources().getColor(R.color.selected_text));
+            textViewPrevious = textView;
+        }
         container.addView(itemView);
         itemView.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 fdAct.changeCategory(position);
-
+                selected = position;
+                if (textViewPrevious != null) {
+                    textViewPrevious.setTextColor(mContext.getResources().getColor(R.color.main_text));
+                }
+                textView.setTextColor(mContext.getResources().getColor(R.color.selected_text));
+                textViewPrevious = textView;
             }
         });
         return itemView;

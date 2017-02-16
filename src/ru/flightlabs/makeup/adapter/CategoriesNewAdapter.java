@@ -24,6 +24,7 @@ public class CategoriesNewAdapter extends BaseAdapter {
     Context mContext;
     TypedArray images;
     LayoutInflater mLayoutInflater;
+    public int selected;
 
     public CategoriesNewAdapter(CommonI context, TypedArray images) {
         mContext = (Context)context;
@@ -52,6 +53,9 @@ public class CategoriesNewAdapter extends BaseAdapter {
         Bitmap bm = BitmapLibs.getSampledResource(mContext, images.getResourceId(position, 0));
         imageView.setImageBitmap(bm);
         imageView.setBackgroundColor(Color.WHITE);
+        if (position == selected) {
+            itemView.findViewById(R.id.item_image_border).setVisibility(View.VISIBLE);
+        }
 //        itemView.setOnClickListener(new View.OnClickListener() {
 //
 //            @Override

@@ -8,6 +8,7 @@
         android:id="@+id/item_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/main_text"
         android:gravity="center"
         android:textSize="12sp" />
 
