@@ -17,7 +17,7 @@ import java.io.InputStream;
  * Created by sov on 27.11.2016.
  */
 
-public class Helper {
+public class BitmapUtils {
 
     public static Bitmap matToBmp(Mat mat) {
         Bitmap bmp = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
@@ -68,17 +68,4 @@ public class Helper {
         }
     }
 
-    public static Mat loadPngToMat(File file) {
-        Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
-        Mat mat = new Mat(bmp.getHeight(), bmp.getWidth(), CvType.CV_8UC4);
-        Utils.bitmapToMat(bmp, mat, true);
-        return mat;
-    }
-
-    public static void saveMatToFile(Mat mRgba, File fileJpg) {
-        Bitmap bitmap = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(mRgba, bitmap);
-        saveBitmap(fileJpg.getPath(), bitmap);
-        bitmap.recycle();
-    }
 }

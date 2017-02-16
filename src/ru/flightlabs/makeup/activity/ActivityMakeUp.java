@@ -23,7 +23,7 @@ import org.opencv.android.OpenCVLoader;
 
 import ru.flightlabs.commonlib.Settings;
 import ru.flightlabs.makeup.CommonI;
-import ru.flightlabs.makeup.EditorEnvironment;
+import ru.flightlabs.makeup.StateEditor;
 import ru.flightlabs.makeup.R;
 import ru.flightlabs.makeup.ResourcesApp;
 import ru.flightlabs.makeup.adapter.CategoriesNamePagerAdapter;
@@ -44,14 +44,17 @@ import us.feras.ecogallery.EcoGalleryAdapterView;
 
 public class ActivityMakeUp extends Activity implements CommonI {
 
+    // this should only know controller
+    private int currentCategory;
+
     public static boolean useHsvOrColorized = false;
-    public static EditorEnvironment editorEnvironment;
+    private StateEditor editorEnvironment;
     ResourcesApp resourcesApp;
     CompModel compModel;
     ProgressBar progressBar;
-    public static GLSurfaceView gLSurfaceView;
-    FastCameraView camereView;
-    MaskRenderer meRender;
+    GLSurfaceView gLSurfaceView;
+    FastCameraView cameraView;
+    MaskRenderer maskRender;
     ImageView rotateCamera;
     ImageView backButton;
     ImageView buttonCamera;
@@ -63,13 +66,13 @@ public class ActivityMakeUp extends Activity implements CommonI {
         public void onManagerConnected(int status) {
             switch (status) {
                 case LoaderCallbackInterface.SUCCESS: {
-                    Log.i(TAG, "OpenCV loaded successfully");
+                    if (Static.LOG_MODE) Log.i(TAG, "OpenCV loaded successfully");
                     // Load native library after(!) OpenCV initialization
                     System.loadLibrary("detection_based_tracker");
 
                     Static.libsLoaded = true;
                     // load cascade file from application resources
-                    Log.e(TAG, "findLandMarks onManagerConnected");
+                    if (Static.LOG_MODE) Log.e(TAG, "findLandMarks onManagerConnected");
                     compModel.loadHaarModel(Static.resourceDetector[0]);
                 }
                 break;
@@ -86,7 +89,7 @@ public class ActivityMakeUp extends Activity implements CommonI {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_makeup);
 
-        camereView = (FastCameraView) findViewById(R.id.fd_fase_surface_view);
+        cameraView = (FastCameraView) findViewById(R.id.fd_fase_surface_view);
 
         compModel = new CompModel();
         compModel.context = getApplicationContext();
@@ -123,20 +126,21 @@ public class ActivityMakeUp extends Activity implements CommonI {
         rotateCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                camereView.swapCamera();
+                cameraView.swapCamera();
             }
         });
         ViewPager viewPagerCategories = (ViewPager) findViewById(R.id.categories);
         CategoriesNamePagerAdapter pagerCategories = new CategoriesNamePagerAdapter(this, getResources().getStringArray(R.array.categories));
         viewPagerCategories.setAdapter(pagerCategories);
 
-        editorEnvironment = new EditorEnvironment(getApplication().getApplicationContext(), resourcesApp);
-        changeCategory(EditorEnvironment.FASHION);
+        editorEnvironment = new StateEditor(getApplication().getApplicationContext(), resourcesApp);
+        editorEnvironment.init();
+        changeCategory(StateEditor.FASHION);
         ((SeekBar)findViewById(R.id.opacity)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                Log.i(TAG, "opacity " + editorEnvironment.catgoryNum + " " + i);
-                editorEnvironment.opacity[editorEnvironment.catgoryNum] = i;
+                if (Static.LOG_MODE) Log.i(TAG, "opacity " + i);
+                editorEnvironment.setOpacity(currentCategory, i);
                 gLSurfaceView.requestRender();
             }
 
@@ -154,12 +158,11 @@ public class ActivityMakeUp extends Activity implements CommonI {
         gLSurfaceView = (GLSurfaceView)findViewById(R.id.fd_glsurface);
         gLSurfaceView.getHolder().setFormat(PixelFormat.TRANSPARENT);
         gLSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        //gLSurfaceView.setZOrderOnTop(true);
-        meRender = new MaskRenderer(this, compModel, new ShaderEffectMakeUp(this));
+        maskRender = new MaskRenderer(this, compModel, new ShaderEffectMakeUp(this, editorEnvironment));
         gLSurfaceView.setEGLContextClientVersion(2);
-        gLSurfaceView.setRenderer(meRender);
-        gLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//RENDERMODE_WHEN_DIRTY);
-        //gLSurfaceView.setZOrderOnTop(false);
+        gLSurfaceView.setRenderer(maskRender);
+        gLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        maskRender.frameCamera = cameraView.frameCamera;
 
         backButton = (ImageView)findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -172,10 +175,10 @@ public class ActivityMakeUp extends Activity implements CommonI {
         findViewById(R.id.camera_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!meRender.staticView) {
-                    meRender.staticView = true;
+                if (!maskRender.staticView) {
+                    maskRender.staticView = true;
                     gLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-                    camereView.disableView();
+                    cameraView.disableView();
                     buttonCamera.setImageResource(R.drawable.ic_save);
                     backButton.setVisibility(View.VISIBLE);
                     rotateCamera.setVisibility(View.GONE);
@@ -195,7 +198,7 @@ public class ActivityMakeUp extends Activity implements CommonI {
 
     @Override
     public void onResume() {
-        Log.i(TAG, "onResume");
+        if (Static.LOG_MODE) Log.i(TAG, "onResume");
         super.onResume();
         final SharedPreferences prefs = getSharedPreferences(Settings.PREFS, Context.MODE_PRIVATE);
         //SettingsActivity.debugMode = prefs.getBoolean(SettingsActivity.DEBUG_MODE, true);
@@ -204,48 +207,49 @@ public class ActivityMakeUp extends Activity implements CommonI {
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         new ModelLoaderTask(progressBar).execute(compModel);
         gLSurfaceView.onResume();
-        editorEnvironment.init();
-        Settings.makeUp = true;
         Settings.clazz = ActivityPhoto.class;
 
         // FIXME wrong way
-        if (meRender.staticView) {
-            meRender.staticView = false;
-            gLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-            buttonCamera.setImageResource(R.drawable.ic_photo);
-            backButton.setVisibility(View.GONE);
-            rotateCamera.setVisibility(View.VISIBLE);
-            camereView.enableView(); // FIXME not good
+        if (maskRender.staticView) {
+            startCameraView();
         }
+    }
+
+    private void startCameraView() {
+        maskRender.staticView = false;
+        gLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        buttonCamera.setImageResource(R.drawable.ic_photo);
+        backButton.setVisibility(View.GONE);
+        rotateCamera.setVisibility(View.VISIBLE);
+        cameraView.enableView(); // FIXME not good
     }
 
 
     @Override
     protected void onPause() {
-        Log.i(TAG, "onPause");
+        if (Static.LOG_MODE) Log.i(TAG, "onPause");
         super.onPause();
         gLSurfaceView.onPause();
         //TODO has something todo with FastCameraView (rlease, close etc.)
-        camereView.disableView();
+        cameraView.disableView();
     }
 
     public void changeCategory(int position) {
+        currentCategory = position;
         int resourceId = R.array.colors_shadow;
 
-        //editorEnvironment.newIndexItem = 0;
-        editorEnvironment.catgoryNum = position;
         EcoGallery viewPager = (EcoGallery) findViewById(R.id.elements);
         TypedArray iconsCategory = null;
-        if (position == EditorEnvironment.EYE_LASH) {
+        if (position == StateEditor.EYE_LASH) {
             iconsCategory = resourcesApp.eyelashesSmall;
             resourceId = R.array.colors_eyelashes;
-        } else if (position == EditorEnvironment.EYE_SHADOW) {
+        } else if (position == StateEditor.EYE_SHADOW) {
             iconsCategory = resourcesApp.eyeshadowSmall;
             resourceId = R.array.colors_shadow;
-        } else if (position == EditorEnvironment.EYE_LINE) {
+        } else if (position == StateEditor.EYE_LINE) {
             resourceId = R.array.colors_eyelashes;
             iconsCategory = resourcesApp.eyelinesSmall;
-        } else if (position == EditorEnvironment.LIPS) {
+        } else if (position == StateEditor.LIPS) {
             iconsCategory = resourcesApp.lipsSmall;
             resourceId = R.array.colors_lips;
         } else  {
@@ -260,7 +264,7 @@ public class ActivityMakeUp extends Activity implements CommonI {
                 changeItemInCategory(position);
             }
         });
-        viewPager.setSelection(editorEnvironment.currentIndexItem[editorEnvironment.catgoryNum]);
+        viewPager.setSelection(editorEnvironment.getCurrentIndex(currentCategory));
         viewPager.setOnItemSelectedListener(new EcoGalleryAdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(EcoGalleryAdapterView<?> parent, View view, int position, long id) {
@@ -276,18 +280,13 @@ public class ActivityMakeUp extends Activity implements CommonI {
         ViewPager viewPagerColors = (ViewPager) findViewById(R.id.colors);
         ColorsPagerAdapter pagerColors = new ColorsPagerAdapter(this, getResources().getIntArray(resourceId));
         viewPagerColors.setAdapter(pagerColors);
-        ((SeekBar)findViewById(R.id.opacity)).setProgress(editorEnvironment.opacity[editorEnvironment.catgoryNum]);
+        ((SeekBar)findViewById(R.id.opacity)).setProgress(editorEnvironment.getOpacity(currentCategory));
     }
 
     @Override
     public void onBackPressed() {
-        if (meRender.staticView) {
-            meRender.staticView = false;
-            gLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-            buttonCamera.setImageResource(R.drawable.ic_photo);
-            backButton.setVisibility(View.GONE);
-            rotateCamera.setVisibility(View.VISIBLE);
-            camereView.enableView();
+        if (maskRender.staticView) {
+            startCameraView();
         } else {
             super.onBackPressed();
         }
@@ -295,30 +294,23 @@ public class ActivityMakeUp extends Activity implements CommonI {
 
     @Override
     public void changeItemInCategory(int newItem) {
-        Log.i(TAG, "changeItemInCategory " + newItem);
-        editorEnvironment.newIndexItem = newItem;
-        if (editorEnvironment.catgoryNum == EditorEnvironment.FASHION) {
-            Log.i(TAG, "changeItemInCategory ");
+        if (Static.LOG_MODE) Log.i(TAG, "changeItemInCategory " + newItem);
+        if (currentCategory == StateEditor.FASHION) {
+            if (Static.LOG_MODE) Log.i(TAG, "changeItemInCategory ");
             String[] fashions = getResources().getStringArray(R.array.fashion_ic1);
-            Log.i(TAG, "changeItemInCategory " + fashions[newItem]);
-            String[] fash = fashions[newItem].split(";");
-            editorEnvironment.currentIndexItem[EditorEnvironment.EYE_LASH] = Integer.parseInt(fash[0]);
-            editorEnvironment.currentIndexItem[EditorEnvironment.EYE_SHADOW] = Integer.parseInt(fash[1]);
-            editorEnvironment.currentIndexItem[EditorEnvironment.EYE_LINE] = Integer.parseInt(fash[2]);
-            editorEnvironment.currentIndexItem[EditorEnvironment.LIPS] = Integer.parseInt(fash[3]);
-            editorEnvironment.currentColor[EditorEnvironment.EYE_LASH] = Integer.parseInt(fash[4]);
-            editorEnvironment.currentColor[EditorEnvironment.EYE_SHADOW] = Integer.parseInt(fash[5]);
-            editorEnvironment.currentColor[EditorEnvironment.EYE_LINE] = Integer.parseInt(fash[6]);
-            editorEnvironment.currentColor[EditorEnvironment.LIPS] = Integer.parseInt(fash[7]);
+            if (Static.LOG_MODE) Log.i(TAG, "changeItemInCategory " + fashions[newItem]);
+            editorEnvironment.setParametersFromFashion(newItem);
         } else {
-            editorEnvironment.currentIndexItem[editorEnvironment.catgoryNum] = newItem;
+            editorEnvironment.setCurrentIndexItem(currentCategory, newItem);
         }
         gLSurfaceView.requestRender();
     }
 
     public void changeColor(int color, int position) {
-        Log.i(TAG, "changeColor " + position);
-        editorEnvironment.currentColor[editorEnvironment.catgoryNum] = position;
-        gLSurfaceView.requestRender();
+        if (Static.LOG_MODE) Log.i(TAG, "changeColor " + position);
+        editorEnvironment.setCurrentColor(currentCategory, position);
+        if (maskRender.staticView) {
+            gLSurfaceView.requestRender();
+        }
     }
 }

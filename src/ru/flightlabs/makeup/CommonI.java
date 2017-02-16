@@ -5,7 +5,7 @@ package ru.flightlabs.makeup;
  */
 // TODO terrible
 public interface CommonI {
-    public void changeCategory(int position);
-    public void changeItemInCategory(int newItem);
-    public void changeColor(int color, int position);
+    void changeCategory(int position);
+    void changeItemInCategory(int newItem);
+    void changeColor(int color, int position);
 }

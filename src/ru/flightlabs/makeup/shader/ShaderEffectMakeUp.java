@@ -6,10 +6,9 @@ import android.util.Log;
 
 import org.opencv.core.Point;
 
-import ru.flightlabs.makeup.EditorEnvironment;
-import ru.flightlabs.makeup.R;
-import ru.flightlabs.makeup.ResourcesApp;
+import ru.flightlabs.makeup.StateEditor;
 import ru.flightlabs.makeup.activity.ActivityMakeUp;
+import ru.flightlabs.makeup.utils.ModelUtils;
 import ru.flightlabs.masks.renderer.ShaderEffect;
 import ru.flightlabs.masks.renderer.ShaderEffectHelper;
 import ru.flightlabs.masks.utils.OpenGlHelper;
@@ -19,25 +18,27 @@ import ru.flightlabs.masks.utils.PoseHelper;
 /**
  * Created by sov on 13.02.2017.
  */
-
 public class ShaderEffectMakeUp extends ShaderEffect {
     private static final String TAG = "ShaderEffectMakeUp";
 
-    private int eyeShadowTextureid;
-    private int eyeLashesTextureid;
-    private int eyeLineTextureid;
-    private int lipsTextureid;
+    private int eyeShadowTextureId;
+    private int eyeLashesTextureId;
+    private int eyeLineTextureId;
+    private int lipsTextureId;
 
-    public ShaderEffectMakeUp(Context contex) {
+    private final StateEditor editEnv;
+
+    public ShaderEffectMakeUp(Context contex, StateEditor editEnv) {
         super(contex);
+        this.editEnv = editEnv;
     }
 
     public void init() {
         super.init();
-        eyeShadowTextureid = OpenGlHelper.loadTexture(context, R.raw.eye2_0000_smokey_eeys);
-        eyeLashesTextureid = OpenGlHelper.loadTexture(context, R.raw.eye2_0000_lash);
-        eyeLineTextureid = OpenGlHelper.loadTexture(context, R.raw.eye2_0000_line);
-        lipsTextureid = OpenGlHelper.loadTexture(context, R.raw.lips_icon);
+        eyeShadowTextureId = OpenGlHelper.loadTexture(context, editEnv.getResourceId(StateEditor.EYE_SHADOW));
+        eyeLashesTextureId = OpenGlHelper.loadTexture(context, editEnv.getResourceId(StateEditor.EYE_LASH));
+        eyeLineTextureId = OpenGlHelper.loadTexture(context, editEnv.getResourceId(StateEditor.EYE_LINE));
+        lipsTextureId = OpenGlHelper.loadTexture(context, editEnv.getResourceId(StateEditor.LIPS));
     }
 
     public void makeShaderMask(int indexEye, PoseHelper.PoseResult poseResult, int width, int height, int texIn, long time, int iGlobTime) {
@@ -49,8 +50,8 @@ public class ShaderEffectMakeUp extends ShaderEffect {
         ShaderEffectHelper.shaderEffect2dWholeScreen(poseResult.leftEye, poseResult.rightEye, texIn, program2dJustCopy, vPos2, vTex2);
 
         if (poseResult.foundLandmarks != null) {
-            Point[] onImageEyeLeft = EditorEnvironment.getOnlyPoints(poseResult.foundLandmarks, 36, 6);
-            Point[] onImageEyeRight = EditorEnvironment.getOnlyPoints(poseResult.foundLandmarks, 36 + 6, 6);
+            Point[] onImageEyeLeft = ModelUtils.getOnlyPoints(poseResult.foundLandmarks, 36, 6);
+            Point[] onImageEyeRight = ModelUtils.getOnlyPoints(poseResult.foundLandmarks, 36 + 6, 6);
             // TODO add checkbox for rgb or hsv bleding
             Log.i(TAG, "onDrawFrame6 draw maekup2");
             int vPos22 = GLES20.glGetAttribLocation(program2dTriangles, "vPosition");
@@ -59,52 +60,46 @@ public class ShaderEffectMakeUp extends ShaderEffect {
             GLES20.glEnableVertexAttribArray(vTex22);
             // TODO use blendshape for eyes
 
-            if (EditorEnvironment.currentIndexItem[EditorEnvironment.EYE_SHADOW] != EditorEnvironment.prevIndexItem[EditorEnvironment.EYE_SHADOW]) {
-                EditorEnvironment.prevIndexItem[EditorEnvironment.EYE_SHADOW] = EditorEnvironment.currentIndexItem[EditorEnvironment.EYE_SHADOW];
-                OpenGlHelper.changeTexture(context, ResourcesApp.eyeshadowSmall.getResourceId(EditorEnvironment.currentIndexItem[EditorEnvironment.EYE_SHADOW], 0), eyeShadowTextureid);
+            if (editEnv.changed(StateEditor.EYE_SHADOW)) {
+                OpenGlHelper.changeTexture(context, editEnv.getResourceId(StateEditor.EYE_SHADOW), eyeShadowTextureId);
             }
-            if (EditorEnvironment.currentIndexItem[EditorEnvironment.EYE_LASH] != EditorEnvironment.prevIndexItem[EditorEnvironment.EYE_LASH]) {
-                EditorEnvironment.prevIndexItem[EditorEnvironment.EYE_LASH] = EditorEnvironment.currentIndexItem[EditorEnvironment.EYE_LASH];
-                OpenGlHelper.changeTexture(context, ResourcesApp.eyelashesSmall.getResourceId(EditorEnvironment.currentIndexItem[EditorEnvironment.EYE_LASH], 0), eyeLashesTextureid);
+            if (editEnv.changed(StateEditor.EYE_LASH)) {
+                OpenGlHelper.changeTexture(context, editEnv.getResourceId(StateEditor.EYE_LASH), eyeLashesTextureId);
             }
-            if (EditorEnvironment.currentIndexItem[EditorEnvironment.EYE_LINE] != EditorEnvironment.prevIndexItem[EditorEnvironment.EYE_LINE]) {
-                EditorEnvironment.prevIndexItem[EditorEnvironment.EYE_LINE] = EditorEnvironment.currentIndexItem[EditorEnvironment.EYE_LINE];
-                OpenGlHelper.changeTexture(context, ResourcesApp.eyelinesSmall.getResourceId(EditorEnvironment.currentIndexItem[EditorEnvironment.EYE_LINE], 0), eyeLineTextureid);
+            if (editEnv.changed(StateEditor.EYE_LINE)) {
+                OpenGlHelper.changeTexture(context, editEnv.getResourceId(StateEditor.EYE_LINE), eyeLineTextureId);
             }
-            if (EditorEnvironment.currentIndexItem[EditorEnvironment.LIPS] != EditorEnvironment.prevIndexItem[EditorEnvironment.LIPS]) {
-                EditorEnvironment.prevIndexItem[EditorEnvironment.LIPS] = EditorEnvironment.currentIndexItem[EditorEnvironment.LIPS];
-                OpenGlHelper.changeTexture(context, ResourcesApp.lipsSmall.getResourceId(EditorEnvironment.currentIndexItem[EditorEnvironment.LIPS], 0), lipsTextureid);
+            if (editEnv.changed(StateEditor.LIPS)) {
+                OpenGlHelper.changeTexture(context, editEnv.getResourceId(StateEditor.LIPS), lipsTextureId);
             }
-            Point[] onImage = PointsConverter.completePointsByAffine(onImageEyeLeft, PointsConverter.convertToOpencvPoints(EditorEnvironment.pointsLeftEye), new int[]{0, 1, 2, 3, 4, 5});
+            Point[] onImage = PointsConverter.completePointsByAffine(onImageEyeLeft, PointsConverter.convertToOpencvPoints(StateEditor.pointsLeftEye), new int[]{0, 1, 2, 3, 4, 5});
             // TODO use blendshapes
             onImage = PointsConverter.replacePoints(onImage, onImageEyeLeft, new int[]{0, 1, 2, 3, 4, 5});
-            ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, eyeShadowTextureid, PointsConverter.convertFromPointsGlCoord(onImage, width, height), PointsConverter.convertFromPointsGlCoord(EditorEnvironment.pointsLeftEye, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(EditorEnvironment.trianglesLeftEye), eyeLashesTextureid, eyeLineTextureid,
+            ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, eyeShadowTextureId, PointsConverter.convertFromPointsGlCoord(onImage, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsLeftEye, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLeftEye), eyeLashesTextureId, eyeLineTextureId,
                     new int[] {ActivityMakeUp.useHsvOrColorized? 2 : 1, 0, 0},
-                    PointsConverter.convertTovec3(EditorEnvironment.EYE_SHADOW_COLORS[EditorEnvironment.currentColor[EditorEnvironment.EYE_SHADOW]]),
-                    PointsConverter.convertTovec3(EditorEnvironment.EYE_LASH_COLORS[EditorEnvironment.currentColor[EditorEnvironment.EYE_LASH]]),
-                    PointsConverter.convertTovec3(EditorEnvironment.EYE_LINE_COLORS[EditorEnvironment.currentColor[EditorEnvironment.EYE_LINE]]),
-                    EditorEnvironment.opacity[EditorEnvironment.EYE_SHADOW] / 100f, EditorEnvironment.opacity[EditorEnvironment.EYE_LASH] / 100f, EditorEnvironment.opacity[EditorEnvironment.EYE_LINE] /100f);
+                    PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_SHADOW)),
+                    PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_LASH)),
+                    PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_LINE)),
+                    editEnv.getOpacityFloat(StateEditor.EYE_SHADOW), editEnv.getOpacityFloat(StateEditor.EYE_LASH), editEnv.getOpacityFloat(StateEditor.EYE_LINE));
 
-            Point[] onImageRight = PointsConverter.completePointsByAffine(PointsConverter.reallocateAndCut(onImageEyeRight, new int[] {3, 2, 1, 0 , 5, 4}), PointsConverter.convertToOpencvPoints(EditorEnvironment.pointsLeftEye), new int[]{0, 1, 2, 3, 4, 5});
+            Point[] onImageRight = PointsConverter.completePointsByAffine(PointsConverter.reallocateAndCut(onImageEyeRight, new int[] {3, 2, 1, 0 , 5, 4}), PointsConverter.convertToOpencvPoints(StateEditor.pointsLeftEye), new int[]{0, 1, 2, 3, 4, 5});
             //onImageRight = PointsConverter.replacePoints(onImageRight, onImageEyeRight, new int[]{3, 2, 1, 0 , 5, 4});
             // FIXME flip triangle on right eyes, cause left and right triangles are not the same
-            ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, eyeShadowTextureid, PointsConverter.convertFromPointsGlCoord(onImageRight, width, height), PointsConverter.convertFromPointsGlCoord(EditorEnvironment.pointsLeftEye, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(EditorEnvironment.trianglesLeftEye), eyeLashesTextureid, eyeLineTextureid,
+            ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, eyeShadowTextureId, PointsConverter.convertFromPointsGlCoord(onImageRight, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsLeftEye, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLeftEye), eyeLashesTextureId, eyeLineTextureId,
                     new int[] {ActivityMakeUp.useHsvOrColorized? 2 : 1, 0, 0},
-                    PointsConverter.convertTovec3(EditorEnvironment.EYE_SHADOW_COLORS[EditorEnvironment.currentColor[EditorEnvironment.EYE_SHADOW]]),
-                    PointsConverter.convertTovec3(EditorEnvironment.EYE_LASH_COLORS[EditorEnvironment.currentColor[EditorEnvironment.EYE_LASH]]),
-                    PointsConverter.convertTovec3(EditorEnvironment.EYE_LINE_COLORS[EditorEnvironment.currentColor[EditorEnvironment.EYE_LINE]]),
-                    EditorEnvironment.opacity[EditorEnvironment.EYE_SHADOW] / 100f, EditorEnvironment.opacity[EditorEnvironment.EYE_LASH] / 100f, EditorEnvironment.opacity[EditorEnvironment.EYE_LINE] /100f);
+                    PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_SHADOW)),
+                    PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_LASH)),
+                    PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_LINE)),
+                    editEnv.getOpacityFloat(StateEditor.EYE_SHADOW), editEnv.getOpacityFloat(StateEditor.EYE_LASH), editEnv.getOpacityFloat(StateEditor.EYE_LINE));
 
-            Point[] onImageLips = EditorEnvironment.getOnlyPoints(poseResult.foundLandmarks, 48, 20);
-            Point[] onImageLipsConv = PointsConverter.completePointsByAffine(onImageLips, PointsConverter.convertToOpencvPoints(EditorEnvironment.pointsWasLips), new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19});
+            Point[] onImageLips = ModelUtils.getOnlyPoints(poseResult.foundLandmarks, 48, 20);
+            Point[] onImageLipsConv = PointsConverter.completePointsByAffine(onImageLips, PointsConverter.convertToOpencvPoints(StateEditor.pointsWasLips), new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19});
             onImageLipsConv = PointsConverter.replacePoints(onImageLipsConv, onImageLips, new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19});
-            Log.i(TAG, "onDrawFrame6 " + EditorEnvironment.LIPS_COLORS[EditorEnvironment.currentColor[EditorEnvironment.LIPS]]);
-            ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, lipsTextureid, PointsConverter.convertFromPointsGlCoord(onImageLipsConv, width, height), PointsConverter.convertFromPointsGlCoord(EditorEnvironment.pointsWasLips, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(EditorEnvironment.trianglesLips), lipsTextureid, lipsTextureid,
+            ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, lipsTextureId, PointsConverter.convertFromPointsGlCoord(onImageLipsConv, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsWasLips, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLips), lipsTextureId, lipsTextureId,
                     new int[] {ActivityMakeUp.useHsvOrColorized? 2 : 1, -1, -1},
-                    PointsConverter.convertTovec3(EditorEnvironment.LIPS_COLORS[EditorEnvironment.currentColor[EditorEnvironment.LIPS]]), null, null,
-                    EditorEnvironment.opacity[EditorEnvironment.LIPS] / 100f, 0, 0);
+                    PointsConverter.convertTovec3(editEnv.getColor(StateEditor.LIPS)), null, null,
+                    editEnv.getOpacityFloat(StateEditor.LIPS), 0, 0);
 
-            // TODO add right eye
             // FIXME elements erase each other
         }
     }

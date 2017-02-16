@@ -31,6 +31,7 @@ public class PhotoPagerAdapter extends PagerAdapter {
     }
     
     public Object instantiateItem(ViewGroup container, int position) {
+        // TODO image should sized and centered
         ImageView imageView = new ImageView(_activity);
         final BitmapFactory.Options options2 = new BitmapFactory.Options();
         Bitmap bm = BitmapFactory.decodeFile(photos.get(position), options2);
@@ -41,7 +42,6 @@ public class PhotoPagerAdapter extends PagerAdapter {
     
     public void destroyItem(ViewGroup container, int position, Object object) {
         ((ViewPager) container).removeView((ImageView) object);
-  
     }
     
 
