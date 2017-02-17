@@ -8,23 +8,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import ru.flightlabs.makeup.CommonI;
 import ru.flightlabs.makeup.R;
 
 /**
  * Created by sov on 19.11.2016.
  */
 
-public class ColorsPagerAdapter  extends PagerAdapter {
+public class ColorsPagerAdapter extends PagerAdapter {
 
-    CommonI fdAct;
+    AdaptersNotifier fdAct;
     Context mContext;
     int[] colors;
     LayoutInflater mLayoutInflater;
 
-    public ColorsPagerAdapter(CommonI context, int[] colors) {
+    public ColorsPagerAdapter(AdaptersNotifier context, int[] colors) {
         mContext = (Context) context;
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.fdAct = context;

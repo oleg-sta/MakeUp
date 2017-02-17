@@ -13,18 +13,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import ru.flightlabs.makeup.CommonI;
 import ru.flightlabs.makeup.R;
 import ru.flightlabs.masks.utils.BitmapLibs;
 
 public class CategoriesPagerAdapter extends PagerAdapter {
 
-    CommonI fdAct;
+    AdaptersNotifier fdAct;
     Context mContext;
     TypedArray images;
     LayoutInflater mLayoutInflater;
 
-    public CategoriesPagerAdapter(CommonI context, TypedArray images) {
+    public CategoriesPagerAdapter(AdaptersNotifier context, TypedArray images) {
         mContext = (Context)context;
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.images = images;

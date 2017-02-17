@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import ru.flightlabs.makeup.CommonI;
 import ru.flightlabs.makeup.R;
 
 
@@ -18,18 +17,18 @@ import ru.flightlabs.makeup.R;
 
 public class CategoriesNamePagerAdapter extends PagerAdapter {
 
-    CommonI fdAct;
+    Notification notification;
     Context mContext;
     String[] texts;
     LayoutInflater mLayoutInflater;
     int selected = 3;
     TextView textViewPrevious;
 
-    public CategoriesNamePagerAdapter(CommonI context, String[] texts) {
+    public CategoriesNamePagerAdapter(Notification context, String[] texts) {
         // something terrible
         mContext = (Context)context;
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.fdAct = context;
+        this.notification = context;
         this.texts = texts;
     }
 
@@ -57,7 +56,7 @@ public class CategoriesNamePagerAdapter extends PagerAdapter {
 
             @Override
             public void onClick(View v) {
-                fdAct.changeCategory(position);
+                notification.selectedCategory(position);
                 selected = position;
                 if (textViewPrevious != null) {
                     textViewPrevious.setTextColor(mContext.getResources().getColor(R.color.main_text));
@@ -77,5 +76,9 @@ public class CategoriesNamePagerAdapter extends PagerAdapter {
     @Override
     public float getPageWidth(int position) {
         return 1f / 4;
+    }
+
+    public interface Notification {
+        void selectedCategory(int position);
     }
 }

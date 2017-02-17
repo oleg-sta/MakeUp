@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import ru.flightlabs.makeup.CommonI;
-
 import ru.flightlabs.makeup.R;
 import ru.flightlabs.masks.utils.BitmapLibs;
 
@@ -20,13 +18,13 @@ import ru.flightlabs.masks.utils.BitmapLibs;
  */
 
 public class CategoriesNewAdapter extends BaseAdapter {
-    CommonI fdAct;
+    AdaptersNotifier fdAct;
     Context mContext;
     TypedArray images;
     LayoutInflater mLayoutInflater;
     public int selected;
 
-    public CategoriesNewAdapter(CommonI context, TypedArray images) {
+    public CategoriesNewAdapter(AdaptersNotifier context, TypedArray images) {
         mContext = (Context)context;
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.images = images;
@@ -57,7 +55,7 @@ public class CategoriesNewAdapter extends BaseAdapter {
 //
 //            @Override
 //            public void onClick(View v) {
-//                fdAct.changeItemInCategory(position);
+//                notification.changeItemInCategory(position);
 //            }
 //        });;
         return itemView;

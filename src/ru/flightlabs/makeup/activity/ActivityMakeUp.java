@@ -22,7 +22,7 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 
 import ru.flightlabs.commonlib.Settings;
-import ru.flightlabs.makeup.CommonI;
+import ru.flightlabs.makeup.adapter.AdaptersNotifier;
 import ru.flightlabs.makeup.StateEditor;
 import ru.flightlabs.makeup.R;
 import ru.flightlabs.makeup.ResourcesApp;
@@ -42,7 +42,7 @@ import us.feras.ecogallery.EcoGalleryAdapterView;
  * Created by sov on 08.02.2017.
  */
 
-public class ActivityMakeUp extends Activity implements CommonI {
+public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelLoaderTask.Callback, CategoriesNamePagerAdapter.Notification {
 
     // this should only know controller
     private int currentCategory;
@@ -200,7 +200,10 @@ public class ActivityMakeUp extends Activity implements CommonI {
         Static.libsLoaded = false;
         OpenCVLoader.initDebug();
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-        new ModelLoaderTask(progressBar).execute(compModel);
+        if (compModel.mNativeDetector == null) {
+            progressBar.setVisibility(View.VISIBLE);
+            new ModelLoaderTask(this).execute(compModel);
+        }
         gLSurfaceView.onResume();
         Settings.clazz = ActivityPhoto.class;
 
@@ -322,5 +325,15 @@ public class ActivityMakeUp extends Activity implements CommonI {
         if (maskRender.staticView) {
             gLSurfaceView.requestRender();
         }
+    }
+
+    @Override
+    public void onModelLoaded() {
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void selectedCategory(int position) {
+        changeCategory(position);
     }
 }
