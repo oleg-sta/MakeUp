@@ -1,9 +1,7 @@
 package ru.flightlabs.makeup.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
@@ -45,7 +43,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
 
     private int currentCategory;
 
-    public static boolean useHsvOrColorized = false;
+    public static boolean useHsv = false; // false - use colorized
     private StateEditor editorEnvironment;
     ResourcesApp resourcesApp;
     CompModel compModel;
@@ -190,7 +188,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         ((CheckBox)findViewById(R.id.useCoorized)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                useHsvOrColorized = b;
+                useHsv = b;
             }
         });
     }

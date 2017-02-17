@@ -84,6 +84,8 @@
         android:id="@+id/opacity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_above="@+id/colors"
         android:max="100"
         android:progress="50"></SeekBar>

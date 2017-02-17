@@ -53,6 +53,10 @@
         <item>#FFC600</item>
         <item>#B1B4B2</item>
         <item>#FFFFFF</item>
+        <item>#404040</item>
+        <item>#0F0F0F</item>
+        <item>#010101</item>
+        <item>#000000</item>
     </array>
 
     <array name="colors_none"/>

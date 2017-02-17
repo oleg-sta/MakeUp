@@ -76,7 +76,7 @@ public class ShaderEffectMakeUp extends ShaderEffect {
             // TODO use blendshapes
             onImage = PointsConverter.replacePoints(onImage, onImageEyeLeft, new int[]{0, 1, 2, 3, 4, 5});
             ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, eyeShadowTextureId, PointsConverter.convertFromPointsGlCoord(onImage, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsLeftEye, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLeftEye), eyeLashesTextureId, eyeLineTextureId,
-                    new int[] {ActivityMakeUp.useHsvOrColorized? 2 : 1, 0, 0},
+                    new int[] {ActivityMakeUp.useHsv ? 1 : 2, 0, 0},
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_SHADOW)),
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_LASH)),
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_LINE)),
@@ -86,7 +86,7 @@ public class ShaderEffectMakeUp extends ShaderEffect {
             //onImageRight = PointsConverter.replacePoints(onImageRight, onImageEyeRight, new int[]{3, 2, 1, 0 , 5, 4});
             // FIXME flip triangle on right eyes, cause left and right triangles are not the same
             ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, eyeShadowTextureId, PointsConverter.convertFromPointsGlCoord(onImageRight, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsLeftEye, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLeftEye), eyeLashesTextureId, eyeLineTextureId,
-                    new int[] {ActivityMakeUp.useHsvOrColorized? 2 : 1, 0, 0},
+                    new int[] {ActivityMakeUp.useHsv ? 1 : 2, 0, 0},
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_SHADOW)),
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_LASH)),
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_LINE)),
@@ -96,7 +96,7 @@ public class ShaderEffectMakeUp extends ShaderEffect {
             Point[] onImageLipsConv = PointsConverter.completePointsByAffine(onImageLips, PointsConverter.convertToOpencvPoints(StateEditor.pointsWasLips), new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19});
             onImageLipsConv = PointsConverter.replacePoints(onImageLipsConv, onImageLips, new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19});
             ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, lipsTextureId, PointsConverter.convertFromPointsGlCoord(onImageLipsConv, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsWasLips, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLips), lipsTextureId, lipsTextureId,
-                    new int[] {ActivityMakeUp.useHsvOrColorized? 2 : 1, -1, -1},
+                    new int[] {ActivityMakeUp.useHsv ? 1 : 2, -1, -1},
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.LIPS)), null, null,
                     editEnv.getOpacityFloat(StateEditor.LIPS), 0, 0);
 
