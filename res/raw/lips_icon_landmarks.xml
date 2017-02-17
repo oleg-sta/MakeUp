@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <?xml-stylesheet type='text/xsl' href='image_metadata_stylesheet.xsl'?>
 <dataset>
 <name>Testing faces</name>
@@ -8,7 +8,7 @@
    300-W dataset.</comment>
 <images>
   <image file='lips_icon.png'>
-    <box top='84' left='160' width='590' height='1032'>
+    <box top='0' left='0' width='590' height='1032'>
       <part name='00' x='71' y='282'/>
       <part name='01' x='137' y='215'/>
       <part name='02' x='222' y='164'/>
@@ -21,14 +21,18 @@
       <part name='09' x='261' y='359'/>
       <part name='10' x='191' y='353'/>
       <part name='11' x='134' y='336'/>
-      <part name='12' x='157' y='266'/>
+      <part name='12' x='158' y='268'/>
       <part name='13' x='204' y='246'/>
       <part name='14' x='259' y='239'/>
       <part name='15' x='303' y='246'/>
       <part name='16' x='355' y='265'/>
       <part name='17' x='306' y='274'/>
       <part name='18' x='265' y='276'/>
-      <part name='19' x='208' y='272'/>
+      <part name='19' x='206' y='273'/>
+      <part name='20' x='47' y='145'/>
+      <part name='21' x='479' y='144'/>
+      <part name='22' x='45' y='401'/>
+      <part name='23' x='472' y='405'/>
     </box>
   </image>
 </images>

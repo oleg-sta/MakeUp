@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <?xml-stylesheet type='text/xsl' href='image_metadata_stylesheet.xsl'?>
 <dataset>
 <name>Testing faces</name>
@@ -18,7 +18,12 @@
       <part name='06' x='213' y='157'/>
       <part name='07' x='523' y='155'/>
       <part name='08' x='537' y='358'/>
-      <part name='09' x='228' y='344'/>
+      <part name='09' x='220' y='351'/>
+      <part name='10' x='382' y='246'/>
+      <part name='11' x='375' y='148'/>
+      <part name='12' x='527' y='258'/>
+      <part name='13' x='367' y='358'/>
+      <part name='14' x='220' y='258'/>
     </box>
   </image>
 </images>

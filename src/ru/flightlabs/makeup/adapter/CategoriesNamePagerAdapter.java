@@ -21,7 +21,7 @@ public class CategoriesNamePagerAdapter extends PagerAdapter {
     Context mContext;
     String[] texts;
     LayoutInflater mLayoutInflater;
-    int selected = 3;
+    public int selected = 3;
     TextView textViewPrevious;
 
     public CategoriesNamePagerAdapter(Notification context, String[] texts) {

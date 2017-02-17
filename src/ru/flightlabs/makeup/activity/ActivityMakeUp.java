@@ -39,12 +39,10 @@ import us.feras.ecogallery.EcoGallery;
 import us.feras.ecogallery.EcoGalleryAdapterView;
 
 /**
- * Created by sov on 08.02.2017.
+ * We should separate view from business logic
  */
-
 public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelLoaderTask.Callback, CategoriesNamePagerAdapter.Notification {
 
-    // this should only know controller
     private int currentCategory;
 
     public static boolean useHsvOrColorized = false;
@@ -98,30 +96,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
 
         resourcesApp = new ResourcesApp(this);
 
-        ((CheckBox)findViewById(R.id.checkDebug)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                Settings.debugMode = b;
-            }
-        });
-        ((CheckBox)findViewById(R.id.checkBoxLinear)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                Settings.useLinear = b;
-            }
-        });
-        ((CheckBox)findViewById(R.id.useCalman)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                Settings.useKalman = b;
-            }
-        });
-        ((CheckBox)findViewById(R.id.useCoorized)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                useHsvOrColorized = b;
-            }
-        });
+        initDebug();
         rotateCamera = (ImageView)findViewById(R.id.rotate_camera);
         rotateCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,6 +106,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         });
         ViewPager viewPagerCategories = (ViewPager) findViewById(R.id.categories);
         CategoriesNamePagerAdapter pagerCategories = new CategoriesNamePagerAdapter(this, getResources().getStringArray(R.array.categories));
+        pagerCategories.selected = StateEditor.FASHION;
         viewPagerCategories.setAdapter(pagerCategories);
 
         editorEnvironment = new StateEditor(getApplication().getApplicationContext(), resourcesApp);
@@ -191,12 +167,38 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         });
     }
 
+    @Deprecated
+    private void initDebug() {
+        ((CheckBox)findViewById(R.id.checkDebug)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                Settings.debugMode = b;
+            }
+        });
+        ((CheckBox)findViewById(R.id.checkBoxLinear)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                Settings.useLinear = b;
+            }
+        });
+        ((CheckBox)findViewById(R.id.useCalman)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                Settings.useKalman = b;
+            }
+        });
+        ((CheckBox)findViewById(R.id.useCoorized)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                useHsvOrColorized = b;
+            }
+        });
+    }
+
     @Override
     public void onResume() {
         if (Static.LOG_MODE) Log.i(TAG, "onResume");
         super.onResume();
-        final SharedPreferences prefs = getSharedPreferences(Settings.PREFS, Context.MODE_PRIVATE);
-        //SettingsActivity.debugMode = prefs.getBoolean(SettingsActivity.DEBUG_MODE, true);
         Static.libsLoaded = false;
         OpenCVLoader.initDebug();
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
@@ -206,7 +208,6 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         }
         gLSurfaceView.onResume();
         Settings.clazz = ActivityPhoto.class;
-
         // FIXME wrong way
         if (maskRender.staticView) {
             startCameraView();
@@ -308,13 +309,12 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
     @Override
     public void changeItemInCategory(int newItem) {
         if (Static.LOG_MODE) Log.i(TAG, "changeItemInCategory " + newItem);
+        editorEnvironment.setCurrentIndexItem(currentCategory, newItem);
         if (currentCategory == StateEditor.FASHION) {
             if (Static.LOG_MODE) Log.i(TAG, "changeItemInCategory ");
             String[] fashions = getResources().getStringArray(R.array.fashion_ic1);
             if (Static.LOG_MODE) Log.i(TAG, "changeItemInCategory " + fashions[newItem]);
             editorEnvironment.setParametersFromFashion(newItem);
-        } else {
-            editorEnvironment.setCurrentIndexItem(currentCategory, newItem);
         }
         gLSurfaceView.requestRender();
     }
