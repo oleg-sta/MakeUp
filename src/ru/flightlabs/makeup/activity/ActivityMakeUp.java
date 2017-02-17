@@ -176,12 +176,7 @@ public class ActivityMakeUp extends Activity implements CommonI {
             @Override
             public void onClick(View view) {
                 if (!maskRender.staticView) {
-                    maskRender.staticView = true;
-                    gLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-                    cameraView.disableView();
-                    buttonCamera.setImageResource(R.drawable.ic_save);
-                    backButton.setVisibility(View.VISIBLE);
-                    rotateCamera.setVisibility(View.GONE);
+                    changeToOnlyEditMode();
                 } else {
                     Static.makePhoto = true;
                     gLSurfaceView.requestRender();
@@ -213,6 +208,15 @@ public class ActivityMakeUp extends Activity implements CommonI {
         if (maskRender.staticView) {
             startCameraView();
         }
+    }
+
+    private void changeToOnlyEditMode() {
+        maskRender.staticView = true;
+        gLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        cameraView.disableView();
+        buttonCamera.setImageResource(R.drawable.ic_save);
+        backButton.setVisibility(View.VISIBLE);
+        rotateCamera.setVisibility(View.GONE);
     }
 
     private void startCameraView() {
@@ -265,7 +269,7 @@ public class ActivityMakeUp extends Activity implements CommonI {
             public void onItemClick(EcoGalleryAdapterView<?> parent, View view, int position, long id) {
                 pager.selected = position;
                 changeItemInCategory(position);
-                pager.notifyDataSetChanged();
+                //pager.notifyDataSetChanged();
             }
         });
         viewPager.setSelection(editorEnvironment.getCurrentIndex(currentCategory));
@@ -274,7 +278,7 @@ public class ActivityMakeUp extends Activity implements CommonI {
             public void onItemSelected(EcoGalleryAdapterView<?> parent, View view, int position, long id) {
                 pager.selected = position;
                 changeItemInCategory(position);
-                pager.notifyDataSetChanged();
+                //pager.notifyDataSetChanged();
             }
 
             @Override

@@ -92,8 +92,17 @@
         android:id="@+id/elements"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_above="@+id/camera_button"
-        android:layout_marginBottom="2dip"></us.feras.ecogallery.EcoGallery>
+        android:layout_marginBottom="10dp"
+        android:layout_above="@+id/camera_button"></us.feras.ecogallery.EcoGallery>
+
+    <ImageView
+        android:id="@+id/item_image_border"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignBottom="@+id/elements"
+        android:layout_alignTop="@+id/elements"
+        android:src="@drawable/border_selected" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/colors"
@@ -105,7 +114,7 @@
     <android.support.v4.view.ViewPager
         android:id="@+id/categories"
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="30dp"
         android:layout_above="@+id/elements"
         android:layout_marginBottom="2dip"></android.support.v4.view.ViewPager>
 

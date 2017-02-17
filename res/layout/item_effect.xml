@@ -1,30 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/item_image"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_gravity="center"
-        android:layout_margin="1dp" />
-
-    <ImageView
-        android:id="@+id/item_image_border"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_margin="1dp"
-        android:layout_gravity="center"
-        android:src="@drawable/border_selected"
-        android:visibility="invisible"/>
-
-    <TextView
-        android:id="@+id/item_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="12sp" />
+        android:layout_margin="5dp"
+        android:layout_gravity="center" />
 
 </FrameLayout>
