@@ -6,6 +6,7 @@ import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -36,7 +37,7 @@ public class ColorsPagerAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view == ((LinearLayout) object);
+        return view == ((FrameLayout) object);
     }
 
     @Override
@@ -44,9 +45,10 @@ public class ColorsPagerAdapter extends PagerAdapter {
         View itemView = mLayoutInflater.inflate(R.layout.item_color, container, false);
 
         ImageView imageView = (ImageView) itemView.findViewById(R.id.item_image);
-        imageView.setImageResource(R.drawable.color_picker);
-        imageView.setBackgroundColor(Color.WHITE);
-        imageView.setBackgroundColor(colors[position]);
+        //imageView.setImageResource(R.drawable.color_picker);
+        //imageView.setBackgroundColor(Color.WHITE);
+        //imageView.setBackgroundColor(colors[position]);
+        imageView.setColorFilter(colors[position]);
         container.addView(itemView);
         itemView.setOnClickListener(new View.OnClickListener() {
 
@@ -61,7 +63,7 @@ public class ColorsPagerAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((LinearLayout) object);
+        container.removeView((FrameLayout) object);
     }
 
     @Override

@@ -68,9 +68,11 @@ public class ActivityPhoto extends Activity {
         findViewById(R.id.thrash_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // TODO chekc for last photo
                 new File(adapter.photos.get(pager.getCurrentItem())).delete();
                 photos.remove(adapter.photos.get(pager.getCurrentItem()));
                 adapter.notifyDataSetChanged();
+                // TODO if last photo then exit after delete
             }
         });
         findViewById(R.id.share_button).setOnClickListener(new View.OnClickListener() {

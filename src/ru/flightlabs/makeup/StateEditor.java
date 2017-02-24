@@ -41,8 +41,10 @@ public class StateEditor {
     private static final String TAG = "EditorEnvironment_class";
     // lips and eyes models points and triangles
     public static ru.flightlabs.masks.model.primitives.Point[] pointsLeftEye;
+    public static ru.flightlabs.masks.model.primitives.Point[] pointsLeftEyeNew;
     public static Triangle[] trianglesLeftEye;
     public static ru.flightlabs.masks.model.primitives.Point[] pointsWasLips;
+    public static ru.flightlabs.masks.model.primitives.Point[] pointsWasLipsNew;
     public static Triangle[] trianglesLips;
 
     public StateEditor(Context activity, ResourcesApp resourcesApp) {
@@ -61,22 +63,26 @@ public class StateEditor {
     private void loadModels() {
         try {
             File cascadeDir = activity.getDir("cascade", Context.MODE_PRIVATE);
-            File fModel = new File(cascadeDir, "landmarks_eye.xml");
 //            resourceToFile(getResources().openRawResource(R.raw.eye_real_landmarks), fModel);
-            BitmapUtils.resourceToFile(activity.getResources().openRawResource(R.raw.eye_real_landmarks), fModel);
-            File fModelLips = new File(cascadeDir, "landmarks_lips.xml");
-            BitmapUtils.resourceToFile(activity.getResources().openRawResource(R.raw.lips_icon_landmarks), fModelLips);
             AssetManager assetManager = activity.getAssets();
             trianglesLeftEye = ModelUtils.loadriangle(assetManager, "eye_real_triangles.txt");
             trianglesLips = ModelUtils.loadriangle(assetManager, "lips_icon_triangles.txt");
-            SimpleModel modelFrom = new ImgLabModel(fModel.getPath());
-            pointsLeftEye = modelFrom.getPointsWas();
-            SimpleModel modelFromLibs = new ImgLabModel(fModelLips.getPath());
-            pointsWasLips = modelFromLibs.getPointsWas();
+            pointsLeftEye = loadPointsFromImglab(cascadeDir, R.raw.eye_real_landmarks);
+            pointsLeftEyeNew = loadPointsFromImglab(cascadeDir, R.raw.eye_real_landmarks_new);
+            pointsWasLips = loadPointsFromImglab(cascadeDir, R.raw.lips_icon_landmarks);
+            pointsWasLipsNew = loadPointsFromImglab(cascadeDir, R.raw.lips_icon_landmarks_new);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             throw new RuntimeException(e);
         }
+    }
+
+    private ru.flightlabs.masks.model.primitives.Point[] loadPointsFromImglab(File cascadeDir, int idResource) {
+        File fModel = new File(cascadeDir, "temp_imglab.xml");
+        BitmapUtils.resourceToFile(activity.getResources().openRawResource(idResource), fModel);
+        SimpleModel modelFrom = new ImgLabModel(fModel.getPath());
+        fModel.delete();
+        return  modelFrom.getPointsWas();
     }
 
 

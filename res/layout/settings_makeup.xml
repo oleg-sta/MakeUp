@@ -56,7 +56,8 @@
         android:clickable="true"
         android:onClick="rateApp"
         android:textSize="20sp"
-        android:textColor="@color/setting_text" />
+        android:textColor="@color/setting_text"
+        android:fontFamily="serif-monospace" />
 
     <ImageView
         android:id="@+id/stars"

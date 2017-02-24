@@ -1,12 +1,15 @@
 package ru.flightlabs.makeup.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -54,6 +57,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
     ImageView rotateCamera;
     ImageView backButton;
     ImageView buttonCamera;
+    private PowerManager.WakeLock wakeLock;
 
     private static final String TAG = "ActivityFast";
 
@@ -84,6 +88,9 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_makeup);
+
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "PreviewWorking");
 
         cameraView = (FastCameraView) findViewById(R.id.fd_fase_surface_view);
 
@@ -163,6 +170,10 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
                 startActivity(new Intent(getApplication(), ActivitySettings.class));
             }
         });
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        Log.i(TAG, "screen size in dp " + dpWidth + " " + dpHeight);
     }
 
     @Deprecated
@@ -197,6 +208,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
     public void onResume() {
         if (Static.LOG_MODE) Log.i(TAG, "onResume");
         super.onResume();
+        wakeLock.acquire();
         Static.libsLoaded = false;
         OpenCVLoader.initDebug();
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
@@ -235,6 +247,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
     protected void onPause() {
         if (Static.LOG_MODE) Log.i(TAG, "onPause");
         super.onPause();
+        wakeLock.release();
         gLSurfaceView.onPause();
         //TODO has something todo with FastCameraView (rlease, close etc.)
         cameraView.disableView();

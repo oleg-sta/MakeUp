@@ -27,13 +27,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/top"
+        android:layout_marginTop="10dip"
+        android:layout_marginBottom="62dip"
         android:layout_above="@+id/lower"
         android:layout_gravity="center_horizontal" />
 
     <View
         android:id="@+id/lower"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/share_button"
+        android:layout_marginTop="-62dp"
         android:background="@color/main_makeup_color"
         android:layout_alignParentBottom="true"/>
     
@@ -43,8 +47,8 @@
         android:layout_height="80dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_alignTop="@+id/lower"
-        android:layout_alignBottom="@+id/lower"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"
         android:src="@drawable/ic_share"/>
 
     <ImageView
@@ -53,8 +57,8 @@
         android:layout_height="23dp"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_alignTop="@+id/lower"
-        android:layout_alignBottom="@+id/lower"
+        android:layout_alignTop="@+id/share_button"
+        android:layout_alignBottom="@+id/share_button"
         android:src="@drawable/ic_back"
         android:layout_marginLeft="20dp"/>
 
@@ -64,8 +68,8 @@
         android:layout_height="23dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_alignTop="@+id/lower"
-        android:layout_alignBottom="@+id/lower"
+        android:layout_alignTop="@+id/share_button"
+        android:layout_alignBottom="@+id/share_button"
         android:src="@drawable/ic_trash"
         android:layout_marginRight="20dp"/>
 
