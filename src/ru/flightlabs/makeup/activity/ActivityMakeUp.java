@@ -239,6 +239,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         buttonCamera.setImageResource(R.drawable.ic_save);
         backButton.setVisibility(View.VISIBLE);
         rotateCamera.setVisibility(View.GONE);
+        gLSurfaceView.requestRender(); // FIXME tis is workaournd
     }
 
     private void startCameraView() {
