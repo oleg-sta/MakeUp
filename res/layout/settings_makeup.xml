@@ -8,9 +8,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:src="@drawable/face"
+        android:src="@drawable/settings_main"
         android:cropToPadding="false"
         android:adjustViewBounds="true" />
+
 
     <ImageView
         android:id="@+id/logo"
@@ -18,7 +19,7 @@
         android:layout_height="120dp"
         android:layout_alignParentRight="true"
         android:layout_marginTop="100dp"
-        android:src="@drawable/logo"
+        android:src="@drawable/settings_logo"
         android:cropToPadding="false"
         android:adjustViewBounds="true" />
 
@@ -115,14 +116,14 @@
         android:onClick="gotoUrl"
         android:text="www.flightlabs.ru"
         android:textSize="20sp"
-        android:textColor="#e84044" />
+        android:textColor="#E40005" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/text_version"
-        android:background="#d7d5c9"/>
+        android:background="#AAB7B9"/>
 
     <TextView
         android:id="@+id/text_share"

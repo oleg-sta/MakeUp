@@ -19,7 +19,7 @@
 
     <color name="main_makeup_color">#f7f7f7</color>
     <color name="main_text">#a4b2b7</color>
-    <color name="setting_text">#a6a7a8</color>
+    <color name="setting_text">#58595B</color>
     <color name="selected_text">#f28d91</color>
 
 </resources>

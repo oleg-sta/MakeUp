@@ -67,4 +67,9 @@ public class ColorsPagerAdapter extends PagerAdapter {
     public float getPageWidth(int position) {
         return 1f / 4;
     }
+
+    public interface Colors {
+        int getCount();
+        int[] getColor(int position);
+    }
 }
