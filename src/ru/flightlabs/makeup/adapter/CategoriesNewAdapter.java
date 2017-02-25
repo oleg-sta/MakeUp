@@ -48,16 +48,13 @@ public class CategoriesNewAdapter extends BaseAdapter {
         // Not using convertView for sample app simplicity. You should probably use it in real application to get better performance.
         View itemView = mLayoutInflater.inflate(R.layout.item_effect, null, false);
         ImageView imageView = (ImageView) itemView.findViewById(R.id.item_image);
-        Bitmap bm = BitmapLibs.getSampledResource(mContext, images.getResourceId(position, 0));
+        int resourceId = images.getResourceId(position, 0);
+        if (images.getString(position).contains(";")) {
+            resourceId = mContext.getResources().getIdentifier(images.getString(position).split(";")[0], "raw", mContext.getPackageName());
+        }
+        Bitmap bm = BitmapLibs.getSampledResource(mContext, resourceId);
         imageView.setImageBitmap(bm);
         imageView.setBackgroundColor(Color.WHITE);
-//        itemView.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                notification.changeItemInCategory(position);
-//            }
-//        });;
         return itemView;
     }
 }

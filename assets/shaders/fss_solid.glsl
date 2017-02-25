@@ -3,17 +3,24 @@ precision mediump float;        // Set the default precision to medium. We don't
 // draw 2d textures
 uniform sampler2D u_TextureOrig; // original screen texture
 uniform sampler2D u_Texture; // mask texture
+uniform sampler2D u_Texture1;
 uniform sampler2D u_Texture2;
 uniform sampler2D u_Texture3;
+uniform sampler2D u_Texture4;
 
 uniform vec3 color0; // color
 uniform vec3 color1; // color
 uniform vec3 color2; // color
+uniform vec3 color3; // color
+uniform vec3 color4; // color
 
 varying vec2 v_TexCoordinate;
 varying vec2 v_TexOrigCoordinate;
-uniform vec3 f_alpha; // mask texture
+
+uniform vec3 f_alpha;
+uniform vec3 f_alpha1;
 uniform vec3 useHsv;
+uniform vec3 useHsv1;
 
 vec3 rgb2hsv(vec3 c)
 {
@@ -68,37 +75,34 @@ vec4 colorizeCommon(vec4 pic, vec4 to, float alpha)
     return colorizedOutput;
 }
 
+vec4 smartMix(vec4 inColor, float useHsvF, vec3 color, float f_alpha, vec4 maskColor)
+{
+    vec4 res = inColor;
+    if (useHsvF == 1.0)
+    {
+        res = mixHsv(res, maskColor, color, f_alpha);
+    } else if (useHsvF == 0.0) {
+        res = mix(res, vec4(color, 1.0), maskColor[3] * f_alpha);
+    } else if (useHsvF == 2.0) {
+        res = colorizeCommon(res, vec4(color, 1.0), maskColor[3] * f_alpha);
+    }
+    return res;
+}
+
 void main()
 {
     vec4 res = vec4(1.0);
-    vec4 maskColor = texture2D(u_Texture, v_TexCoordinate);
+    vec4 maskColor0 = texture2D(u_Texture, v_TexCoordinate);
+    vec4 maskColor1 = texture2D(u_Texture1, v_TexCoordinate);
     vec4 maskColor2 = texture2D(u_Texture2, v_TexCoordinate);
     vec4 maskColor3 = texture2D(u_Texture3, v_TexCoordinate);
+    vec4 maskColor4 = texture2D(u_Texture4, v_TexCoordinate);
 
     res = texture2D(u_TextureOrig, v_TexOrigCoordinate);
-    if (useHsv[0] == 1.0)
-    {
-        res = mixHsv(res, maskColor, color0, f_alpha[0]);
-    } else if (useHsv[0] == 0.0) {
-        res = mix(res, vec4(color0, 1.0), maskColor[3] * f_alpha[0]);
-    } else if (useHsv[0] == 2.0) {
-        res = colorizeCommon(res, vec4(color0, 1.0), maskColor[3] * f_alpha[0]);
-    }
-    if (useHsv[1] == 1.0)
-    {
-        res = mixHsv(res, maskColor2, color1, f_alpha[1]);
-    } else if (useHsv[1] == 0.0) {
-        res = mix(res, vec4(color1, 1.0), maskColor2[3] * f_alpha[1]);
-    } else if (useHsv[1] == 2.0) {
-        res = colorizeCommon(res, vec4(color1, 1.0), maskColor2[3] * f_alpha[1]);
-    }
-    if (useHsv[2] == 1.0)
-    {
-        res = mixHsv(res, maskColor3, color2, f_alpha[2]);
-    } else if (useHsv[2] == 0.0) {
-        res = mix(res, vec4(color2, 1.0), maskColor3[3] * f_alpha[2]);
-    } else if (useHsv[2] == 2.0) {
-        res = colorizeCommon(res, vec4(color2, 1.0), maskColor3[3] * f_alpha[2]);
-    }
+    res = smartMix(res, useHsv[0], color0, f_alpha[0], maskColor0);
+    res = smartMix(res, useHsv[1], color1, f_alpha[1], maskColor1);
+    res = smartMix(res, useHsv[2], color2, f_alpha[2], maskColor2);
+    res = smartMix(res, useHsv1[0], color3, f_alpha1[0], maskColor3);
+    res = smartMix(res, useHsv1[1], color4, f_alpha1[1], maskColor4);
     gl_FragColor = res;
 }

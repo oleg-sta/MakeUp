@@ -15,15 +15,15 @@
       <part name='03' x='382' y='258'/>
       <part name='04' x='314' y='276'/>
       <part name='05' x='235' y='272'/>
-      <part name='06' x='4' y='70'/>
-      <part name='07' x='506' y='79'/>
-      <part name='08' x='506' y='401'/>
-      <part name='09' x='10' y='397'/>
+      <part name='06' x='60' y='113'/>
+      <part name='07' x='477' y='119'/>
+      <part name='08' x='483' y='388'/>
+      <part name='09' x='70' y='382'/>
       <part name='10' x='278' y='241'/>
-      <part name='11' x='261' y='74'/>
-      <part name='12' x='505' y='268'/>
-      <part name='13' x='254' y='404'/>
-      <part name='14' x='4' y='245'/>
+      <part name='11' x='274' y='107'/>
+      <part name='12' x='482' y='266'/>
+      <part name='13' x='274' y='383'/>
+      <part name='14' x='61' y='238'/>
     </box>
   </image>
 </images>

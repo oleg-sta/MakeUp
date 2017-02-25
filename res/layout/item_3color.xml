@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="150dp"
+    android:layout_height="match_parent"
+    android:background="#A0AFAFAF">
+
+    <ImageView
+        android:id="@+id/item_image"
+        android:layout_width="40dp"
+        android:layout_height="22dp"
+        android:layout_marginRight="45dp"
+        android:src="@drawable/color_it2"
+        android:layout_gravity="center"/>
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="22dp"
+        android:layout_marginRight="45dp"
+        android:src="@drawable/color_it3"
+        android:layout_gravity="center"/>
+
+    <ImageView
+        android:id="@+id/item_image1"
+        android:layout_width="40dp"
+        android:layout_height="22dp"
+        android:src="@drawable/color_it2"
+        android:layout_gravity="center"/>
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="22dp"
+        android:src="@drawable/color_it3"
+        android:layout_gravity="center"/>
+
+    <ImageView
+        android:id="@+id/item_image2"
+        android:layout_width="40dp"
+        android:layout_height="22dp"
+        android:layout_marginLeft="45dp"
+        android:src="@drawable/color_it2"
+        android:layout_gravity="center"/>
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="22dp"
+        android:layout_marginLeft="45dp"
+        android:src="@drawable/color_it3"
+        android:layout_gravity="center"/>
+</FrameLayout>

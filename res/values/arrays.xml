@@ -23,20 +23,23 @@
         <item>#7B0D17</item>
     </array>
 
-    <array name="colors_shadow">
-        <item>none</item>
+    <string-array name="colors_shadow"> <!-- make more then one color for eyeshadow-->
         <item>#000000</item>
-        <item>#E18049</item>
-        <item>#D7CD9C</item>
+        <item>#FF0000;#00FF00;#0000FF</item>
+        <item>#00FF00;#0000FF;#FF0000</item>
+        <item>#0000FF;#FF0000;#00FF00</item>
+        <item>#E18049;#FF0000;#00FF00</item>
+        <item>#D7CD9C;#8F824B;#5B5444</item>
         <item>#8F824B</item>
         <item>#5B5444</item>
         <item>#CFC38F</item>
         <item>#D4A557</item>
         <item>#88664B</item>
-    </array>
+    </string-array>
 
     <array name="colors_lips">
         <item>none</item>
+        <item>#FF0000</item>
         <item>#FFCFBB</item>
         <item>#FFAE88</item>
         <item>#F99072</item>
@@ -48,6 +51,8 @@
         <item>#B3498B</item>
         <item>#095B20</item>
         <item>#4116EC</item>
+        <item>#0000FF</item>
+        <item>#00FF00</item>
         <item>#1AE015</item>
         <item>#1BEEDD</item>
         <item>#FFC600</item>
@@ -71,7 +76,7 @@
     </array>
 
     <array name="eyeshadow">
-        <item>@raw/el_shadow_01_01</item>
+        <item>el_shadow_01_01;el_shadow_01_02;el_shadow_01_03</item>
         <item>@raw/eye2_0000_shadow</item>
         <item>@raw/eye2_0000_shadow_exp</item>
         <item>@raw/eye2_0000_shadow2</item>

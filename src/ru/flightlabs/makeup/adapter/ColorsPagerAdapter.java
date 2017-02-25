@@ -45,9 +45,6 @@ public class ColorsPagerAdapter extends PagerAdapter {
         View itemView = mLayoutInflater.inflate(R.layout.item_color, container, false);
 
         ImageView imageView = (ImageView) itemView.findViewById(R.id.item_image);
-        //imageView.setImageResource(R.drawable.color_picker);
-        //imageView.setBackgroundColor(Color.WHITE);
-        //imageView.setBackgroundColor(colors[position]);
         imageView.setColorFilter(colors[position]);
         container.addView(itemView);
         itemView.setOnClickListener(new View.OnClickListener() {

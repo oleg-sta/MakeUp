@@ -47,6 +47,8 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
     private int currentCategory;
 
     public static boolean useHsv = false; // false - use colorized
+    public static boolean useAlphaCol= false;
+
     private StateEditor editorEnvironment;
     ResourcesApp resourcesApp;
     CompModel compModel;
@@ -202,6 +204,12 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
                 useHsv = b;
             }
         });
+        ((CheckBox)findViewById(R.id.useAlphaColor)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                useAlphaCol = b;
+            }
+        });
     }
 
     @Override
@@ -303,7 +311,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         });
 
         ViewPager viewPagerColors = (ViewPager) findViewById(R.id.colors);
-        ColorsPagerAdapter pagerColors = new ColorsPagerAdapter(this, getResources().getIntArray(resourceId));
+        ColorsPagerAdapter pagerColors = new ColorsPagerAdapter(this, editorEnvironment.getAllColors(position));//getResources().getIntArray(resourceId));
         viewPagerColors.setAdapter(pagerColors);
         ((SeekBar)findViewById(R.id.opacity)).setProgress(editorEnvironment.getOpacity(currentCategory));
     }

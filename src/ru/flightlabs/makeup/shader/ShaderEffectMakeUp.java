@@ -6,6 +6,8 @@ import android.util.Log;
 
 import org.opencv.core.Point;
 
+import java.util.Arrays;
+
 import ru.flightlabs.makeup.StateEditor;
 import ru.flightlabs.makeup.activity.ActivityMakeUp;
 import ru.flightlabs.makeup.utils.ModelUtils;
@@ -21,7 +23,7 @@ import ru.flightlabs.masks.utils.PoseHelper;
 public class ShaderEffectMakeUp extends ShaderEffect {
     private static final String TAG = "ShaderEffectMakeUp";
 
-    private int eyeShadowTextureId;
+    private int[] eyeShadowTextureId = new int[3];
     private int eyeLashesTextureId;
     private int eyeLineTextureId;
     private int lipsTextureId;
@@ -35,10 +37,28 @@ public class ShaderEffectMakeUp extends ShaderEffect {
 
     public void init() {
         super.init();
-        eyeShadowTextureId = OpenGlHelper.loadTexture(context, editEnv.getResourceId(StateEditor.EYE_SHADOW));
+        loadTexures(eyeShadowTextureId, editEnv.getResourceIds(StateEditor.EYE_SHADOW));
         eyeLashesTextureId = OpenGlHelper.loadTexture(context, editEnv.getResourceId(StateEditor.EYE_LASH));
         eyeLineTextureId = OpenGlHelper.loadTexture(context, editEnv.getResourceId(StateEditor.EYE_LINE));
         lipsTextureId = OpenGlHelper.loadTexture(context, editEnv.getResourceId(StateEditor.LIPS));
+    }
+
+    private void loadTexures(int[] openglTexts, int[] resources) {
+        for (int i = 0; i < openglTexts.length; i++) {
+            if (i < resources.length && resources[i] > 0) {
+                openglTexts[i] = OpenGlHelper.loadTexture(context, resources[i]);
+            } else {
+                openglTexts[i] = OpenGlHelper.loadTexture(context, resources[0]); // TODO fix
+            }
+        }
+    }
+
+    private void changeTexures(int[] openglTexts, int[] resources) {
+        for (int i = 0; i < resources.length; i++) {
+            if (resources[i] > 0) {
+                OpenGlHelper.changeTexture(context, resources[i], openglTexts[i]);
+            }
+        }
     }
 
     public void makeShaderMask(int indexEye, PoseHelper.PoseResult poseResult, int width, int height, int texIn, long time, int iGlobTime) {
@@ -61,7 +81,8 @@ public class ShaderEffectMakeUp extends ShaderEffect {
             // TODO use blendshape for eyes
 
             if (editEnv.changed(StateEditor.EYE_SHADOW)) {
-                OpenGlHelper.changeTexture(context, editEnv.getResourceId(StateEditor.EYE_SHADOW), eyeShadowTextureId);
+                Log.i(TAG, "changed texture " + Arrays.toString(editEnv.getResourceIds(StateEditor.EYE_SHADOW)));
+                changeTexures(eyeShadowTextureId, editEnv.getResourceIds(StateEditor.EYE_SHADOW));
             }
             if (editEnv.changed(StateEditor.EYE_LASH)) {
                 OpenGlHelper.changeTexture(context, editEnv.getResourceId(StateEditor.EYE_LASH), eyeLashesTextureId);
@@ -76,32 +97,57 @@ public class ShaderEffectMakeUp extends ShaderEffect {
             Point[] onImage = PointsConverter.completePointsByAffine(onImageEyeLeft, PointsConverter.convertToOpencvPoints(StateEditor.pointsLeftEyeNew), new int[]{0, 1, 2, 3, 4, 5});
             // TODO use blendshapes
             onImage = PointsConverter.replacePoints(onImage, onImageEyeLeft, new int[]{0, 1, 2, 3, 4, 5});
+            int[] shadowColor = editEnv.getColors(StateEditor.EYE_SHADOW);
+
+            int[] hsv = new int[] {ActivityMakeUp.useHsv ? 1 : 2, 0, 0};
+            if (ActivityMakeUp.useAlphaCol) {
+                hsv[0] = 0;
+            }
+
+
+
             ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, eyeShadowTextureId, PointsConverter.convertFromPointsGlCoord(onImage, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsLeftEyeNew, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLeftEye), eyeLashesTextureId, eyeLineTextureId,
-                    new int[] {ActivityMakeUp.useHsv ? 1 : 2, 0, 0},
-                    PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_SHADOW)),
+                    hsv,
+                    PointsConverter.convertTovec3(shadowColor[0]),
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_LASH)),
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_LINE)),
-                    editEnv.getOpacityFloat(StateEditor.EYE_SHADOW), editEnv.getOpacityFloat(StateEditor.EYE_LASH), editEnv.getOpacityFloat(StateEditor.EYE_LINE));
+                    editEnv.getOpacityFloat(StateEditor.EYE_SHADOW), editEnv.getOpacityFloat(StateEditor.EYE_LASH), editEnv.getOpacityFloat(StateEditor.EYE_LINE), getColor(shadowColor));
 
             Point[] onImageRight = PointsConverter.completePointsByAffine(PointsConverter.reallocateAndCut(onImageEyeRight, new int[] {3, 2, 1, 0 , 5, 4}), PointsConverter.convertToOpencvPoints(StateEditor.pointsLeftEyeNew), new int[]{0, 1, 2, 3, 4, 5});
             //onImageRight = PointsConverter.replacePoints(onImageRight, onImageEyeRight, new int[]{3, 2, 1, 0 , 5, 4});
             // FIXME flip triangle on right eyes, cause left and right triangles are not the same
             ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, eyeShadowTextureId, PointsConverter.convertFromPointsGlCoord(onImageRight, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsLeftEyeNew, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLeftEye), eyeLashesTextureId, eyeLineTextureId,
-                    new int[] {ActivityMakeUp.useHsv ? 1 : 2, 0, 0},
-                    PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_SHADOW)),
+                    hsv,
+                    PointsConverter.convertTovec3(shadowColor[0]),
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_LASH)),
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_LINE)),
-                    editEnv.getOpacityFloat(StateEditor.EYE_SHADOW), editEnv.getOpacityFloat(StateEditor.EYE_LASH), editEnv.getOpacityFloat(StateEditor.EYE_LINE));
+                    editEnv.getOpacityFloat(StateEditor.EYE_SHADOW), editEnv.getOpacityFloat(StateEditor.EYE_LASH), editEnv.getOpacityFloat(StateEditor.EYE_LINE), getColor(shadowColor));
 
             Point[] onImageLips = ModelUtils.getOnlyPoints(poseResult.foundLandmarks, 48, 20);
             Point[] onImageLipsConv = PointsConverter.completePointsByAffine(onImageLips, PointsConverter.convertToOpencvPoints(StateEditor.pointsWasLipsNew), new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19});
             onImageLipsConv = PointsConverter.replacePoints(onImageLipsConv, onImageLips, new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19});
-            ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, lipsTextureId, PointsConverter.convertFromPointsGlCoord(onImageLipsConv, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsWasLipsNew, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLips), lipsTextureId, lipsTextureId,
+            ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, new int[]{lipsTextureId, -1, -1}, PointsConverter.convertFromPointsGlCoord(onImageLipsConv, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsWasLipsNew, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLips), lipsTextureId, lipsTextureId,
                     new int[] {ActivityMakeUp.useHsv ? 1 : 2, -1, -1},
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.LIPS)), null, null,
-                    editEnv.getOpacityFloat(StateEditor.LIPS), 0, 0);
+                    editEnv.getOpacityFloat(StateEditor.LIPS), 0, 0, new float[0]);
 
             // FIXME elements erase each other
         }
+    }
+
+    private static float[] getColor(int color[]) {
+        float[] res = new float[6];
+        for (int i = 0; i < 2; i++) {
+            float[] r;
+            if (i + 1 < color.length) {
+                r = PointsConverter.convertTovec3(color[i]);
+            } else {
+                r = PointsConverter.convertTovec3(color[0]);
+            }
+            res[i * 3] = r[0];
+            res[i * 3 + 1] = r[1];
+            res[i * 3 + 2] = r[2];
+        }
+        return res;
     }
 }

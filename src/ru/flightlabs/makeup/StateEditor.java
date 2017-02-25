@@ -2,6 +2,8 @@ package ru.flightlabs.makeup;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +31,7 @@ public class StateEditor {
     public static final int FASHION = 4;
 
     private int[] EYE_LASH_COLORS;
-    private int[] EYE_SHADOW_COLORS;
+    private String[] EYE_SHADOW_COLORS;
     private int[] EYE_LINE_COLORS;
     private int[] LIPS_COLORS;
 
@@ -54,7 +56,7 @@ public class StateEditor {
 
     public void init() {
         EYE_LASH_COLORS = activity.getResources().getIntArray(R.array.colors_eyelashes);
-        EYE_SHADOW_COLORS = activity.getResources().getIntArray(R.array.colors_shadow);
+        EYE_SHADOW_COLORS = activity.getResources().getStringArray(R.array.colors_shadow);
         EYE_LINE_COLORS = activity.getResources().getIntArray(R.array.colors_eyelashes);
         LIPS_COLORS = activity.getResources().getIntArray(R.array.colors_lips);
         loadModels();
@@ -99,6 +101,7 @@ public class StateEditor {
             case EYE_LASH:
                 return resourcesApp.eyelashesSmall.getResourceId(currentIndexItem[EYE_LASH], 0);
             case EYE_SHADOW:
+                // TODO it has multiple layers
                 return resourcesApp.eyeshadowSmall.getResourceId(currentIndexItem[EYE_SHADOW], 0);
             case EYE_LINE:
                 return resourcesApp.eyelinesSmall.getResourceId(currentIndexItem[EYE_LINE], 0);
@@ -109,12 +112,69 @@ public class StateEditor {
         }
     }
 
+    public int[] getResourceIds(int itemNum) {
+        switch (itemNum) {
+            case EYE_SHADOW:
+                if (resourcesApp.eyeshadowSmall.getString(currentIndexItem[EYE_SHADOW]).contains(";")) {
+                    String[] w = resourcesApp.eyeshadowSmall.getString(currentIndexItem[EYE_SHADOW]).split(";");
+                    int[] resources = new int[w.length];
+                    for (int i = 0; i < w.length; i++) {
+                        resources[i] = activity.getResources().getIdentifier(w[i], "raw", activity.getPackageName());
+                    }
+                    return resources;
+                } else {
+                    return new int[] {resourcesApp.eyeshadowSmall.getResourceId(currentIndexItem[EYE_SHADOW], 0)};
+                }
+            default:
+                throw new RuntimeException("Unsupported element");
+        }
+    }
+
+    public int[] getColors(int itemNum) {
+        switch (itemNum) {
+            case EYE_SHADOW:
+                String[] colorStr = EYE_SHADOW_COLORS[currentColorIndex[StateEditor.EYE_SHADOW]].split(";");
+                int[] res = new int[colorStr.length];
+                for (int i = 0; i < colorStr.length; i++) {
+                     res[i] = Color.parseColor(colorStr[i]);
+                }
+                return res;
+            default:
+                throw new RuntimeException("Unsupported element");
+        }
+    }
+
+    private static int[] convertToSimpleColor(String[] colors) {
+        int[] res = new int[colors.length];
+        for (int i = 0; i < colors.length; i++) {
+            res[i] = Color.parseColor(colors[i].split(";")[0]);
+        }
+        return res;
+    }
+    public int[] getAllColors(int itemNum) {
+        switch (itemNum) {
+            case EYE_LASH:
+                return EYE_LASH_COLORS;
+            case EYE_SHADOW:
+                return convertToSimpleColor(EYE_SHADOW_COLORS);
+            case EYE_LINE:
+                return EYE_LINE_COLORS;
+            case LIPS:
+                return LIPS_COLORS;
+            case FASHION:
+                return new int[0];
+            default:
+                throw new RuntimeException("Unsupported element");
+        }
+    }
+
     public int getColor(int itemNum) {
         switch (itemNum) {
             case EYE_LASH:
                 return EYE_LASH_COLORS[currentColorIndex[StateEditor.EYE_LASH]];
             case EYE_SHADOW:
-                return EYE_SHADOW_COLORS[currentColorIndex[StateEditor.EYE_SHADOW]];
+                String colorStr = EYE_SHADOW_COLORS[currentColorIndex[StateEditor.EYE_SHADOW]].split(";")[0];
+                return Color.parseColor(colorStr);
             case EYE_LINE:
                 return EYE_LINE_COLORS[currentColorIndex[StateEditor.EYE_LINE]];
             case LIPS:
