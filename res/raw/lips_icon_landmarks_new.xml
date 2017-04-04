@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <?xml-stylesheet type='text/xsl' href='image_metadata_stylesheet.xsl'?>
 <dataset>
 <name>Testing faces</name>
@@ -9,28 +9,28 @@
 <images>
   <image file='face_elements2_0004_Layer-4_lips.png'>
     <box top='0' left='0' width='590' height='1032'>
-      <part name='00' x='16' y='180'/>
-      <part name='01' x='123' y='153'/>
-      <part name='02' x='196' y='131'/>
-      <part name='03' x='267' y='143'/>
-      <part name='04' x='345' y='125'/>
-      <part name='05' x='406' y='138'/>
-      <part name='06' x='511' y='161'/>
+      <part name='00' x='33' y='192'/>
+      <part name='01' x='120' y='140'/>
+      <part name='02' x='198' y='107'/>
+      <part name='03' x='267' y='121'/>
+      <part name='04' x='338' y='108'/>
+      <part name='05' x='408' y='131'/>
+      <part name='06' x='490' y='186'/>
       <part name='07' x='415' y='262'/>
-      <part name='08' x='356' y='286'/>
-      <part name='09' x='275' y='294'/>
-      <part name='10' x='198' y='287'/>
-      <part name='11' x='118' y='268'/>
-      <part name='12' x='61' y='193'/>
-      <part name='13' x='211' y='192'/>
-      <part name='14' x='268' y='189'/>
-      <part name='15' x='330' y='189'/>
-      <part name='16' x='466' y='178'/>
-      <part name='17' x='331' y='199'/>
-      <part name='18' x='271' y='205'/>
-      <part name='19' x='212' y='204'/>
+      <part name='08' x='360' y='292'/>
+      <part name='09' x='275' y='305'/>
+      <part name='10' x='190' y='297'/>
+      <part name='11' x='119' y='271'/>
+      <part name='12' x='87' y='193'/>
+      <part name='13' x='205' y='174'/>
+      <part name='14' x='271' y='171'/>
+      <part name='15' x='338' y='171'/>
+      <part name='16' x='441' y='185'/>
+      <part name='17' x='338' y='207'/>
+      <part name='18' x='274' y='212'/>
+      <part name='19' x='203' y='210'/>
       <part name='20' x='20' y='48'/>
-      <part name='21' x='507' y='66'/>
+      <part name='21' x='507' y='59'/>
       <part name='22' x='17' y='340'/>
       <part name='23' x='508' y='324'/>
     </box>

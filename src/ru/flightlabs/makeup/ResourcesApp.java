@@ -2,12 +2,6 @@ package ru.flightlabs.makeup;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.util.Log;
-
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-
-import ru.flightlabs.masks.Static;
 
 /**
  * Created by sov on 27.11.2016.
@@ -16,19 +10,31 @@ import ru.flightlabs.masks.Static;
 public class ResourcesApp {
 
     // FIXME make it small
-    public TypedArray eyelashesSmall;
-    public TypedArray eyeshadowSmall;
-    public TypedArray eyelinesSmall;
+    public TypedArray eyelashesTextures;
+    public TypedArray eyelashesIcons;
+
+    public TypedArray eyeshadowTextures;
+    public TypedArray eyeshadowIcons;
+
+    public TypedArray eyelinesTextures;
+    public TypedArray eyelinesIcons;
+
     public TypedArray lipsSmall;
-    public TypedArray fashionSmall;
+    public TypedArray fashionIcons;
     public String[] fashions;
 
     public ResourcesApp(Context context) {
-        eyelashesSmall = context.getResources().obtainTypedArray(R.array.eyelashes);
-        eyeshadowSmall = context.getResources().obtainTypedArray(R.array.eyeshadow);
-        eyelinesSmall = context.getResources().obtainTypedArray(R.array.eyelines);
+        eyelashesTextures = context.getResources().obtainTypedArray(R.array.eyelashes);
+        eyelashesIcons = context.getResources().obtainTypedArray(R.array.eyelashesIcon);
+
+        eyeshadowTextures = context.getResources().obtainTypedArray(R.array.eyeshadow);
+        eyeshadowIcons = context.getResources().obtainTypedArray(R.array.eyeshadowIcon);
+
+        eyelinesTextures = context.getResources().obtainTypedArray(R.array.eyelines);
+        eyelinesIcons = context.getResources().obtainTypedArray(R.array.eyelinesIcons);
+
         lipsSmall = context.getResources().obtainTypedArray(R.array.lips);
-        fashionSmall = context.getResources().obtainTypedArray(R.array.fashion_ic);
+        fashionIcons = context.getResources().obtainTypedArray(R.array.fashion_ic);
         fashions = context.getResources().getStringArray(R.array.fashion_ic1);
     }
 }

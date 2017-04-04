@@ -23,7 +23,7 @@ import ru.flightlabs.masks.utils.PoseHelper;
 public class ShaderEffectMakeUp extends ShaderEffect {
     private static final String TAG = "ShaderEffectMakeUp";
 
-    private int[] eyeShadowTextureId = new int[3];
+    private int[] eyeShadowTextureId = new int[5];
     private int eyeLashesTextureId;
     private int eyeLineTextureId;
     private int lipsTextureId;
@@ -126,7 +126,7 @@ public class ShaderEffectMakeUp extends ShaderEffect {
             Point[] onImageLips = ModelUtils.getOnlyPoints(poseResult.foundLandmarks, 48, 20);
             Point[] onImageLipsConv = PointsConverter.completePointsByAffine(onImageLips, PointsConverter.convertToOpencvPoints(StateEditor.pointsWasLipsNew), new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19});
             onImageLipsConv = PointsConverter.replacePoints(onImageLipsConv, onImageLips, new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19});
-            ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, new int[]{lipsTextureId, -1, -1}, PointsConverter.convertFromPointsGlCoord(onImageLipsConv, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsWasLipsNew, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLips), lipsTextureId, lipsTextureId,
+            ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, new int[]{lipsTextureId, -1, -1, -1, -1}, PointsConverter.convertFromPointsGlCoord(onImageLipsConv, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsWasLipsNew, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLips), lipsTextureId, lipsTextureId,
                     new int[] {ActivityMakeUp.useHsv ? 1 : 2, -1, -1},
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.LIPS)), null, null,
                     editEnv.getOpacityFloat(StateEditor.LIPS), 0, 0, new float[0]);
@@ -136,8 +136,9 @@ public class ShaderEffectMakeUp extends ShaderEffect {
     }
 
     private static float[] getColor(int color[]) {
-        float[] res = new float[6];
-        for (int i = 0; i < 2; i++) {
+        final int num = 2 + 2; // 4 слоя тени(1ый слой был уже учтен)
+        float[] res = new float[num * 3]; // RGB на каждый слой
+        for (int i = 0; i < num; i++) {
             float[] r;
             if (i + 1 < color.length) {
                 r = PointsConverter.convertTovec3(color[i]);

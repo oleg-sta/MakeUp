@@ -270,19 +270,19 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         EcoGallery viewPager = (EcoGallery) findViewById(R.id.elements);
         TypedArray iconsCategory = null;
         if (position == StateEditor.EYE_LASH) {
-            iconsCategory = resourcesApp.eyelashesSmall;
+            iconsCategory = resourcesApp.eyelashesIcons;
             resourceId = R.array.colors_eyelashes;
         } else if (position == StateEditor.EYE_SHADOW) {
-            iconsCategory = resourcesApp.eyeshadowSmall;
+            iconsCategory = resourcesApp.eyeshadowIcons;
             resourceId = R.array.colors_shadow;
         } else if (position == StateEditor.EYE_LINE) {
+            iconsCategory = resourcesApp.eyelinesIcons;
             resourceId = R.array.colors_eyelashes;
-            iconsCategory = resourcesApp.eyelinesSmall;
         } else if (position == StateEditor.LIPS) {
             iconsCategory = resourcesApp.lipsSmall;
             resourceId = R.array.colors_lips;
         } else  {
-            iconsCategory = resourcesApp.fashionSmall;
+            iconsCategory = resourcesApp.fashionIcons;
             resourceId = R.array.colors_none;
         }
         final CategoriesNewAdapter pager = new CategoriesNewAdapter(this, iconsCategory);

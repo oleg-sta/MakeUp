@@ -2,7 +2,6 @@ package ru.flightlabs.makeup;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 
 import java.io.File;
@@ -99,12 +98,12 @@ public class StateEditor {
     public int getResourceId(int itemNum) {
         switch (itemNum) {
             case EYE_LASH:
-                return resourcesApp.eyelashesSmall.getResourceId(currentIndexItem[EYE_LASH], 0);
+                return resourcesApp.eyelashesTextures.getResourceId(currentIndexItem[EYE_LASH], 0);
             case EYE_SHADOW:
                 // TODO it has multiple layers
-                return resourcesApp.eyeshadowSmall.getResourceId(currentIndexItem[EYE_SHADOW], 0);
+                return resourcesApp.eyeshadowTextures.getResourceId(currentIndexItem[EYE_SHADOW], 0);
             case EYE_LINE:
-                return resourcesApp.eyelinesSmall.getResourceId(currentIndexItem[EYE_LINE], 0);
+                return resourcesApp.eyelinesTextures.getResourceId(currentIndexItem[EYE_LINE], 0);
             case LIPS:
                 return resourcesApp.lipsSmall.getResourceId(currentIndexItem[LIPS], 0);
             default:
@@ -115,15 +114,15 @@ public class StateEditor {
     public int[] getResourceIds(int itemNum) {
         switch (itemNum) {
             case EYE_SHADOW:
-                if (resourcesApp.eyeshadowSmall.getString(currentIndexItem[EYE_SHADOW]).contains(";")) {
-                    String[] w = resourcesApp.eyeshadowSmall.getString(currentIndexItem[EYE_SHADOW]).split(";");
+                if (resourcesApp.eyeshadowTextures.getString(currentIndexItem[EYE_SHADOW]).contains(";")) {
+                    String[] w = resourcesApp.eyeshadowTextures.getString(currentIndexItem[EYE_SHADOW]).split(";");
                     int[] resources = new int[w.length];
                     for (int i = 0; i < w.length; i++) {
                         resources[i] = activity.getResources().getIdentifier(w[i], "raw", activity.getPackageName());
                     }
                     return resources;
                 } else {
-                    return new int[] {resourcesApp.eyeshadowSmall.getResourceId(currentIndexItem[EYE_SHADOW], 0)};
+                    return new int[] {resourcesApp.eyeshadowTextures.getResourceId(currentIndexItem[EYE_SHADOW], 0)};
                 }
             default:
                 throw new RuntimeException("Unsupported element");

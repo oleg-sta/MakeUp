@@ -23,7 +23,7 @@
         <item>#7B0D17</item>
     </array>
 
-    <string-array name="colors_shadow"> <!-- make more then one color for eyeshadow-->
+    <string-array translatable="false" name="colors_shadow"> <!-- make more then one color for eyeshadow-->
         <item>#000000</item>
         <item>#FF0000;#00FF00;#0000FF</item>
         <item>#00FF00;#0000FF;#FF0000</item>
@@ -66,56 +66,110 @@
 
     <array name="colors_none"/>
 
+    <array name="eyelashesIcon">
+        <item>@raw/eyelashes_icon_01</item>
+        <item>@raw/eyelashes_icon_04</item>
+        <item>@raw/eyelashes_icon_05</item>
+        <item>@raw/eyelashes_icon_06</item>
+        <item>@raw/eyelashes_icon_07</item>
+        <item>@raw/eyelashes_icon_08</item>
+        <item>@raw/eyelashes_icon_09</item>
+        <item>@raw/eyelashes_icon_10</item>
+        <item>@raw/eyelashes_icon_11</item>
+        <item>@raw/eyelashes_icon_12_1</item>
+        <item>@raw/eyelashes_icon_12_2</item>
+        <item>@raw/eyelashes_icon_13</item>
+    </array>
     <array name="eyelashes">
-        <item>@raw/el_lash_01</item>
-        <item>@raw/eye2_0000_lash</item>
-        <item>@raw/eye2_0000_lash2</item>
-        <item>@raw/eye2_0000_lash3</item>
-        <item>@raw/eye2_0000_lash4</item>
-        <item>@raw/eye2_0000_lash5</item>
+        <item>@raw/eyelashes_01</item>
+        <item>@raw/eyelashes_04</item>
+        <item>@raw/eyelashes_05</item>
+        <item>@raw/eyelashes_06</item>
+        <item>@raw/eyelashes_07</item>
+        <item>@raw/eyelashes_08</item>
+        <item>@raw/eyelashes_09</item>
+        <item>@raw/eyelashes_10</item>
+        <item>@raw/eyelashes_11</item>
+        <item>@raw/eyelashes_12_1</item>
+        <item>@raw/eyelashes_12_2</item>
+        <item>@raw/eyelashes_13</item>
+    </array>
+
+    <array name="eyeshadowIcon">
+        <item>@raw/eyeshadow_icon_01</item>
+        <item>@raw/eyeshadow_icon_02</item>
+        <item>@raw/eyeshadow_icon_04</item>
+        <item>@raw/eyeshadow_icon_05</item>
+        <item>@raw/eyeshadow_icon_06</item>
+        <item>@raw/eyeshadow_icon_08</item>
+        <item>@raw/eyeshadow_icon_09</item>
     </array>
 
     <array name="eyeshadow">
-        <item>el_shadow_01_01;el_shadow_01_02;el_shadow_01_03</item>
-        <item>@raw/eye2_0000_shadow</item>
-        <item>@raw/eye2_0000_shadow_exp</item>
-        <item>@raw/eye2_0000_shadow2</item>
-        <item>@raw/eye2_0000_shadow3</item>
-        <item>@raw/eye2_0000_shadow4</item>
-        <item>@raw/eye2_0000_shadow5</item>
-        <item>@raw/eye2_0000_shadow6</item>
-        <item>@raw/eye2_0000_smokey_eeys</item>
+        <item>eyeshadow_01_01;eyeshadow_01_02;eyeshadow_01_03</item>
+        <item>eyeshadow_02_01;eyeshadow_02_02;eyeshadow_02_03;eyeshadow_02_04;eyeshadow_02_05</item>
+        <item>eyeshadow_04_01;eyeshadow_04_02;eyeshadow_04_03</item>
+        <item>eyeshadow_05_01;eyeshadow_05_02;eyeshadow_05_03</item>
+        <item>eyeshadow_06_01;eyeshadow_06_02;eyeshadow_06_03</item>
+        <item>eyeshadow_08_01;eyeshadow_08_02;eyeshadow_08_03;eyeshadow_08_04;eyeshadow_08_05</item>
+        <item>eyeshadow_09_01;eyeshadow_09_02;eyeshadow_09_03</item>
+    </array>
+
+    <array name="eyelinesIcons">
+        <item>@raw/eyeline_icon_01</item>
+        <item>@raw/eyeline_icon_02</item>
+        <item>@raw/eyeline_icon_03</item>
+        <item>@raw/eyeline_icon_04</item>
+        <item>@raw/eyeline_icon_05</item>
+        <item>@raw/eyeline_icon_06</item>
+        <item>@raw/eyeline_icon_08</item>
+        <item>@raw/eyeline_icon_09</item>
+        <item>@raw/eyeline_icon_11</item>
+        <item>@raw/eyeline_icon_12</item>
     </array>
 
     <array name="eyelines">
-        <item>@raw/el_line_01</item>
-        <item>@raw/eye2_0000_line</item>
-        <item>@raw/eye2_0000_line2</item>
-        <item>@raw/eye2_0000_line3</item>
+        <item>@raw/eyeline_01</item>
+        <item>@raw/eyeline_02</item>
+        <item>@raw/eyeline_03</item>
+        <item>@raw/eyeline_04</item>
+        <item>@raw/eyeline_05</item>
+        <item>@raw/eyeline_06</item>
+        <item>@raw/eyeline_08</item>
+        <item>@raw/eyeline_09</item>
+        <item>@raw/eyeline_11</item>
+        <item>@raw/eyeline_12</item>
     </array>
 
     <array name="lips">
         <item>@raw/el_lips_01</item>
-        <item>@raw/lips_icon</item>
-        <item>@raw/lips_icon_2</item>
     </array>
 
+    <!--lash,shadow,line,lips,lash_col,shad_col,line_col,lips_col-->
     <array name="fashion_ic1">
         <item>0;0;0;0;1;2;3;4</item>
         <item>0;1;0;0;2;3;4;1</item>
         <item>0;0;1;0;3;4;1;2</item>
-        <item>0;0;0;1;4;1;2;3</item>
+        <item>0;0;0;0;4;1;2;3</item>
         <item>1;0;0;0;1;2;3;4</item>
+        <item>0;1;0;0;2;3;4;1</item>
+        <item>0;1;0;0;2;3;4;1</item>
+        <item>0;1;0;0;2;3;4;1</item>
+        <item>0;1;0;0;2;3;4;1</item>
         <item>0;1;0;0;2;3;4;1</item>
     </array>
 
     <array name="fashion_ic">
-        <item>@drawable/fashion_1</item>
-        <item>@drawable/fashion_1</item>
-        <item>@drawable/fashion_1</item>
-        <item>@drawable/fashion_1</item>
-        <item>@drawable/fashion_1</item>
-        <item>@drawable/fashion_1</item>
+        <item>@raw/image_icon_01</item>
+        <item>@raw/image_icon_02</item>
+        <item>@raw/image_icon_03</item>
+        <item>@raw/image_icon_04</item>
+        <item>@raw/image_icon_05</item>
+        <item>@raw/image_icon_06</item>
+        <item>@raw/image_icon_07</item>
+        <item>@raw/image_icon_08</item>
+        <item>@raw/image_icon_09</item>
+        <item>@raw/image_icon_10</item>
     </array>
 
 </resources>

@@ -7,20 +7,26 @@ uniform sampler2D u_Texture1;
 uniform sampler2D u_Texture2;
 uniform sampler2D u_Texture3;
 uniform sampler2D u_Texture4;
+uniform sampler2D u_Texture5;
+uniform sampler2D u_Texture6;
 
 uniform vec3 color0; // color
 uniform vec3 color1; // color
 uniform vec3 color2; // color
 uniform vec3 color3; // color
 uniform vec3 color4; // color
+uniform vec3 color5; // color
+uniform vec3 color6; // color
 
 varying vec2 v_TexCoordinate;
 varying vec2 v_TexOrigCoordinate;
 
 uniform vec3 f_alpha;
 uniform vec3 f_alpha1;
+uniform vec3 f_alpha2;
 uniform vec3 useHsv;
 uniform vec3 useHsv1;
+uniform vec3 useHsv2;
 
 vec3 rgb2hsv(vec3 c)
 {
