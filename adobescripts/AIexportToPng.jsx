@@ -17,10 +17,15 @@ function main() {
             doc1.pageItems[a2].hidden = true;
         }
         var prevLayer = null;
-        for (var a2 = 0; a2 < doc1.groupItems.length; a2++)
+        for (var a2 = 0; a2 < doc1.pageItems.length; a2++)
         {
-            doc1.groupItems[a2].hidden = false;
-            var gr = doc1.groupItems[a2];
+            var curItem = doc1.pageItems[a2];
+            if (curItem.typename != "GroupItem") {
+                prevLayer = curItem;
+                continue;
+            }
+            curItem.hidden = false;
+            var gr = curItem;
             var fileName = saveFile + "aa" + a2 + ".png";
             for (var a3 = 0; a3 < gr.pageItems.length; a3++)
             {
@@ -46,19 +51,21 @@ function main() {
                 try {
                     if (gr.pageItems[a3] != null && gr.pageItems[a3].typename == "RasterItem" && gr.pageItems[a3].file != null) {
                         fileName = exportPath + gr.pageItems[a3].file.name + ".png";
-//                        prevLayer.hidden = false;
+                        prevLayer = doc1.pageItems[a2 - 1];
+                        prevLayer.hidden = false;
                     }  
                 // exception for one
                     if (gr.pageItems[a3].typename == "GroupItem") {
                         fileName = exportPath + gr.pageItems[a3].pageItems[0].file.name + ".png";
-//                        prevLayer.hidden = false;
+                        prevLayer = doc1.pageItems[a2 - 1];
+                        prevLayer.hidden = false;
                     }
                 } catch(e) {}
             }
             SavePNG(fileName);  
-            doc1.groupItems[a2].hidden=true;
+            curItem.hidden=true;
             if (prevLayer != null) {prevLayer.hidden = true;}
-            prevLayer = doc1.groupItems[a2];
+//            prevLayer = doc1.groupItems[a2];
         }
     }  
 
