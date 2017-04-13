@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <?xml-stylesheet type='text/xsl' href='image_metadata_stylesheet.xsl'?>
 <dataset>
 <name>Testing faces</name>
@@ -8,22 +8,22 @@
    300-W dataset.</comment>
 <images>
   <image file='face_elements2_0004_Layer-4.png'>
-    <box top='0' left='0' width='512' height='512'>
-      <part name='00' x='166' y='244'/>
-      <part name='01' x='236' y='214'/>
-      <part name='02' x='329' y='215'/>
-      <part name='03' x='382' y='258'/>
-      <part name='04' x='314' y='276'/>
-      <part name='05' x='235' y='272'/>
-      <part name='06' x='4' y='70'/>
-      <part name='07' x='506' y='79'/>
-      <part name='08' x='506' y='401'/>
-      <part name='09' x='10' y='397'/>
+    <box top='0' left='1' width='505' height='512'>
+      <part name='00' x='157' y='248'/>
+      <part name='01' x='228' y='209'/>
+      <part name='02' x='320' y='213'/>
+      <part name='03' x='402' y='266'/>
+      <part name='04' x='315' y='286'/>
+      <part name='05' x='230' y='286'/>
+      <part name='06' x='0' y='33'/>
+      <part name='07' x='512' y='33'/>
+      <part name='08' x='510' y='408'/>
+      <part name='09' x='0' y='406'/>
       <part name='10' x='278' y='241'/>
-      <part name='11' x='261' y='74'/>
-      <part name='12' x='505' y='268'/>
-      <part name='13' x='254' y='404'/>
-      <part name='14' x='4' y='245'/>
+      <part name='11' x='266' y='32'/>
+      <part name='12' x='511' y='254'/>
+      <part name='13' x='282' y='409'/>
+      <part name='14' x='1' y='241'/>
     </box>
   </image>
 </images>

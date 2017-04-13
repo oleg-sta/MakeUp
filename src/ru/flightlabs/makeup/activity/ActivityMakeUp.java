@@ -63,6 +63,11 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
 
     private static final String TAG = "ActivityFast";
 
+    View borderFashion;
+    View borderElement;
+    View elements;
+
+
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -118,7 +123,9 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
 
         editorEnvironment = new StateEditor(getApplication().getApplicationContext(), resourcesApp);
         editorEnvironment.init();
-        changeCategory(StateEditor.FASHION);
+        borderFashion = findViewById(R.id.border_fashion);
+        borderElement = findViewById(R.id.border_element);
+        elements = findViewById(R.id.elements);
         ((SeekBar)findViewById(R.id.opacity)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -172,10 +179,14 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
                 startActivity(new Intent(getApplication(), ActivitySettings.class));
             }
         });
+
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         Log.i(TAG, "screen size in dp " + dpWidth + " " + dpHeight);
+        // init
+        changeCategory(StateEditor.FASHION);
+        changeItemInCategory(3);
     }
 
     @Deprecated
@@ -267,6 +278,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         currentCategory = position;
         int resourceId = R.array.colors_shadow;
 
+        boolean fashion = false;
         EcoGallery viewPager = (EcoGallery) findViewById(R.id.elements);
         TypedArray iconsCategory = null;
         if (position == StateEditor.EYE_LASH) {
@@ -284,8 +296,20 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         } else  {
             iconsCategory = resourcesApp.fashionIcons;
             resourceId = R.array.colors_none;
+            fashion = true;
         }
-        final CategoriesNewAdapter pager = new CategoriesNewAdapter(this, iconsCategory);
+        if (fashion) {
+            borderFashion.setVisibility(View.VISIBLE);
+            borderElement.setVisibility(View.INVISIBLE);
+        } else {
+            borderFashion.setVisibility(View.INVISIBLE);
+            borderElement.setVisibility(View.VISIBLE);
+        }
+        String[] names = null;
+        if (position == StateEditor.FASHION) {
+            names = editorEnvironment.getFashionNames();
+        }
+        final CategoriesNewAdapter pager = new CategoriesNewAdapter(this, iconsCategory, names);
         pager.selected = editorEnvironment.getCurrentIndex(currentCategory);
         viewPager.setAdapter(pager);
         viewPager.setOnItemClickListener(new EcoGalleryAdapterView.OnItemClickListener() {
@@ -312,6 +336,11 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         });
 
         ViewPager viewPagerColors = (ViewPager) findViewById(R.id.colors);
+        if (position == StateEditor.LIPS) {
+            viewPagerColors.setVisibility(View.VISIBLE);
+        } else {
+            viewPagerColors.setVisibility(View.INVISIBLE);
+        }
         ColorsPagerAdapter pagerColors = new ColorsPagerAdapter(this, editorEnvironment.getAllColors(position));//getResources().getIntArray(resourceId));
         viewPagerColors.setAdapter(pagerColors);
         ((SeekBar)findViewById(R.id.opacity)).setProgress(editorEnvironment.getOpacity(currentCategory));

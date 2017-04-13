@@ -24,6 +24,7 @@ public class ShaderEffectMakeUp extends ShaderEffect {
     private static final String TAG = "ShaderEffectMakeUp";
 
     private int[] eyeShadowTextureId = new int[5];
+    private int[] eyeShadowTextureIdWas = new int[5];
     private int eyeLashesTextureId;
     private int eyeLineTextureId;
     private int lipsTextureId;
@@ -44,6 +45,7 @@ public class ShaderEffectMakeUp extends ShaderEffect {
     }
 
     private void loadTexures(int[] openglTexts, int[] resources) {
+        eyeShadowTextureIdWas = resources;
         for (int i = 0; i < openglTexts.length; i++) {
             if (i < resources.length && resources[i] > 0) {
                 openglTexts[i] = OpenGlHelper.loadTexture(context, resources[i]);
@@ -54,6 +56,7 @@ public class ShaderEffectMakeUp extends ShaderEffect {
     }
 
     private void changeTexures(int[] openglTexts, int[] resources) {
+        eyeShadowTextureIdWas = resources;
         for (int i = 0; i < resources.length; i++) {
             if (resources[i] > 0) {
                 OpenGlHelper.changeTexture(context, resources[i], openglTexts[i]);
@@ -100,13 +103,14 @@ public class ShaderEffectMakeUp extends ShaderEffect {
             int[] shadowColor = editEnv.getColors(StateEditor.EYE_SHADOW);
 
             int[] hsv = new int[] {ActivityMakeUp.useHsv ? 1 : 2, 0, 0};
+            hsv[0] = 3;
             if (ActivityMakeUp.useAlphaCol) {
                 hsv[0] = 0;
+                hsv[0] = 4;
             }
 
 
-
-            ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, eyeShadowTextureId, PointsConverter.convertFromPointsGlCoord(onImage, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsLeftEyeNew, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLeftEye), eyeLashesTextureId, eyeLineTextureId,
+            ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, setSignShadow(eyeShadowTextureId, eyeShadowTextureIdWas), PointsConverter.convertFromPointsGlCoord(onImage, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsLeftEyeNew, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLeftEye), eyeLashesTextureId, eyeLineTextureId,
                     hsv,
                     PointsConverter.convertTovec3(shadowColor[0]),
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_LASH)),
@@ -116,7 +120,7 @@ public class ShaderEffectMakeUp extends ShaderEffect {
             Point[] onImageRight = PointsConverter.completePointsByAffine(PointsConverter.reallocateAndCut(onImageEyeRight, new int[] {3, 2, 1, 0 , 5, 4}), PointsConverter.convertToOpencvPoints(StateEditor.pointsLeftEyeNew), new int[]{0, 1, 2, 3, 4, 5});
             //onImageRight = PointsConverter.replacePoints(onImageRight, onImageEyeRight, new int[]{3, 2, 1, 0 , 5, 4});
             // FIXME flip triangle on right eyes, cause left and right triangles are not the same
-            ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, eyeShadowTextureId, PointsConverter.convertFromPointsGlCoord(onImageRight, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsLeftEyeNew, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLeftEye), eyeLashesTextureId, eyeLineTextureId,
+            ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, setSignShadow(eyeShadowTextureId, eyeShadowTextureIdWas), PointsConverter.convertFromPointsGlCoord(onImageRight, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsLeftEyeNew, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLeftEye), eyeLashesTextureId, eyeLineTextureId,
                     hsv,
                     PointsConverter.convertTovec3(shadowColor[0]),
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.EYE_LASH)),
@@ -133,6 +137,18 @@ public class ShaderEffectMakeUp extends ShaderEffect {
 
             // FIXME elements erase each other
         }
+    }
+
+    private int[] setSignShadow(int[] eyeShadowTextureId, int[] eyeShadowTextureIdWas) {
+        int[] res = new int[eyeShadowTextureId.length];
+        for (int i = 0; i < eyeShadowTextureId.length; i++ ) {
+            if (i >= eyeShadowTextureIdWas.length || eyeShadowTextureIdWas[i] < 0) {
+                res[i] = -1;
+            } else {
+                res[i] = eyeShadowTextureId[i];
+            }
+        }
+        return res;
     }
 
     private static float[] getColor(int color[]) {

@@ -10,4 +10,13 @@
         android:layout_margin="5dp"
         android:layout_gravity="center" />
 
+    <TextView
+        android:id="@+id/item_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dip"
+        android:textColor="#FFFFFF"
+        android:textSize="10sp"
+        android:layout_gravity="bottom|center_horizontal" />
+
 </FrameLayout>

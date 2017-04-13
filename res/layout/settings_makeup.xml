@@ -18,29 +18,30 @@
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="90dp"
         android:src="@drawable/settings_logo"
         android:cropToPadding="false"
         android:adjustViewBounds="true" />
 
     <ImageView
         android:id="@+id/back_button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dip"
+        android:layout_marginTop="10dip"
         android:src="@drawable/ic_back2"
         android:cropToPadding="false"
         android:adjustViewBounds="true" />
 
     <ImageView
         android:id="@+id/like"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/logo"
+        android:layout_marginTop="20dip"
         android:src="@drawable/ic_like"
         android:clickable="true"
         android:onClick="rateApp"
@@ -85,15 +86,15 @@
 
     <ImageView
         android:id="@+id/share"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_height="40dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/sep1"
         android:clickable="true"
         android:onClick="shareApp"
         android:src="@drawable/ic_little_share"
         android:cropToPadding="false"
-        android:adjustViewBounds="true" />
+        android:adjustViewBounds="true"
+        android:layout_width="40dp" />
 
     <View
         android:id="@+id/sep2"
@@ -112,18 +113,12 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/sep2"
+        android:layout_marginTop="20dip"
         android:clickable="true"
         android:onClick="gotoUrl"
         android:text="www.flightlabs.ru"
         android:textSize="20sp"
         android:textColor="#E40005" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/text_version"
-        android:background="#AAB7B9"/>
 
     <TextView
         android:id="@+id/text_share"
@@ -144,7 +139,16 @@
         android:text="Версия 1.0"
         android:textSize="17sp"
         android:textColor="@color/setting_text"
+        android:layout_marginTop="10dip"
         android:layout_below="@+id/text_url"
         android:layout_centerHorizontal="true" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/text_version"
+        android:background="#AAB7B9"/>
 
 </RelativeLayout>

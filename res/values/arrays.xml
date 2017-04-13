@@ -51,10 +51,6 @@
         <item>#EFD2DB</item>
 
         <item>#FF0000</item>
-        <item>#FFCFBB</item>
-        <item>#FFAE88</item>
-        <item>#F99072</item>
-        <item>#FF675C</item>
         <item>#FF4342</item>
         <item>#C02431</item>
         <item>#D18FE6</item>
@@ -69,15 +65,13 @@
         <item>#FFC600</item>
         <item>#B1B4B2</item>
         <item>#FFFFFF</item>
-        <item>#404040</item>
-        <item>#0F0F0F</item>
-        <item>#010101</item>
         <item>#000000</item>
     </array>
 
     <array name="colors_none"/>
 
     <array name="eyelashesIcon">
+        <item>@raw/empty_icon_00</item>
         <item>@raw/eyelashes_icon_01</item>
         <item>@raw/eyelashes_icon_04</item>
         <item>@raw/eyelashes_icon_05</item>
@@ -92,6 +86,7 @@
         <item>@raw/eyelashes_icon_13</item>
     </array>
     <array name="eyelashes">
+        <item>@raw/empty_00</item>
         <item>@raw/eyelashes_01</item>
         <item>@raw/eyelashes_04</item>
         <item>@raw/eyelashes_05</item>
@@ -107,6 +102,7 @@
     </array>
 
     <array name="eyeshadowIcon">
+        <item>@raw/empty_icon_00</item>
         <item>@raw/eyeshadow_icon_01</item>
         <item>@raw/eyeshadow_icon_02</item>
         <item>@raw/eyeshadow_icon_04</item>
@@ -117,6 +113,17 @@
     </array>
 
     <array name="eyeshadow">
+        <item>@raw/empty_00</item>
+        <item>@raw/eyeshadow_01</item>
+        <item>@raw/eyeshadow_02</item>
+        <item>@raw/eyeshadow_04</item>
+        <item>@raw/eyeshadow_05</item>
+        <item>@raw/eyeshadow_06</item>
+        <item>@raw/eyeshadow_08</item>
+        <item>@raw/eyeshadow_09</item>
+    </array>
+
+    <array name="eyeshadow2">
         <item>eyeshadow_01_01;eyeshadow_01_02;eyeshadow_01_03</item>
         <item>eyeshadow_02_01;eyeshadow_02_02;eyeshadow_02_03;eyeshadow_02_04;eyeshadow_02_05</item>
         <item>eyeshadow_04_01;eyeshadow_04_02;eyeshadow_04_03</item>
@@ -127,6 +134,7 @@
     </array>
 
     <array name="eyelinesIcons">
+        <item>@raw/empty_icon_00</item>
         <item>@raw/eyeline_icon_01</item>
         <item>@raw/eyeline_icon_02</item>
         <item>@raw/eyeline_icon_03</item>
@@ -140,6 +148,7 @@
     </array>
 
     <array name="eyelines">
+        <item>@raw/empty_00</item>
         <item>@raw/eyeline_01</item>
         <item>@raw/eyeline_02</item>
         <item>@raw/eyeline_03</item>
@@ -158,19 +167,21 @@
 
     <!--lash,shadow,line,lips,lash_col,shad_col,line_col,lips_col-->
     <array name="fashion_ic1">
-        <item>0;0;0;0;1;2;3;1</item>
-        <item>0;1;0;0;2;3;4;2</item>
-        <item>0;0;1;0;3;4;1;3</item>
-        <item>0;0;0;0;4;1;2;4</item>
-        <item>1;0;0;0;1;2;3;5</item>
-        <item>0;1;0;0;2;3;4;6</item>
-        <item>0;1;0;0;2;3;4;7</item>
-        <item>0;1;0;0;2;3;4;8</item>
-        <item>0;1;0;0;2;3;4;9</item>
-        <item>0;1;0;0;2;3;4;10</item>
+        <item>0;0;0;0;0;0;0;0;;m</item>
+        <item>1;1;1;0;1;3;1;1;Natural</item>
+        <item>1;2;2;0;1;4;1;2;Tenderness</item>
+        <item>1;3;3;0;1;1;1;3;80s</item>
+        <item>2;3;4;0;1;2;1;4;Gotik</item>
+        <item>3;4;5;0;1;3;1;5;40s</item>
+        <item>4;5;6;0;1;3;1;6;Twiggy</item>
+        <item>5;3;3;0;1;3;1;7;winter</item>
+        <item>6;6;7;0;1;3;1;8;summer</item>
+        <item>7;7;8;0;1;3;1;9;aqua</item>
+        <item>8;3;2;0;1;3;1;10;smoky</item>
     </array>
 
     <array name="fashion_ic">
+        <item>@raw/image_icon_00</item>
         <item>@raw/image_icon_01</item>
         <item>@raw/image_icon_02</item>
         <item>@raw/image_icon_03</item>

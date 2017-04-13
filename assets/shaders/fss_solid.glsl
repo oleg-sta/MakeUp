@@ -21,12 +21,15 @@ uniform vec3 color6; // color
 varying vec2 v_TexCoordinate;
 varying vec2 v_TexOrigCoordinate;
 
-uniform vec3 f_alpha;
+uniform vec3 f_alpha; // make it array
 uniform vec3 f_alpha1;
 uniform vec3 f_alpha2;
-uniform vec3 useHsv;
-uniform vec3 useHsv1;
-uniform vec3 useHsv2;
+uniform int useHsv0[3]; // make it more
+uniform int useHsv1[3];
+uniform int useHsv2[3];
+//uniform vec3 useHsv;
+//uniform vec3 useHsv1;
+//uniform vec3 useHsv2;
 
 vec3 rgb2hsv(vec3 c)
 {
@@ -81,17 +84,26 @@ vec4 colorizeCommon(vec4 pic, vec4 to, float alpha)
     return colorizedOutput;
 }
 
-vec4 smartMix(vec4 inColor, float useHsvF, vec3 color, float f_alpha, vec4 maskColor)
+vec4 smartMix(vec4 inColor, int useHsvF, vec3 color, float f_alpha, vec4 maskColor)
 {
+    //useHsvF = 3.0;
     vec4 res = inColor;
-    if (useHsvF == 1.0)
+    if (useHsvF == 1)
     {
         res = mixHsv(res, maskColor, color, f_alpha);
-    } else if (useHsvF == 0.0) {
+    } else if (useHsvF == 0) {
         res = mix(res, vec4(color, 1.0), maskColor[3] * f_alpha);
-    } else if (useHsvF == 2.0) {
+    } else if (useHsvF == 2) {
         res = colorizeCommon(res, vec4(color, 1.0), maskColor[3] * f_alpha);
+    } else if (useHsvF == 3) { // use color from texture
+        res = colorizeCommon(res, maskColor, maskColor[3] * f_alpha);
+    }  else if (useHsvF == 4) { // use color from texture
+        res = mix(res, maskColor, maskColor[3] * f_alpha);
+    } else {
+    // defualt mix for test purposes
+        //res = mix(res, maskColor, maskColor[3] * f_alpha);
     }
+//res = mix(res, vec4(1.0), maskColor[3] * f_alpha);
     return res;
 }
 
@@ -104,11 +116,17 @@ void main()
     vec4 maskColor3 = texture2D(u_Texture3, v_TexCoordinate);
     vec4 maskColor4 = texture2D(u_Texture4, v_TexCoordinate);
 
+    vec4 maskColor5 = texture2D(u_Texture5, v_TexCoordinate);
+    vec4 maskColor6 = texture2D(u_Texture6, v_TexCoordinate);
+
     res = texture2D(u_TextureOrig, v_TexOrigCoordinate);
-    res = smartMix(res, useHsv[0], color0, f_alpha[0], maskColor0);
-    res = smartMix(res, useHsv[1], color1, f_alpha[1], maskColor1);
-    res = smartMix(res, useHsv[2], color2, f_alpha[2], maskColor2);
+    res = smartMix(res, useHsv0[0], color0, f_alpha[0], maskColor0);
+    res = smartMix(res, useHsv0[1], color1, f_alpha[1], maskColor1);
+    res = smartMix(res, useHsv0[2], color2, f_alpha[2], maskColor2);
     res = smartMix(res, useHsv1[0], color3, f_alpha1[0], maskColor3);
     res = smartMix(res, useHsv1[1], color4, f_alpha1[1], maskColor4);
+
+    res = smartMix(res, useHsv1[2], color5, f_alpha1[2], maskColor5);
+    res = smartMix(res, useHsv2[0], color6, f_alpha2[0], maskColor6);
     gl_FragColor = res;
 }

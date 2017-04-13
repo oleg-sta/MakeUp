@@ -87,6 +87,14 @@ public class StateEditor {
     }
 
 
+    public String[] getFashionNames() {
+        String[] names = new String[resourcesApp.fashions.length];
+        for ( int i = 0; i < names.length; i++) {
+            names[i] = resourcesApp.fashions[i].split(";")[8];
+        }
+        return names;
+    }
+
     public boolean changed(int itemNum) {
         if (currentIndexItem[itemNum] != prevIndexItem[itemNum]) {
             prevIndexItem[itemNum] = currentIndexItem[itemNum];

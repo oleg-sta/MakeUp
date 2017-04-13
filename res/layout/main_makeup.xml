@@ -95,14 +95,26 @@
         android:layout_marginBottom="10dp"
         android:layout_above="@+id/camera_button"></us.feras.ecogallery.EcoGallery>
 
-    <ImageView
-        android:id="@+id/item_image_border"
+    <FrameLayout
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_centerHorizontal="true"
-        android:layout_alignBottom="@+id/elements"
-        android:layout_alignTop="@+id/elements"
-        android:src="@drawable/border_selected" />
+        android:layout_marginBottom="10dp"
+        android:layout_above="@+id/camera_button">
+        <ImageView
+            android:id="@+id/border_fashion"
+            android:layout_width="73dp"
+            android:layout_height="73dp"
+            android:layout_gravity="center"
+            android:src="@drawable/border_selected" />
+        <ImageView
+            android:id="@+id/border_element"
+            android:layout_width="68dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            android:src="@drawable/border_el_selected" />
+    </FrameLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/colors"

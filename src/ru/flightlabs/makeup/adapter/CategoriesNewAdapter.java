@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import ru.flightlabs.makeup.R;
 import ru.flightlabs.masks.utils.BitmapLibs;
@@ -23,12 +24,14 @@ public class CategoriesNewAdapter extends BaseAdapter {
     TypedArray images;
     LayoutInflater mLayoutInflater;
     public int selected;
+    String[] names;
 
-    public CategoriesNewAdapter(AdaptersNotifier context, TypedArray images) {
+    public CategoriesNewAdapter(AdaptersNotifier context, TypedArray images, String[] names) {
         mContext = (Context)context;
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.images = images;
         this.fdAct = context;
+        this.names = names;
     }
 
     public int getCount() {
@@ -48,13 +51,16 @@ public class CategoriesNewAdapter extends BaseAdapter {
         // Not using convertView for sample app simplicity. You should probably use it in real application to get better performance.
         View itemView = mLayoutInflater.inflate(R.layout.item_effect, null, false);
         ImageView imageView = (ImageView) itemView.findViewById(R.id.item_image);
+        if (names != null) {
+            ((TextView) itemView.findViewById(R.id.item_text)).setText(names[position]);
+        }
         int resourceId = images.getResourceId(position, 0);
         if (images.getString(position).contains(";")) {
             resourceId = mContext.getResources().getIdentifier(images.getString(position).split(";")[0], "raw", mContext.getPackageName());
         }
         Bitmap bm = BitmapLibs.getSampledResource(mContext, resourceId);
         imageView.setImageBitmap(bm);
-        imageView.setBackgroundColor(Color.WHITE);
+        //imageView.setBackgroundColor(Color.WHITE);
         return itemView;
     }
 }
