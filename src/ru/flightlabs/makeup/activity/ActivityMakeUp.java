@@ -29,6 +29,7 @@ import ru.flightlabs.makeup.R;
 import ru.flightlabs.makeup.ResourcesApp;
 import ru.flightlabs.makeup.adapter.CategoriesNamePagerAdapter;
 import ru.flightlabs.makeup.adapter.CategoriesNewAdapter;
+import ru.flightlabs.makeup.adapter.ColorsNewPagerAdapter;
 import ru.flightlabs.makeup.adapter.ColorsPagerAdapter;
 import ru.flightlabs.makeup.shader.ShaderEffectMakeUp;
 import ru.flightlabs.masks.CompModel;
@@ -274,7 +275,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         cameraView.disableView();
     }
 
-    public void changeCategory(int position) {
+    public void changeCategory(final int position) {
         // FIXME current position not equal current category
         currentCategory = position;
         int resourceId = R.array.colors_shadow;
@@ -336,18 +337,40 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
             }
         });
 
-        ViewPager viewPagerColors = (ViewPager) findViewById(R.id.colors);
+        //ViewPager viewPagerColors = (ViewPager) findViewById(R.id.colors);
         if (position == StateEditor.LIPS) {
-            viewPagerColors.setVisibility(View.VISIBLE);
-            viewPager.setVisibility(View.INVISIBLE);
-            borderFashion.setVisibility(View.INVISIBLE);
-            borderElement.setVisibility(View.INVISIBLE);
+            //viewPagerColors.setVisibility(View.VISIBLE);
+            ColorsNewPagerAdapter pagerColorsNew = new ColorsNewPagerAdapter(this, editorEnvironment.getAllColors(position));
+            viewPager.setAdapter(pagerColorsNew);
+            viewPager.setOnItemSelectedListener(new EcoGalleryAdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(EcoGalleryAdapterView<?> parent, View view, int position2, long id) {
+                    //pager.selected = position2;
+                    changeColor(editorEnvironment.getAllColors(position)[position2], position2);
+                    //pager.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onNothingSelected(EcoGalleryAdapterView<?> parent) {
+
+                }
+            });
+            viewPager.setOnItemClickListener(new EcoGalleryAdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(EcoGalleryAdapterView<?> parent, View view, int position2, long id) {
+                    changeColor(editorEnvironment.getAllColors(position)[position2], position2);
+                    //pager.notifyDataSetChanged();
+                }
+            });
+            //viewPager.setVisibility(View.INVISIBLE);
+            //borderFashion.setVisibility(View.INVISIBLE);
+            //borderElement.setVisibility(View.INVISIBLE);
         } else {
-            viewPagerColors.setVisibility(View.INVISIBLE);
+            //viewPagerColors.setVisibility(View.INVISIBLE);
             viewPager.setVisibility(View.VISIBLE);
         }
-        ColorsPagerAdapter pagerColors = new ColorsPagerAdapter(this, editorEnvironment.getAllColors(position));//getResources().getIntArray(resourceId));
-        viewPagerColors.setAdapter(pagerColors);
+        //ColorsPagerAdapter pagerColors = new ColorsPagerAdapter(this, editorEnvironment.getAllColors(position));//getResources().getIntArray(resourceId));
+        //viewPagerColors.setAdapter(pagerColors);
         ((SeekBar)findViewById(R.id.opacity)).setProgress(editorEnvironment.getOpacity(currentCategory));
     }
 

@@ -53,7 +53,7 @@
 
     <ImageView
         android:id="@+id/back_button"
-        android:layout_width="23dp"
+        android:layout_width="18dp"
         android:layout_height="23dp"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
@@ -64,7 +64,7 @@
 
     <ImageView
         android:id="@+id/thrash_button"
-        android:layout_width="23dp"
+        android:layout_width="18dp"
         android:layout_height="23dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"

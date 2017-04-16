@@ -174,10 +174,10 @@
         <item>2;3;4;0;1;2;1;4;Gotik</item>
         <item>3;4;5;0;1;3;1;5;40s</item>
         <item>4;5;6;0;1;3;1;6;Twiggy</item>
-        <item>5;3;3;0;1;3;1;7;winter</item>
-        <item>6;6;7;0;1;3;1;8;summer</item>
-        <item>7;7;8;0;1;3;1;9;aqua</item>
-        <item>8;3;2;0;1;3;1;10;smoky</item>
+        <item>5;3;3;0;1;3;1;7;Winter</item>
+        <item>6;6;7;0;1;3;1;8;Summer</item>
+        <item>7;7;8;0;1;3;1;9;Aqua</item>
+        <item>8;3;2;0;1;3;1;10;Smoky</item>
     </array>
 
     <array name="fashion_ic">

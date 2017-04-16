@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Make Up</string>
+    <string name="app_name" translatable="false">BeautyKit</string>
     <string name="send_mail_with">Send e-mail</string>
     <string name="send_photo_with">send with</string>
 
