@@ -46,6 +46,9 @@ public class ColorsPagerAdapter extends PagerAdapter {
 
         ImageView imageView = (ImageView) itemView.findViewById(R.id.item_image);
         imageView.setColorFilter(colors[position]);
+        if (position == 0) {
+            imageView.setImageAlpha(0);
+        }
         container.addView(itemView);
         itemView.setOnClickListener(new View.OnClickListener() {
 

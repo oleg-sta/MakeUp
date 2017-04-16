@@ -88,6 +88,20 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="254dp" />
 
+    <!--android.support.v4.view.ViewPager
+        android:id="@+id/colors"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_above="@+id/categories"
+        android:layout_marginBottom="10dip"></android.support.v4.view.ViewPager-->
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/colors"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_above="@+id/camera_button"
+        android:layout_marginBottom="25dip"></android.support.v4.view.ViewPager>
+
     <us.feras.ecogallery.EcoGallery
         android:id="@+id/elements"
         android:layout_width="match_parent"
@@ -115,13 +129,6 @@
             android:visibility="invisible"
             android:src="@drawable/border_el_selected" />
     </FrameLayout>
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/colors"
-        android:layout_width="match_parent"
-        android:layout_height="44dp"
-        android:layout_above="@+id/categories"
-        android:layout_marginBottom="10dip"></android.support.v4.view.ViewPager>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/categories"
@@ -168,7 +175,7 @@
         android:progress="50"
         android:layout_above="@+id/colors"
         android:alpha="0.2"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="60dp"
         android:layout_centerHorizontal="true"></SeekBar>
 
 

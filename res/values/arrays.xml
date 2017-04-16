@@ -38,7 +38,7 @@
     </string-array>
 
     <array name="colors_lips">
-        <item>none</item>
+        <item>#AAAAAA</item>
         <item>#FCB1A5</item>
         <item>#C55A63</item>
         <item>#FC4398</item>
@@ -81,8 +81,8 @@
         <item>@raw/eyelashes_icon_09</item>
         <item>@raw/eyelashes_icon_10</item>
         <item>@raw/eyelashes_icon_11</item>
-        <item>@raw/eyelashes_icon_12_1</item>
-        <item>@raw/eyelashes_icon_12_2</item>
+        <!--item>@raw/eyelashes_icon_12_1</item>
+        <item>@raw/eyelashes_icon_12_2</item-->
         <item>@raw/eyelashes_icon_13</item>
     </array>
     <array name="eyelashes">
@@ -96,8 +96,8 @@
         <item>@raw/eyelashes_09</item>
         <item>@raw/eyelashes_10</item>
         <item>@raw/eyelashes_11</item>
-        <item>@raw/eyelashes_12_1</item>
-        <item>@raw/eyelashes_12_2</item>
+        <!--item>@raw/eyelashes_12_1</item>
+        <item>@raw/eyelashes_12_2</item-->
         <item>@raw/eyelashes_13</item>
     </array>
 

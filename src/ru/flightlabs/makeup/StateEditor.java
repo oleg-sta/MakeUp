@@ -119,6 +119,10 @@ public class StateEditor {
         }
     }
 
+    public int getColorIndex() {
+        return currentColorIndex[LIPS];
+    }
+
     public int[] getResourceIds(int itemNum) {
         switch (itemNum) {
             case EYE_SHADOW:

@@ -25,8 +25,8 @@
 
     <ImageView
         android:id="@+id/back_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="10dip"
@@ -57,7 +57,7 @@
         android:text="Оценить приложение"
         android:clickable="true"
         android:onClick="rateApp"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:textColor="@color/setting_text"
         android:fontFamily="serif-monospace" />
 
@@ -81,7 +81,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginLeft="10dp"
         android:layout_below="@+id/stars"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:background="#e6e6e6" />
 
     <ImageView
@@ -91,21 +91,11 @@
         android:layout_below="@+id/sep1"
         android:clickable="true"
         android:onClick="shareApp"
+        android:layout_marginTop="20dp"
         android:src="@drawable/ic_little_share"
         android:cropToPadding="false"
         android:adjustViewBounds="true"
         android:layout_width="40dp" />
-
-    <View
-        android:id="@+id/sep2"
-        android:layout_width="match_parent"
-        android:layout_height="2dip"
-        android:layout_marginBottom="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="10dp"
-        android:layout_below="@+id/text_share"
-        android:layout_marginTop="10dp"
-        android:background="#e6e6e6" />
 
     <TextView
         android:id="@+id/text_url"
@@ -113,7 +103,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/sep2"
-        android:layout_marginTop="20dip"
+        android:layout_marginTop="30dip"
         android:clickable="true"
         android:onClick="gotoUrl"
         android:text="www.flightlabs.ru"
@@ -127,7 +117,7 @@
         android:clickable="true"
         android:onClick="shareApp"
         android:text="Поделиться приложением"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:textColor="@color/setting_text"
         android:layout_below="@+id/share"
         android:layout_centerHorizontal="true" />
@@ -137,7 +127,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Версия 1.0"
-        android:textSize="17sp"
+        android:textSize="14sp"
         android:textColor="@color/setting_text"
         android:layout_marginTop="10dip"
         android:layout_below="@+id/text_url"
@@ -150,5 +140,15 @@
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/text_version"
         android:background="#AAB7B9"/>
+
+    <View
+        android:id="@+id/sep2"
+        android:layout_width="match_parent"
+        android:layout_height="2dip"
+        android:background="#e6e6e6"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/text_share"
+        android:layout_alignLeft="@+id/sep1"
+        android:layout_alignStart="@+id/sep1" />
 
 </RelativeLayout>

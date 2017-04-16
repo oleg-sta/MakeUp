@@ -130,10 +130,15 @@ public class ShaderEffectMakeUp extends ShaderEffect {
             Point[] onImageLips = ModelUtils.getOnlyPoints(poseResult.foundLandmarks, 48, 20);
             Point[] onImageLipsConv = PointsConverter.completePointsByAffine(onImageLips, PointsConverter.convertToOpencvPoints(StateEditor.pointsWasLipsNew), new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19});
             onImageLipsConv = PointsConverter.replacePoints(onImageLipsConv, onImageLips, new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19});
+            float alphaLips = 1;
+            // workaround
+            if (editEnv.getColorIndex() == 0) {
+                alphaLips = 0;
+            }
             ShaderEffectHelper.effect2dTriangles(program2dTriangles, texIn, new int[]{lipsTextureId, -1, -1, -1, -1}, PointsConverter.convertFromPointsGlCoord(onImageLipsConv, width, height), PointsConverter.convertFromPointsGlCoord(StateEditor.pointsWasLipsNew, 512, 512), vPos22, vTex22, PointsConverter.convertTriangle(StateEditor.trianglesLips), lipsTextureId, lipsTextureId,
                     new int[] {ActivityMakeUp.useHsv ? 1 : 2, -1, -1},
                     PointsConverter.convertTovec3(editEnv.getColor(StateEditor.LIPS)), null, null,
-                    editEnv.getOpacityFloat(StateEditor.LIPS), 0, 0, new float[0]);
+                    editEnv.getOpacityFloat(StateEditor.LIPS) * alphaLips, 0, 0, new float[0]);
 
             // FIXME elements erase each other
         }
