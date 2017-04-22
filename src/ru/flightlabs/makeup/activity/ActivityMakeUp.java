@@ -102,6 +102,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
 
         cameraView = (FastCameraView) findViewById(R.id.fd_fase_surface_view);
 
+        Settings.resourceLogo = R.drawable.settings_logo;
         compModel = new CompModel();
         compModel.context = getApplicationContext();
 

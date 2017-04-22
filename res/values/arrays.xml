@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <array name="categories">
-        <item>РЕСНИЦЫ</item>
-        <item>ТЕНИ</item>
-        <item>ЛИНИИ</item>
-        <item>ГУБЫ</item>
-        <item>ОБРАЗ</item>
-    </array>
+    <string-array name="categories">
+        <item>EYELASHES</item>
+        <item>EYESHADOW</item>
+        <item>EYELINE</item>
+        <item>LIPS</item>
+        <item>FASHION</item>
+    </string-array>
 
     <!-- WARNING это взято из другого приложения-->
     <array name="colors_eyelashes">

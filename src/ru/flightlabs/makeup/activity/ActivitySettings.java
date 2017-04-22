@@ -37,7 +37,7 @@ public class ActivitySettings extends Activity {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT,
-                "Hey check out my app at: https://play.google.com/store/apps/details?id=" + getPackageName());
+                "https://play.google.com/store/apps/details?id=" + getPackageName());
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
     }

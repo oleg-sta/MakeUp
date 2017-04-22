@@ -3,5 +3,8 @@
     <string name="app_name" translatable="false">BeautyKit</string>
     <string name="send_mail_with">Send e-mail</string>
     <string name="send_photo_with">send with</string>
+    <string name="eval_app">Evaluate app</string>
+    <string name="share_app">Share app</string>
+    <string name="version_app">Version 1.0</string>
 
 </resources>
