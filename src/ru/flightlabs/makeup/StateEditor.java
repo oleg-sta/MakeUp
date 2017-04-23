@@ -209,6 +209,11 @@ public class StateEditor {
 
     public void setOpacity(int itemNum, int i) {
         opacity[itemNum] = i;
+        if (itemNum == FASHION) {
+            for (int j = 0; j < opacity.length; j++) {
+                opacity[j] = i;
+            }
+        }
     }
 
     public void setParametersFromFashion(int newItem) {

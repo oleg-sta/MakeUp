@@ -53,7 +53,7 @@
         android:id="@+id/checkBoxLinear"
         android:layout_width="40dip"
         android:layout_height="40dip"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="54dp" />
 
@@ -61,7 +61,7 @@
         android:id="@+id/checkDebug"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="104dp" />
 
@@ -69,7 +69,7 @@
         android:id="@+id/useCalman"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="154dp" />
 
@@ -77,7 +77,7 @@
         android:id="@+id/useCoorized"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="204dp" />
 
@@ -85,7 +85,7 @@
         android:id="@+id/useAlphaColor"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="254dp" />
 
@@ -169,16 +169,27 @@
         android:src="@drawable/ic_back"
         android:visibility="gone" />
 
-    <SeekBar
+    <ru.flightlabs.makeup.views.VerticalSeekBar
         android:id="@+id/opacity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:max="100"
         android:progress="50"
-        android:layout_above="@+id/colors"
-        android:alpha="0.2"
-        android:layout_marginBottom="60dp"
-        android:layout_centerHorizontal="true"></SeekBar>
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/rotate_camera"
+        android:layout_above="@+id/nn"
+        android:layout_marginTop="30dip"
+        android:layout_marginBottom="30dip"
+
+        android:layout_alignRight="@+id/rotate_camera"
+        android:layout_marginRight="10dip"
+        android:paddingLeft="15dip"
+        android:paddingRight="15dip"
+
+        android:alpha="0.6"
+        android:thumb="@drawable/thumb"
+        android:progressDrawable="@drawable/progress"
+        android:maxHeight="5dip"/>
 
 
 </RelativeLayout>

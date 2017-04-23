@@ -343,6 +343,8 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
             //viewPagerColors.setVisibility(View.VISIBLE);
             ColorsNewPagerAdapter pagerColorsNew = new ColorsNewPagerAdapter(this, editorEnvironment.getAllColors(position));
             viewPager.setAdapter(pagerColorsNew);
+            pagerColorsNew.selected = editorEnvironment.getColorIndex();
+            viewPager.setSelection(editorEnvironment.getColorIndex());
             viewPager.setOnItemSelectedListener(new EcoGalleryAdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(EcoGalleryAdapterView<?> parent, View view, int position2, long id) {
