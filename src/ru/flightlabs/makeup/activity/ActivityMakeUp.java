@@ -102,7 +102,6 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
 
         cameraView = (FastCameraView) findViewById(R.id.fd_fase_surface_view);
 
-        Settings.resourceLogo = R.drawable.settings_logo;
         compModel = new CompModel();
         compModel.context = getApplicationContext();
 
@@ -252,7 +251,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         cameraView.disableView();
         buttonCamera.setImageResource(R.drawable.ic_save);
         backButton.setVisibility(View.VISIBLE);
-        rotateCamera.setVisibility(View.GONE);
+        rotateCamera.setVisibility(View.INVISIBLE);
         gLSurfaceView.requestRender(); // FIXME tis is workaournd
     }
 

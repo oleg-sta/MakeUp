@@ -175,7 +175,7 @@
         android:layout_height="match_parent"
         android:max="100"
         android:progress="50"
-        android:layout_alignParentRight="true"
+
         android:layout_below="@+id/rotate_camera"
         android:layout_above="@+id/nn"
         android:layout_marginTop="30dip"
@@ -189,7 +189,8 @@
         android:alpha="0.6"
         android:thumb="@drawable/thumb"
         android:progressDrawable="@drawable/progress"
-        android:maxHeight="5dip"/>
+        android:maxHeight="5dip"
+        android:minHeight="5dip"/>
 
 
 </RelativeLayout>
