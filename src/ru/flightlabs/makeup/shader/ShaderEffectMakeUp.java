@@ -130,6 +130,10 @@ public class ShaderEffectMakeUp extends ShaderEffect {
             Point[] onImageLips = ModelUtils.getOnlyPoints(poseResult.foundLandmarks, 48, 20);
             Point[] onImageLipsConv = PointsConverter.completePointsByAffine(onImageLips, PointsConverter.convertToOpencvPoints(StateEditor.pointsWasLipsNew), new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19});
             onImageLipsConv = PointsConverter.replacePoints(onImageLipsConv, onImageLips, new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19});
+            onImageLipsConv[24] = avg(onImageLipsConv, 13, 19);
+            onImageLipsConv[25] = avg(onImageLipsConv, 14, 18);
+            onImageLipsConv[26] = avg(onImageLipsConv, 15, 17);
+
             float alphaLips = 1;
             // workaround
             if (editEnv.getColorIndex() == 0) {
@@ -142,6 +146,22 @@ public class ShaderEffectMakeUp extends ShaderEffect {
 
             // FIXME elements erase each other
         }
+    }
+
+    private static Point avg(Point[] onImageLipsConv, int i, int i1) {
+        Point p1 = onImageLipsConv[i];
+        Point p2 = onImageLipsConv[i1];
+        Point avg = new Point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+        double dist = len(p1, p2);
+        if (dist < 10) {
+            onImageLipsConv[i] = avg;
+            onImageLipsConv[i1] = avg;
+        }
+        return avg;
+    }
+
+    private static double len(Point p1, Point p2) {
+        return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
     }
 
     private int[] setSignShadow(int[] eyeShadowTextureId, int[] eyeShadowTextureIdWas) {

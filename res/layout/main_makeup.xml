@@ -132,12 +132,13 @@
             android:src="@drawable/border_el_selected" />
     </FrameLayout>
 
-    <android.support.v4.view.ViewPager
+    <us.feras.ecogallery.EcoGallery
         android:id="@+id/categories"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_above="@+id/elements"
-        android:layout_marginBottom="2dip"></android.support.v4.view.ViewPager>
+        app:unselectedAlpha="1"
+        android:layout_marginBottom="2dip"></us.feras.ecogallery.EcoGallery>
 
     <ImageView
         android:id="@+id/camera_button"

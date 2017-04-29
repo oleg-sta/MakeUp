@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -31,6 +33,7 @@ import ru.flightlabs.makeup.adapter.CategoriesNamePagerAdapter;
 import ru.flightlabs.makeup.adapter.CategoriesNewAdapter;
 import ru.flightlabs.makeup.adapter.ColorsNewPagerAdapter;
 import ru.flightlabs.makeup.adapter.ColorsPagerAdapter;
+import ru.flightlabs.makeup.adapter.TextNewPagerAdapter;
 import ru.flightlabs.makeup.shader.ShaderEffectMakeUp;
 import ru.flightlabs.masks.CompModel;
 import ru.flightlabs.masks.ModelLoaderTask;
@@ -82,6 +85,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
                     // load cascade file from application resources
                     if (Static.LOG_MODE) Log.e(TAG, "findLandMarks onManagerConnected");
                     compModel.loadHaarModel(Static.resourceDetector[0]);
+                    compModel.load3lbpModels(R.raw.lbp_frontal_face, R.raw.lbp_left_face, R.raw.lbp_right_face);
                 }
                 break;
                 default: {
@@ -117,10 +121,27 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
                 cameraView.swapCamera();
             }
         });
-        ViewPager viewPagerCategories = (ViewPager) findViewById(R.id.categories);
-        CategoriesNamePagerAdapter pagerCategories = new CategoriesNamePagerAdapter(this, getResources().getStringArray(R.array.categories));
+        final EcoGallery viewPagerCategories = (EcoGallery) findViewById(R.id.categories);
+        final TextNewPagerAdapter pagerCategories = new TextNewPagerAdapter(this, getResources().getStringArray(R.array.categories));
         pagerCategories.selected = StateEditor.FASHION;
         viewPagerCategories.setAdapter(pagerCategories);
+        viewPagerCategories.setSelection(StateEditor.FASHION);
+        viewPagerCategories.setOnItemSelectedListener(new EcoGalleryAdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(EcoGalleryAdapterView<?> parent, View view, final int position, long id) {
+                //mContext.getResources().getColor(R.color.main_text)
+                //pagerCategories.current.setTextColor(Color.BLACK);
+                pagerCategories.selected = position;
+                selectedCategory(position);
+                //((TextView)view.findViewById(R.id.item_text)).setTextColor(Color.RED);
+                // set color
+            }
+
+            @Override
+            public void onNothingSelected(EcoGalleryAdapterView<?> parent) {
+
+            }
+        });
 
         editorEnvironment = new StateEditor(getApplication().getApplicationContext(), resourcesApp);
         editorEnvironment.init();
