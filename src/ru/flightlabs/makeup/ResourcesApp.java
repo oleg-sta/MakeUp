@@ -3,6 +3,8 @@ package ru.flightlabs.makeup;
 import android.content.Context;
 import android.content.res.TypedArray;
 
+import ru.oramalabs.beautykit.R;
+
 /**
  * Created by sov on 27.11.2016.
  */

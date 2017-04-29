@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import ru.flightlabs.makeup.R;
 import ru.flightlabs.masks.utils.BitmapLibs;
+import ru.oramalabs.beautykit.R;
 
 public class CategoriesPagerAdapter extends PagerAdapter {
 

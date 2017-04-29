@@ -12,6 +12,7 @@ import ru.flightlabs.makeup.utils.ModelUtils;
 import ru.flightlabs.masks.model.ImgLabModel;
 import ru.flightlabs.masks.model.SimpleModel;
 import ru.flightlabs.masks.model.primitives.Triangle;
+import ru.oramalabs.beautykit.R;
 
 /**
  * Created by sov on 27.11.2016.

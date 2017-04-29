@@ -4,16 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 
-import ru.flightlabs.makeup.R;
 import ru.flightlabs.masks.CompModel;
 import ru.flightlabs.masks.ModelLoaderTask;
 import ru.flightlabs.masks.Static;
+import ru.oramalabs.beautykit.R;
 
 /**
  * Created by sov on 29.04.2017.
@@ -76,8 +75,9 @@ public class SplashScreen extends Activity implements ModelLoaderTask.Callback {
             @Override
             public void run() {
                 Intent i = new Intent(getApplication(), ActivityMakeUp.class); // Your list's Intent
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
+                //i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
                 startActivity(i);
+                finish();
             }
         });
     }

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import ru.flightlabs.makeup.R;
+import ru.oramalabs.beautykit.R;
 
 
 /**

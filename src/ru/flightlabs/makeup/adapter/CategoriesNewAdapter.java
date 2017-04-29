@@ -11,8 +11,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import ru.flightlabs.makeup.R;
 import ru.flightlabs.masks.utils.BitmapLibs;
+import ru.oramalabs.beautykit.R;
 
 /**
  * Created by sov on 10.02.2017.

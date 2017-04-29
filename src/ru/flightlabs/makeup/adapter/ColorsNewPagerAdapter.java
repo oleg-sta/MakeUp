@@ -1,17 +1,14 @@
 package ru.flightlabs.makeup.adapter;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import ru.flightlabs.makeup.R;
-import ru.flightlabs.masks.utils.BitmapLibs;
+import ru.oramalabs.beautykit.R;
+
 
 /**
  * Created by sov on 16.04.2017.

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.flightlabs.makeup"
+    package="ru.oramalabs.beautykit"
     android:versionCode="1"
     android:versionName="1.0">
 
@@ -13,7 +13,7 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         <activity
-            android:name=".activity.SplashScreen"
+            android:name="ru.flightlabs.makeup.activity.SplashScreen"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
@@ -23,15 +23,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.ActivityMakeUp"
+            android:name="ru.flightlabs.makeup.activity.ActivityMakeUp"
             android:label="@string/app_name"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".activity.ActivityPhoto"
+            android:name="ru.flightlabs.makeup.activity.ActivityPhoto"
             android:label="@string/app_name"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".activity.ActivitySettings"
+            android:name="ru.flightlabs.makeup.activity.ActivitySettings"
             android:label="@string/app_name"
             android:screenOrientation="portrait"></activity>
     </application>

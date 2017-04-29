@@ -2,14 +2,11 @@ package ru.flightlabs.makeup.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.ImageView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,8 +15,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import ru.flightlabs.commonlib.Settings;
-import ru.flightlabs.makeup.R;
 import ru.flightlabs.makeup.adapter.PhotoPagerAdapter;
+import ru.oramalabs.beautykit.R;
 
 
 /**

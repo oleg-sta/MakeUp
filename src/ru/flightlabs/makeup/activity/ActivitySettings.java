@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
-import ru.flightlabs.makeup.R;
+import ru.oramalabs.beautykit.R;
 
 
 /**

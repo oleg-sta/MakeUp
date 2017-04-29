@@ -1,16 +1,15 @@
 package ru.flightlabs.makeup.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
-import ru.flightlabs.makeup.R;
+import ru.oramalabs.beautykit.R;
+
 
 /**
  * Created by sov on 19.11.2016.

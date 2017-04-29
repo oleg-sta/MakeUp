@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import ru.flightlabs.makeup.R;
 import ru.flightlabs.makeup.activity.ActivityMakeUp;
+import ru.oramalabs.beautykit.R;
 
 /**
  * Created by sov on 26.04.2017.
@@ -46,7 +46,7 @@ public class TextNewPagerAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        View itemView = mLayoutInflater.inflate(R.layout.item_effect, null, false);
+        View itemView = mLayoutInflater.inflate(R.layout.item_text, null, false);
         TextView imageView = (TextView) itemView.findViewById(R.id.item_text);
         imageView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14); // FIXME resource
         if (position == selected) {
