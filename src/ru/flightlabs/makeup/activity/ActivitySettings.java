@@ -27,7 +27,7 @@ public class ActivitySettings extends Activity {
                 onBackPressed();
             }
         });
-        ((TextView)findViewById(R.id.text_version)).setText(getResources().getText(R.string.version_app) + " " + BuildConfig.BUILD_TIME);
+        ((TextView)findViewById(R.id.text_version)).setText(String.format(getString(R.string.version_app), BuildConfig.VERSION_NAME, BuildConfig.BUILD_TIME));
     }
 
     public void rateApp(View view) {
