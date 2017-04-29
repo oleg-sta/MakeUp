@@ -35,7 +35,7 @@ public class StateEditor {
     private int[] LIPS_COLORS;
 
     private int[] prevIndexItem = {1, 1, 1, 1, 1};
-    private int[] currentIndexItem = {1, 1, 1, 1, 1};
+    private int[] currentIndexItem = {1, 1, 1, 1, 5};
     private int[] currentColorIndex = {-1, -1, -1, -1, -1};
     private int[] opacity = {50, 50, 50, 50, 50};
 

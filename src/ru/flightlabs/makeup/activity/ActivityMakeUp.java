@@ -46,7 +46,7 @@ import us.feras.ecogallery.EcoGalleryAdapterView;
 /**
  * We should separate view from business logic
  */
-public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelLoaderTask.Callback, CategoriesNamePagerAdapter.Notification {
+public class ActivityMakeUp extends Activity implements AdaptersNotifier, CategoriesNamePagerAdapter.Notification {
 
     private int currentCategory;
 
@@ -55,7 +55,6 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
 
     private StateEditor editorEnvironment;
     ResourcesApp resourcesApp;
-    CompModel compModel;
     ProgressBar progressBar;
     GLSurfaceView gLSurfaceView;
     FastCameraView cameraView;
@@ -72,30 +71,6 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
     View elements;
 
 
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS: {
-                    if (Static.LOG_MODE) Log.i(TAG, "OpenCV loaded successfully");
-                    // Load native library after(!) OpenCV initialization
-                    System.loadLibrary("detection_based_tracker");
-
-                    Static.libsLoaded = true;
-                    // load cascade file from application resources
-                    if (Static.LOG_MODE) Log.e(TAG, "findLandMarks onManagerConnected");
-                    compModel.loadHaarModel(Static.resourceDetector[0]);
-                    compModel.load3lbpModels(R.raw.lbp_frontal_face, R.raw.lbp_left_face, R.raw.lbp_right_face);
-                }
-                break;
-                default: {
-                    super.onManagerConnected(status);
-                }
-                break;
-            }
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,9 +80,6 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "PreviewWorking");
 
         cameraView = (FastCameraView) findViewById(R.id.fd_fase_surface_view);
-
-        compModel = new CompModel();
-        compModel.context = getApplicationContext();
 
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
@@ -170,7 +142,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         gLSurfaceView = (GLSurfaceView)findViewById(R.id.fd_glsurface);
         gLSurfaceView.getHolder().setFormat(PixelFormat.TRANSPARENT);
         gLSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        maskRender = new MaskRenderer(this, compModel, new ShaderEffectMakeUp(this, editorEnvironment));
+        maskRender = new MaskRenderer(this, SplashScreen.compModel, new ShaderEffectMakeUp(this, editorEnvironment));
         gLSurfaceView.setEGLContextClientVersion(2);
         gLSurfaceView.setRenderer(maskRender);
         gLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -251,13 +223,6 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         if (Static.LOG_MODE) Log.i(TAG, "onResume");
         super.onResume();
         wakeLock.acquire();
-        Static.libsLoaded = false;
-        OpenCVLoader.initDebug();
-        mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-        if (compModel.mNativeDetector == null) {
-            progressBar.setVisibility(View.VISIBLE);
-            new ModelLoaderTask(this).execute(compModel);
-        }
         gLSurfaceView.onResume();
         Settings.clazz = ActivityPhoto.class;
         // FIXME wrong way
@@ -425,11 +390,6 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, ModelL
         if (maskRender.staticView) {
             gLSurfaceView.requestRender();
         }
-    }
-
-    @Override
-    public void onModelLoaded() {
-        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
