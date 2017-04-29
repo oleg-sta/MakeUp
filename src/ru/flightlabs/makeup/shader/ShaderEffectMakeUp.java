@@ -11,6 +11,7 @@ import java.util.Arrays;
 import ru.flightlabs.makeup.StateEditor;
 import ru.flightlabs.makeup.activity.ActivityMakeUp;
 import ru.flightlabs.makeup.utils.ModelUtils;
+import ru.flightlabs.masks.Static;
 import ru.flightlabs.masks.renderer.ShaderEffect;
 import ru.flightlabs.masks.renderer.ShaderEffectHelper;
 import ru.flightlabs.masks.utils.OpenGlHelper;
@@ -65,7 +66,7 @@ public class ShaderEffectMakeUp extends ShaderEffect {
     }
 
     public void makeShaderMask(int indexEye, PoseHelper.PoseResult poseResult, int width, int height, int texIn, long time, int iGlobTime) {
-        Log.i(TAG, "onDrawFrame6 draw maekup");
+        if (Static.LOG_MODE) Log.i(TAG, "onDrawFrame6 draw maekup");
         int vPos2 = GLES20.glGetAttribLocation(program2dJustCopy, "vPosition");
         int vTex2 = GLES20.glGetAttribLocation(program2dJustCopy, "vTexCoord");
         GLES20.glEnableVertexAttribArray(vPos2);
@@ -76,7 +77,7 @@ public class ShaderEffectMakeUp extends ShaderEffect {
             Point[] onImageEyeLeft = ModelUtils.getOnlyPoints(poseResult.foundLandmarks, 36, 6);
             Point[] onImageEyeRight = ModelUtils.getOnlyPoints(poseResult.foundLandmarks, 36 + 6, 6);
             // TODO add checkbox for rgb or hsv bleding
-            Log.i(TAG, "onDrawFrame6 draw maekup2");
+            if (Static.LOG_MODE) Log.i(TAG, "onDrawFrame6 draw maekup2");
             int vPos22 = GLES20.glGetAttribLocation(program2dTriangles, "vPosition");
             int vTex22 = GLES20.glGetAttribLocation(program2dTriangles, "vTexCoord");
             GLES20.glEnableVertexAttribArray(vPos22);
@@ -84,7 +85,7 @@ public class ShaderEffectMakeUp extends ShaderEffect {
             // TODO use blendshape for eyes
 
             if (editEnv.changed(StateEditor.EYE_SHADOW)) {
-                Log.i(TAG, "changed texture " + Arrays.toString(editEnv.getResourceIds(StateEditor.EYE_SHADOW)));
+                if (Static.LOG_MODE) Log.i(TAG, "changed texture " + Arrays.toString(editEnv.getResourceIds(StateEditor.EYE_SHADOW)));
                 changeTexures(eyeShadowTextureId, editEnv.getResourceIds(StateEditor.EYE_SHADOW));
             }
             if (editEnv.changed(StateEditor.EYE_LASH)) {

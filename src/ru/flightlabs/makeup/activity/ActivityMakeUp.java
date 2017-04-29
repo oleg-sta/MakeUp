@@ -167,7 +167,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        Log.i(TAG, "screen size in dp " + dpWidth + " " + dpHeight);
+        if (Static.LOG_MODE) Log.i(TAG, "screen size in dp " + dpWidth + " " + dpHeight);
         // init
         changeCategory(StateEditor.FASHION);
         changeItemInCategory(3);
