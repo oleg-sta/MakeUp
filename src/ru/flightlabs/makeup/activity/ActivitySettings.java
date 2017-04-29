@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
+import ru.oramalabs.beautykit.BuildConfig;
 import ru.oramalabs.beautykit.R;
 
 
@@ -25,7 +27,7 @@ public class ActivitySettings extends Activity {
                 onBackPressed();
             }
         });
-
+        ((TextView)findViewById(R.id.text_version)).setText(getResources().getText(R.string.version_app) + " " + BuildConfig.BUILD_TIME);
     }
 
     public void rateApp(View view) {

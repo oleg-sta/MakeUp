@@ -28,6 +28,19 @@ dependencies {
     compile project(':ecogallery2')
 }
 
+def gitSha1 = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--tags'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+//def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
+def buildTime() {
+    return new Date().format("dd.MM.yyyy", TimeZone.getTimeZone('UTC'));;
+}
+
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
@@ -50,9 +63,11 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
+            buildConfigField 'String', 'BUILD_TIME', '"' + buildTime() + '"'
         }
         debug {
             signingConfig signingConfigs.debug
+            buildConfigField 'String', 'BUILD_TIME', 'null'
         }
     }
 
