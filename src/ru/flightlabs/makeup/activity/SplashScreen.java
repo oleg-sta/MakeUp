@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
@@ -21,6 +23,7 @@ import ru.oramalabs.beautykit.R;
 public class SplashScreen extends Activity implements ModelLoaderTask.Callback {
 
     private static final String TAG = "SplashScreen";
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     static CompModel compModel;
 
@@ -52,9 +55,9 @@ public class SplashScreen extends Activity implements ModelLoaderTask.Callback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         compModel = new CompModel();
         compModel.context = getApplicationContext();
-
     }
 
     @Override
@@ -74,8 +77,7 @@ public class SplashScreen extends Activity implements ModelLoaderTask.Callback {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Intent i = new Intent(getApplication(), ActivityMakeUp.class); // Your list's Intent
-                //i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
+                Intent i = new Intent(getApplication(), ActivityMakeUp.class);
                 startActivity(i);
                 finish();
             }

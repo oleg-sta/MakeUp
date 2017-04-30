@@ -5,6 +5,5 @@
     <string name="send_photo_with">send with</string>
     <string name="eval_app">Evaluate app</string>
     <string name="share_app">Share app</string>
-    <string name="version_app">Version %s released %s</string>
-
+    <string name="version_app" formatted="false">Version %s released %s</string>
 </resources>

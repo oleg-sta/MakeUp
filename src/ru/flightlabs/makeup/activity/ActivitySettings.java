@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import ru.oramalabs.beautykit.BuildConfig;
 import ru.oramalabs.beautykit.R;
 
@@ -16,10 +18,13 @@ import ru.oramalabs.beautykit.R;
  */
 
 public class ActivitySettings extends Activity {
+
+    private FirebaseAnalytics mFirebaseAnalytics;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_makeup);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         findViewById(R.id.back_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -31,11 +36,21 @@ public class ActivitySettings extends Activity {
     }
 
     public void rateApp(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "rate app");
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "app");
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="
                 + getPackageName()));
         startActivity(intent);
     }
     public void shareApp(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "share app");
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "app");
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT,
@@ -45,6 +60,11 @@ public class ActivitySettings extends Activity {
     }
 
     public void gotoUrl(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "goto url");
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "app");
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://flightlabs.ru"));
         startActivity(browserIntent);
     }

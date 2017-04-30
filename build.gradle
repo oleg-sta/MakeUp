@@ -5,7 +5,8 @@ buildscript {
         maven { url "https://jcenter.bintray.com" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.1'
+        classpath 'com.android.tools.build:gradle:2.3.1'
+        classpath 'com.google.gms:google-services:3.0.0'
     }
 }
 
@@ -22,10 +23,11 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:22.2.+'
-    compile 'com.android.support:appcompat-v7:22.2.+'
     compile project(':commonlib2')
     compile project(':ecogallery2')
+    compile 'com.android.support:support-v4:22.2.1'
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.google.firebase:firebase-core:10.0.1'
 }
 
 def gitSha1 = { ->
@@ -38,12 +40,12 @@ def gitSha1 = { ->
 }
 //def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
 def buildTime() {
-    return new Date().format("dd.MM.yyyy", TimeZone.getTimeZone('UTC'));;
+    return new Date().format("dd.MM.yyyy", TimeZone.getTimeZone('UTC')); ;
 }
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    buildToolsVersion '25.0.0'
 
     signingConfigs {
         release {
@@ -101,3 +103,4 @@ android {
     }
 
 }
+apply plugin: 'com.google.gms.google-services'

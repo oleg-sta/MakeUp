@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import ru.flightlabs.commonlib.Settings;
 import ru.flightlabs.makeup.ResourcesApp;
 import ru.flightlabs.makeup.StateEditor;
@@ -38,6 +40,7 @@ import us.feras.ecogallery.EcoGalleryAdapterView;
  */
 public class ActivityMakeUp extends Activity implements AdaptersNotifier, CategoriesNamePagerAdapter.Notification {
 
+    private FirebaseAnalytics mFirebaseAnalytics;
     private int currentCategory;
 
     public static boolean useHsv = false; // false - use colorized
@@ -65,6 +68,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_makeup);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "PreviewWorking");
@@ -75,7 +79,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
 
         resourcesApp = new ResourcesApp(this);
 
-        initDebug();
+        if (Static.LOG_MODE) initDebug();
         rotateCamera = (ImageView)findViewById(R.id.rotate_camera);
         rotateCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,8 +154,17 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
             @Override
             public void onClick(View view) {
                 if (!maskRender.staticView) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "edit_photo");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "makeup");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
                     changeToOnlyEditMode();
                 } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "save_photo");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "makeup");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                     Static.makePhoto = true;
                     gLSurfaceView.requestRender();
                 }
@@ -175,6 +188,11 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
 
     @Deprecated
     private void initDebug() {
+        findViewById(R.id.checkDebug).setVisibility(View.VISIBLE);
+        findViewById(R.id.checkBoxLinear).setVisibility(View.VISIBLE);
+        findViewById(R.id.useCalman).setVisibility(View.VISIBLE);
+        findViewById(R.id.useCoorized).setVisibility(View.VISIBLE);
+        findViewById(R.id.useAlphaColor).setVisibility(View.VISIBLE);
         ((CheckBox)findViewById(R.id.checkDebug)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

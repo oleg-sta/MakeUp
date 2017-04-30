@@ -8,6 +8,8 @@ import android.os.Environment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,10 +27,14 @@ import ru.oramalabs.beautykit.R;
 
 public class ActivityPhoto extends Activity {
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.after_photo_makeup);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         // TODO add pager
         Bundle extras = getIntent().getExtras();
@@ -65,6 +71,11 @@ public class ActivityPhoto extends Activity {
         findViewById(R.id.thrash_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "delete photo");
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                 // TODO chekc for last photo
                 new File(adapter.photos.get(pager.getCurrentItem())).delete();
                 photos.remove(adapter.photos.get(pager.getCurrentItem()));
@@ -75,6 +86,11 @@ public class ActivityPhoto extends Activity {
         findViewById(R.id.share_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "share photo");
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(adapter.photos.get(pager.getCurrentItem()))));
