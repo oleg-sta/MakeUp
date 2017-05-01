@@ -158,7 +158,10 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
                     bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "edit_photo");
                     bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "makeup");
                     mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-                    changeToOnlyEditMode();
+                    // FIXME should by synchronized, it's fast
+                    if (MaskRenderer.poseResult != null && MaskRenderer.poseResult.foundLandmarks != null) {
+                        changeToOnlyEditMode();
+                    }
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "save_photo");
