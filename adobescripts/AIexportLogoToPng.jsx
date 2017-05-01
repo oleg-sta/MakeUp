@@ -10,7 +10,7 @@ function main() {
         var doc1 = doc.layers[a];
       //activeDocument.activeLayer = activeDocument.layers.getByName(doc.layers[a].name);  
         var saveFile = File(exportPath+doc.layers[a].name + ".png");  
-        SavePNG(saveFile);  
+        SavePNG(saveFile, 1.0);  
 // make all hidden
         for (var a2 = 0; a2 < doc1.pageItems.length; a2++)
         {
@@ -25,7 +25,11 @@ function main() {
             curItem.hidden = false;
             var gr = curItem;
             var fileName = saveFile + "aa" + a2 + ".png";
-            SavePNG(fileName);  
+            SavePNG(fileName, 1.0);  
+            SavePNG(fileName + "_mdpi.png", 48.0/512.0);  
+            SavePNG(fileName + "_hdpi.png", 72.0/512.0);  
+            SavePNG(fileName + "_xhdpi.png", 96.0/512.0);  
+            SavePNG(fileName + "_xxhdpi.png", 144.0/512.0);  
             curItem.hidden=true;
 //            prevLayer = doc1.groupItems[a2];
         }
@@ -35,7 +39,7 @@ function main() {
     for (var a=0; a < doc.layers.length; a++) {
         var doc1 = doc.layers[a];
         var saveFile= File(exportPath+doc.layers[a].name +".png");  
-        SavePNG(saveFile);  
+        SavePNG(saveFile, 1.0);  
         for (var a2 = 0; a2 < doc1.pageItems.length; a2++)
         {
             doc1.pageItems[a2].hidden = false;
@@ -44,14 +48,14 @@ function main() {
 
 }  
 main();  
-function SavePNG(saveFile){  
+function SavePNG(saveFile, sizeKoef){  
     var exportOptions = new ExportOptionsPNG24();
     var type = ExportType.PNG24;
     var fileSpec = new File(saveFile);
 //    exportOptions.colorCount = 8;
     exportOptions.transparency = true;
-    exportOptions.verticalScale = 456;
-    exportOptions.horizontalScale = 456;
+    exportOptions.verticalScale = 456 * sizeKoef;
+    exportOptions.horizontalScale = 456 * sizeKoef;
     app.activeDocument.exportFile( fileSpec, type, exportOptions );
 } 
 
