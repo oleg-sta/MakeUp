@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -14,6 +16,7 @@ import org.opencv.android.OpenCVLoader;
 import ru.flightlabs.masks.CompModel;
 import ru.flightlabs.masks.ModelLoaderTask;
 import ru.flightlabs.masks.Static;
+import ru.oramalabs.beautykit.BeautyKit;
 import ru.oramalabs.beautykit.R;
 
 /**
@@ -23,7 +26,7 @@ import ru.oramalabs.beautykit.R;
 public class SplashScreen extends Activity implements ModelLoaderTask.Callback {
 
     private static final String TAG = "SplashScreen";
-    private FirebaseAnalytics mFirebaseAnalytics;
+    private Tracker mTracker;
 
     static CompModel compModel;
 
@@ -55,14 +58,19 @@ public class SplashScreen extends Activity implements ModelLoaderTask.Callback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         compModel = new CompModel();
         compModel.context = getApplicationContext();
+
+        BeautyKit application = (BeautyKit) getApplication();
+        mTracker = application.getDefaultTracker();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        mTracker.setScreenName("SplashScreen");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
         Static.libsLoaded = false;
         OpenCVLoader.initDebug();
         mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);

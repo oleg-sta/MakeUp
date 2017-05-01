@@ -27,7 +27,7 @@ dependencies {
     compile project(':ecogallery2')
     compile 'com.android.support:support-v4:22.2.1'
     compile 'com.android.support:appcompat-v7:22.2.1'
-    compile 'com.google.firebase:firebase-core:10.0.1'
+    compile 'com.google.android.gms:play-services-analytics:9.2.0'
 }
 
 def gitSha1 = { ->

@@ -8,6 +8,8 @@ import android.os.Environment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.File;
@@ -18,6 +20,7 @@ import java.util.List;
 
 import ru.flightlabs.commonlib.Settings;
 import ru.flightlabs.makeup.adapter.PhotoPagerAdapter;
+import ru.oramalabs.beautykit.BeautyKit;
 import ru.oramalabs.beautykit.R;
 
 
@@ -27,14 +30,15 @@ import ru.oramalabs.beautykit.R;
 
 public class ActivityPhoto extends Activity {
 
-    private FirebaseAnalytics mFirebaseAnalytics;
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.after_photo_makeup);
 
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        BeautyKit application = (BeautyKit) getApplication();
+        mTracker = application.getDefaultTracker();
 
         // TODO add pager
         Bundle extras = getIntent().getExtras();
@@ -71,10 +75,10 @@ public class ActivityPhoto extends Activity {
         findViewById(R.id.thrash_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "delete photo");
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
-                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Action")
+                        .setAction("DeletePhoto")
+                        .build());
 
                 // TODO chekc for last photo
                 new File(adapter.photos.get(pager.getCurrentItem())).delete();
@@ -86,10 +90,10 @@ public class ActivityPhoto extends Activity {
         findViewById(R.id.share_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "share photo");
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
-                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Action")
+                        .setAction("SharePhoto")
+                        .build());
 
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
@@ -99,5 +103,12 @@ public class ActivityPhoto extends Activity {
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mTracker.setScreenName("ActivityPhoto");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 }

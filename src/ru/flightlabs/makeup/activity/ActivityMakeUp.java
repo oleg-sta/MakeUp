@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import ru.flightlabs.commonlib.Settings;
@@ -31,6 +33,7 @@ import ru.flightlabs.makeup.shader.ShaderEffectMakeUp;
 import ru.flightlabs.masks.Static;
 import ru.flightlabs.masks.camera.FastCameraView;
 import ru.flightlabs.masks.renderer.MaskRenderer;
+import ru.oramalabs.beautykit.BeautyKit;
 import ru.oramalabs.beautykit.R;
 import us.feras.ecogallery.EcoGallery;
 import us.feras.ecogallery.EcoGalleryAdapterView;
@@ -40,7 +43,7 @@ import us.feras.ecogallery.EcoGalleryAdapterView;
  */
 public class ActivityMakeUp extends Activity implements AdaptersNotifier, CategoriesNamePagerAdapter.Notification {
 
-    private FirebaseAnalytics mFirebaseAnalytics;
+    private Tracker mTracker;
     private int currentCategory;
 
     public static boolean useHsv = false; // false - use colorized
@@ -68,7 +71,9 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_makeup);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
+        BeautyKit application = (BeautyKit) getApplication();
+        mTracker = application.getDefaultTracker();
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "PreviewWorking");
@@ -84,6 +89,10 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
         rotateCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Action")
+                        .setAction("RotateCamera")
+                        .build());
                 cameraView.swapCamera();
             }
         });
@@ -95,8 +104,10 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
         viewPagerCategories.setOnItemSelectedListener(new EcoGalleryAdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(EcoGalleryAdapterView<?> parent, View view, final int position, long id) {
-                //mContext.getResources().getColor(R.color.main_text)
-                //pagerCategories.current.setTextColor(Color.BLACK);
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Action")
+                        .setAction("ChangeCategoryItem")
+                        .build());
                 pagerCategories.selected = position;
                 selectedCategory(position);
                 //((TextView)view.findViewById(R.id.item_text)).setTextColor(Color.RED);
@@ -154,20 +165,19 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
             @Override
             public void onClick(View view) {
                 if (!maskRender.staticView) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "edit_photo");
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "makeup");
-                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                    mTracker.send(new HitBuilders.EventBuilder()
+                            .setCategory("Action")
+                            .setAction("ToEditPhoto")
+                            .build());
                     // FIXME should by synchronized, it's fast
                     if (MaskRenderer.poseResult != null && MaskRenderer.poseResult.foundLandmarks != null) {
                         changeToOnlyEditMode();
                     }
                 } else {
-                    Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "save_photo");
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "makeup");
-                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-
+                    mTracker.send(new HitBuilders.EventBuilder()
+                            .setCategory("Action")
+                            .setAction("SavePhoto")
+                            .build());
                     Static.makePhoto = true;
                     gLSurfaceView.requestRender();
                 }
@@ -233,6 +243,8 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
     public void onResume() {
         if (Static.LOG_MODE) Log.i(TAG, "onResume");
         super.onResume();
+        mTracker.setScreenName("ActivityMakeUp");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         wakeLock.acquire();
         gLSurfaceView.onResume();
         Settings.clazz = ActivityPhoto.class;
@@ -384,6 +396,10 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
 
     @Override
     public void changeItemInCategory(int newItem) {
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Action")
+                .setAction("ChangeItemInCategory")
+                .build());
         if (Static.LOG_MODE) Log.i(TAG, "changeItemInCategory " + newItem);
         editorEnvironment.setCurrentIndexItem(currentCategory, newItem);
         if (currentCategory == StateEditor.FASHION) {

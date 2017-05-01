@@ -7,8 +7,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import ru.oramalabs.beautykit.BeautyKit;
 import ru.oramalabs.beautykit.BuildConfig;
 import ru.oramalabs.beautykit.R;
 
@@ -19,12 +22,13 @@ import ru.oramalabs.beautykit.R;
 
 public class ActivitySettings extends Activity {
 
-    private FirebaseAnalytics mFirebaseAnalytics;
+    private Tracker mTracker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_makeup);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        BeautyKit application = (BeautyKit) getApplication();
+        mTracker = application.getDefaultTracker();
 
         findViewById(R.id.back_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,20 +40,20 @@ public class ActivitySettings extends Activity {
     }
 
     public void rateApp(View view) {
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "rate app");
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "app");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Action")
+                .setAction("RateApp")
+                .build());
 
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="
                 + getPackageName()));
         startActivity(intent);
     }
     public void shareApp(View view) {
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "share app");
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "app");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Action")
+                .setAction("ShareApp")
+                .build());
 
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
@@ -60,12 +64,19 @@ public class ActivitySettings extends Activity {
     }
 
     public void gotoUrl(View view) {
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "goto url");
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "app");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Action")
+                .setAction("GotoUrl")
+                .build());
 
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://flightlabs.ru"));
         startActivity(browserIntent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mTracker.setScreenName("ActivitySettings");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 }
