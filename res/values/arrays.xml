@@ -3,10 +3,10 @@
 
     <string-array name="categories">
         <item>EYELASHES</item>
-        <item>EYESHADOW</item>
-        <item>EYELINE</item>
+        <item>EYESHADOWS</item>
+        <item>EYELINES</item>
         <item>LIPS</item>
-        <item>FASHION</item>
+        <item>LOOK</item>
     </string-array>
 
     <!-- WARNING это взято из другого приложения-->
