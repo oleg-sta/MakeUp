@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="send_mail_with">Отправить письмо с помощью</string>
     <string name="send_photo_with">отправить с помощью</string>
-    <string name="eval_app">Оценить приложение</string>
+    <string name="eval_app">Оцените нас</string>
     <string name="share_app">Поделиться приложением</string>
     <string name="version_app" formatted="false">Версия %s от %s</string>
 </resources>

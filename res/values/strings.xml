@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">BeautyKit</string>
-    <string name="send_mail_with">Send e-mail</string>
     <string name="send_photo_with">send with</string>
-    <string name="eval_app">Evaluate app</string>
-    <string name="share_app">Share app</string>
+    <string name="eval_app">Rate us</string>
+    <string name="share_app">Share</string>
     <string name="version_app" formatted="false">Version %s released %s</string>
 </resources>
