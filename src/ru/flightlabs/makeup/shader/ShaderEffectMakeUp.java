@@ -14,9 +14,11 @@ import ru.flightlabs.makeup.utils.ModelUtils;
 import ru.flightlabs.masks.Static;
 import ru.flightlabs.masks.renderer.ShaderEffect;
 import ru.flightlabs.masks.renderer.ShaderEffectHelper;
+import ru.flightlabs.masks.utils.FileUtils;
 import ru.flightlabs.masks.utils.OpenGlHelper;
 import ru.flightlabs.masks.utils.PointsConverter;
 import ru.flightlabs.masks.utils.PoseHelper;
+import ru.flightlabs.masks.utils.ShaderUtils;
 
 /**
  * Created by sov on 13.02.2017.
@@ -29,6 +31,8 @@ public class ShaderEffectMakeUp extends ShaderEffect {
     private int eyeLashesTextureId;
     private int eyeLineTextureId;
     private int lipsTextureId;
+
+    protected int program2dNoFace;
 
     private final StateEditor editEnv;
 
@@ -43,6 +47,7 @@ public class ShaderEffectMakeUp extends ShaderEffect {
         eyeLashesTextureId = OpenGlHelper.loadTexture(context, editEnv.getResourceId(StateEditor.EYE_LASH));
         eyeLineTextureId = OpenGlHelper.loadTexture(context, editEnv.getResourceId(StateEditor.EYE_LINE));
         lipsTextureId = OpenGlHelper.loadTexture(context, editEnv.getResourceId(StateEditor.LIPS));
+        program2dNoFace = ShaderUtils.createProgram(ShaderUtils.createShader(GLES20.GL_VERTEX_SHADER, FileUtils.getStringFromAsset(context.getAssets(), "shaders/vss_2d.glsl")), ShaderUtils.createShader(GLES20.GL_FRAGMENT_SHADER, FileUtils.getStringFromAsset(context.getAssets(), "shaders/fss_no_face.glsl")));
     }
 
     private void loadTexures(int[] openglTexts, int[] resources) {
@@ -146,6 +151,12 @@ public class ShaderEffectMakeUp extends ShaderEffect {
                     editEnv.getOpacityFloat(StateEditor.LIPS) * alphaLips, 0, 0, new float[0]);
 
             // FIXME elements erase each other
+        } else {
+            int vPos22 = GLES20.glGetAttribLocation(program2dJustCopy, "vPosition");
+            int vTex22 = GLES20.glGetAttribLocation(program2dJustCopy, "vTexCoord");
+            GLES20.glEnableVertexAttribArray(vPos22);
+            GLES20.glEnableVertexAttribArray(vTex22);
+            ShaderEffectHelper.shaderEffect2dWholeScreen(poseResult.leftEye, poseResult.rightEye, texIn, program2dNoFace, vPos22, vTex22);
         }
     }
 
