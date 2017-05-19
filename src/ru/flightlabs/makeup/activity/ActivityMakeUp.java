@@ -145,10 +145,10 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
         });
 
         gLSurfaceView = (GLSurfaceView)findViewById(R.id.fd_glsurface);
-        gLSurfaceView.getHolder().setFormat(PixelFormat.TRANSPARENT);
-        gLSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        maskRender = new MaskRenderer(this, SplashScreen.compModel, new ShaderEffectMakeUp(this, editorEnvironment));
         gLSurfaceView.setEGLContextClientVersion(2);
+        gLSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+        gLSurfaceView.getHolder().setFormat(PixelFormat.TRANSPARENT);
+        maskRender = new MaskRenderer(this, SplashScreen.compModel, new ShaderEffectMakeUp(this, editorEnvironment));
         gLSurfaceView.setRenderer(maskRender);
         gLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         maskRender.frameCamera = cameraView.frameCamera;
