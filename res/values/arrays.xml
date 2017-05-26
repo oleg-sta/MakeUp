@@ -111,6 +111,7 @@
         <item>@raw/eyeshadow_icon_06</item>
         <item>@raw/eyeshadow_icon_08</item>
         <item>@raw/eyeshadow_icon_09</item>
+        <item>@raw/eyeshadow_icon_06</item><!--temp-->
     </array>
 
     <array name="eyeshadow">

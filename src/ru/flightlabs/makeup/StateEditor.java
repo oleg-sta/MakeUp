@@ -24,6 +24,9 @@ public class StateEditor {
     Context activity;
     ResourcesApp resourcesApp;
 
+
+    public static final String[] PREFIX_FOR_LABEL = {"EYE_LASH", "EYE_SHADOW", "EYE_LINE", "LIPS", "FASHION"};
+
     public static final int EYE_LASH = 0;
     public static final int EYE_SHADOW = 1;
     public static final int EYE_LINE = 2;

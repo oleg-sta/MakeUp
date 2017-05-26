@@ -21,6 +21,8 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import java.io.IOException;
+
 import ru.flightlabs.commonlib.Settings;
 import ru.flightlabs.makeup.ResourcesApp;
 import ru.flightlabs.makeup.StateEditor;
@@ -32,7 +34,10 @@ import ru.flightlabs.makeup.adapter.TextNewPagerAdapter;
 import ru.flightlabs.makeup.shader.ShaderEffectMakeUp;
 import ru.flightlabs.masks.Static;
 import ru.flightlabs.masks.camera.FastCameraView;
+import ru.flightlabs.masks.camera.FrameCamera;
+import ru.flightlabs.masks.model.Utils;
 import ru.flightlabs.masks.renderer.MaskRenderer;
+import ru.flightlabs.masks.utils.FrameCameraLoad;
 import ru.oramalabs.beautykit.BeautyKit;
 import ru.oramalabs.beautykit.R;
 import us.feras.ecogallery.EcoGallery;
@@ -72,6 +77,8 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_makeup);
 
+        Settings.DIRECTORY_SELFIE = "BeautyKit";
+
         BeautyKit application = (BeautyKit) getApplication();
         mTracker = application.getDefaultTracker();
 
@@ -107,6 +114,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
                 mTracker.send(new HitBuilders.EventBuilder()
                         .setCategory("Action")
                         .setAction("ChangeCategoryItem")
+                        .setLabel(StateEditor.PREFIX_FOR_LABEL[position])
                         .build());
                 pagerCategories.selected = position;
                 selectedCategory(position);
@@ -206,6 +214,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
         findViewById(R.id.useCalman).setVisibility(View.VISIBLE);
         findViewById(R.id.useCoorized).setVisibility(View.VISIBLE);
         findViewById(R.id.useAlphaColor).setVisibility(View.VISIBLE);
+        findViewById(R.id.useFakeCamera).setVisibility(View.VISIBLE);
         ((CheckBox)findViewById(R.id.checkDebug)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -234,6 +243,21 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 useAlphaCol = b;
+            }
+        });
+        ((CheckBox)findViewById(R.id.useFakeCamera)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (Settings.fakeCamera == null) {
+                    Settings.fakeCamera = new FrameCamera();
+                    try {
+                        FrameCameraLoad.loadPic(Settings.fakeCamera, getAssets().open("for_testing/1456.jpg"));
+                    } catch (IOException e) {
+                        Log.i("FrameCameraLoad", "error " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+                Settings.useFakeCamera = b;
             }
         });
         ((CheckBox)findViewById(R.id.useAlphaColor)).setChecked(true);
@@ -388,6 +412,10 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
     @Override
     public void onBackPressed() {
         if (maskRender.staticView) {
+            mTracker.send(new HitBuilders.EventBuilder()
+                    .setCategory("Action")
+                    .setAction("FromEditPhoto")
+                    .build());
             startCameraView();
         } else {
             super.onBackPressed();
@@ -399,6 +427,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
         mTracker.send(new HitBuilders.EventBuilder()
                 .setCategory("Action")
                 .setAction("ChangeItemInCategory")
+                .setLabel(StateEditor.PREFIX_FOR_LABEL[currentCategory] + "_" + newItem)
                 .build());
         if (Static.LOG_MODE) Log.i(TAG, "changeItemInCategory " + newItem);
         editorEnvironment.setCurrentIndexItem(currentCategory, newItem);
@@ -412,6 +441,11 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
     }
 
     public void changeColor(int color, int position) {
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Action")
+                .setAction("ChangeItemInCategory")
+                .setLabel(StateEditor.PREFIX_FOR_LABEL[currentCategory] + "_" + position)
+                .build());
         if (Static.LOG_MODE) Log.i(TAG, "changeColor " + position);
         editorEnvironment.setCurrentColor(currentCategory, position);
         if (maskRender.staticView) {
