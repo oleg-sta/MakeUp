@@ -23,6 +23,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 
+import ru.flightlabs.commonlib.ErrorInterface;
 import ru.flightlabs.commonlib.Settings;
 import ru.flightlabs.makeup.ResourcesApp;
 import ru.flightlabs.makeup.StateEditor;
@@ -46,7 +47,10 @@ import us.feras.ecogallery.EcoGalleryAdapterView;
 /**
  * We should separate view from business logic
  */
-public class ActivityMakeUp extends Activity implements AdaptersNotifier, CategoriesNamePagerAdapter.Notification {
+public class ActivityMakeUp extends Activity implements AdaptersNotifier, CategoriesNamePagerAdapter.Notification, ErrorInterface {
+
+
+    long startTime;
 
     private Tracker mTracker;
     private int currentCategory;
@@ -76,6 +80,8 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_makeup);
+
+        Settings.errorClass = this;
 
         Settings.DIRECTORY_SELFIE = "BeautyKit";
 
@@ -424,11 +430,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
 
     @Override
     public void changeItemInCategory(int newItem) {
-        mTracker.send(new HitBuilders.EventBuilder()
-                .setCategory("Action")
-                .setAction("ChangeItemInCategory")
-                .setLabel(StateEditor.PREFIX_FOR_LABEL[currentCategory] + "_" + newItem)
-                .build());
+        analytic(currentCategory, newItem);
         if (Static.LOG_MODE) Log.i(TAG, "changeItemInCategory " + newItem);
         editorEnvironment.setCurrentIndexItem(currentCategory, newItem);
         if (currentCategory == StateEditor.FASHION) {
@@ -441,11 +443,7 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
     }
 
     public void changeColor(int color, int position) {
-        mTracker.send(new HitBuilders.EventBuilder()
-                .setCategory("Action")
-                .setAction("ChangeItemInCategory")
-                .setLabel(StateEditor.PREFIX_FOR_LABEL[currentCategory] + "_" + position)
-                .build());
+        analytic(currentCategory, position);
         if (Static.LOG_MODE) Log.i(TAG, "changeColor " + position);
         editorEnvironment.setCurrentColor(currentCategory, position);
         if (maskRender.staticView) {
@@ -456,5 +454,25 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
     @Override
     public void selectedCategory(int position) {
         changeCategory(position);
+    }
+
+    @Override
+    public void sendError(UnsatisfiedLinkError e) {
+        mTracker.send(new HitBuilders.ExceptionBuilder()
+                .setDescription(e.getMessage() +  ":" + e.getLocalizedMessage())
+                .setFatal(true)
+                .build());
+    }
+
+    private void analytic(Integer newCategory, Integer newItem) {
+        long curTime = System.currentTimeMillis();
+        if ((curTime - startTime) > 1000) {
+            mTracker.send(new HitBuilders.EventBuilder()
+                    .setCategory("Action")
+                    .setAction("ChangeItemInCategory")
+                    .setLabel(StateEditor.PREFIX_FOR_LABEL[newCategory] + "_" + newItem)
+                    .build());
+        }
+        startTime = curTime;
     }
 }
