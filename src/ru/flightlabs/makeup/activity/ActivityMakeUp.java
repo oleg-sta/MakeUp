@@ -183,6 +183,8 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
                             .setCategory("Action")
                             .setAction("ToEditPhoto")
                             .build());
+                    mTracker.setScreenName("ActivityEdit");
+                    mTracker.send(new HitBuilders.ScreenViewBuilder().build());
                     // FIXME should by synchronized, it's fast
                     if (MaskRenderer.poseResult != null && MaskRenderer.poseResult.foundLandmarks != null) {
                         changeToOnlyEditMode();
@@ -422,6 +424,8 @@ public class ActivityMakeUp extends Activity implements AdaptersNotifier, Catego
                     .setCategory("Action")
                     .setAction("FromEditPhoto")
                     .build());
+            mTracker.setScreenName("ActivityMakeUp");
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
             startCameraView();
         } else {
             super.onBackPressed();
