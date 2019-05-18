@@ -2,7 +2,7 @@
 
 ## What is it?
 
-This is android application. It is VR application, it uses stream from camera, and add to face effects for make-up: it could paint lips, eyes, braces.
+This is android application that I wrote. It is VR application, it uses stream from camera, and add to face effects for make-up: it could paint lips, eyes, eyelashes.
 
 # Table of Contests
 
