@@ -1,6 +1,6 @@
 [submodule "commonlib"]
 	path = commonlib
-	url = https://trolleg@bitbucket.org/trolleg/commonlibmask.git
+	url = https://github.com/oleg-sta/commonLibMask.git
 [submodule "ecogallery"]
 	path = ecogallery
-	url = https://trolleg@bitbucket.org/trolleg/commonui.git
+	url = https://github.com/oleg-sta/commonUi.git
