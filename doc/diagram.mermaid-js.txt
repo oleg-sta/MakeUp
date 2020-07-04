@@ -1,0 +1,9 @@
+graph TD
+	A[FastCameraView] --> B(CameraView)
+	B --> |grey image| C(C module)
+  B --> |colour image| G
+  C --> E(OpenCV to find face)
+  E --> F(dlib to find points on face)
+  F --> |points on face| G(MaskRenderer)
+  I --> |image with mask| H(GlView)
+  G --> I(OpenGL)
