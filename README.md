@@ -19,4 +19,5 @@ Make settings to submodule [commonLib](https://github.com/oleg-sta/commonLibMask
 It is a very complex application that uses camera, machine learning libraries written on C, OpenGL scripts and it should work very fast because it works online. You could read about main logic in my submodule [here](https://github.com/oleg-sta/commonLibMask) with all description of logic in it.
 
 Application could be described by picture below:
+
 ![image](./doc/diagram.png)
