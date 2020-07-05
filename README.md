@@ -101,3 +101,19 @@ public void onPreviewFrame(byte[] data, Camera camera) {
     mCamera.addCallbackBuffer(mBuffer);
 }
 ```
+
+### Using C on Android
+
+To find face and points on it we use C-libraries. To use C/C++ you need to use Android NDK for building and JNI(Java Native Interface). Before calling native code, you need to describe them in java code:
+```
+class A {
+    private static native void nativeDetect(long thiz, long inputImage, long faces);
+}
+```
+and C code for this method
+```
+JNIEXPORT void JNICALL Java_ru_flightlabs_masks_DetectionBasedTracker_nativeDetect
+(JNIEnv * jenv, jclass, jlong thiz, jlong imageGray, jlong faces)
+{
+```
+where jenv and jclass should alwayes received by native function. And others - our parameters in this example we are using pointer to memory.
