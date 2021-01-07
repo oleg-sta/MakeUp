@@ -4,6 +4,8 @@
 
 This is android application that I wrote. It is VR application, it uses stream from camera, and add to face effects for make-up: it could paint lips, eyes, eyelashes.
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=md-Ssosl1cE" target="_blank"><img src="http://img.youtube.com/vi/md-Ssosl1cE/0.jpg" alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+
 # Table of Contests
 
 - [What is it?](#what-is-it)
